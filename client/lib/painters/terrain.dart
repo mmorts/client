@@ -107,7 +107,11 @@ out vec2 v_texcoord;
 
 vec4 resPos;
 
-mat4 rot = mat4(vec4());
+mat4 rot = mat4(
+  vec4(1.0,0.5,-0.28867512941360474,0.0),
+  vec4(0.0,0.7499780058860779,-0.43299999833106995,0.0),
+  vec4(0.0,0.5,0.8660253882408142,0.0),
+  vec4(0.0,0.0,0.0,1.0));
  
 void main() {
   resPos.x = (position.x * 2.0) / resolution.x;
@@ -120,7 +124,7 @@ void main() {
   resPos.y = -resPos.y;
   
   /*u_matrix * */
-  gl_Position = resPos;
+  gl_Position = rot * resPos;
  
   v_texcoord = texcoord;
 }
