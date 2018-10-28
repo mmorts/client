@@ -39,8 +39,6 @@ class ShaderProgram {
     return AttributeLocation(location: attribLocation, program: this);
   }
 
-  // TODO getVertexAttribLocation(String name) → VertexAttribLocation
-
   void use() {
     gl.useProgram(program);
     gl.bindVertexArray(vao);
@@ -79,7 +77,9 @@ class ShaderProgram {
   }
 
   static ShaderProgram prepare(
-      {RenderingContext2 gl, String vertex, String fragment}) {
+      {@required RenderingContext2 gl,
+      @required String vertex,
+      @required String fragment}) {
     // TODO Handle exceptions
     final Shader vertexShader = compileShader(gl, WebGL.VERTEX_SHADER, vertex);
     final Shader fragmentShader =

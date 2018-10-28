@@ -1,115 +1,66 @@
 import 'dart:html';
 import 'dart:web_gl';
 import 'dart:async';
+import 'package:http/browser_client.dart';
+import 'package:jaguar_resty/jaguar_resty.dart';
 
-import 'dart:typed_data';
+import 'package:client/objects/objects.dart';
 
-import 'package:client/ezwebgl/ezwebgl.dart';
+import 'package:client/painters/terrain.dart';
+import 'package:client/painters/military.dart';
+import 'package:client/painters/building.dart';
 
-final String mapVertexShader = r"""
-#version 300 es
+void main() async {
+  globalClient = BrowserClient();
 
-layout(location = 0) in vec2 a_plus;
-layout(location = 1) in vec4 a_position;
-
-void main() {
-  gl_Position = vec4(a_position.x + a_plus.x, a_position.y + a_plus.y, a_position.z, a_position.w);
-}
-""";
-
-final String mapFragmentShader = r"""
-#version 300 es
-
-precision mediump float;
- 
-// we need to declare an output for the fragment shader
-out vec4 outColor;
- 
-void main() {
-  outColor = vec4(1, 0, 0, 1);
-}
-""";
-
-void main() {
   CanvasElement gameCanvas = querySelector("#game-canvas");
   RenderingContext2 gl = gameCanvas.getContext("webgl2");
 
-  ShaderProgram mapShader;
-  Buffer positionBuffer;
-  Texture texture;
+  gl.enable(WebGL.BLEND);
+  gl.blendFunc(WebGL.SRC_ALPHA, WebGL.ONE_MINUS_SRC_ALPHA);
 
-  Function init = () {
-    // Create and bind VBO
-    positionBuffer = gl.createBuffer();
-    gl.bindBuffer(WebGL.ARRAY_BUFFER, positionBuffer);
+  final state = State(gl: gl);
 
-    mapShader = ShaderProgram.prepare(
-        gl: gl, vertex: mapVertexShader, fragment: mapFragmentShader);
+  Function adjust = () {
+    int width = gameCanvas.clientWidth;
+    int height = gameCanvas.clientHeight;
 
-    mapShader.addAttribute("a_plus", size: 2, stride: 6 * 4, offset: 4 * 4);
-    mapShader.addAttribute("a_position", size: 4, stride: 6 * 4);
+    state.size = Point<int>(width, height);
 
-    texture = gl.createTexture();
-    gl.bindTexture(WebGL.TEXTURE_2D, texture);
-    gl.texImage2D2(
-        WebGL.TEXTURE_2D,
-        0,
-        WebGL.RGBA,
-        2,
-        2,
-        0,
-        WebGL.RGBA,
-        WebGL.UNSIGNED_BYTE,
-        Uint8List.fromList([
-          1, 1, 1, 1, //
-          1, 1, 1, 1, //
-          0, 1, 1, 1, //
-          0, 1, 1, 1, //
-        ]));
-
-    // TODO setup uniform
+    gameCanvas.width = width;
+    gameCanvas.height = height;
+    gl.viewport(0, 0, width, height);
   };
 
-  document.onLoad.listen((_) {
-    // TODO also on resize
-    gameCanvas.width = gameCanvas.clientWidth;
-    gameCanvas.height = gameCanvas.clientHeight;
-    gl.viewport(0, 0, gameCanvas.clientWidth, gameCanvas.clientHeight);
-  });
+  window.onLoad.listen((_) => adjust());
 
-  init();
+  ResizeObserver((_, _1) {
+    adjust();
+  }).observe(gameCanvas);
+
+  Function init = () async {
+    await TerrainPainter.bootstrap(gl);
+    await MilitaryPainter.bootstrap(gl);
+    await BuildingPainter.bootstrap(gl);
+  };
+
+  await init();
+
+  final terrain = Terrain();
+  final military = Military();
+  final building = Building();
 
   Function loop = () {
-    gl.clearColor(0, 0, 0, 1);
-    gl.clear(WebGL.COLOR_BUFFER_BIT);
+    state.newLoop(gl);
 
-    final positions = DataArray()
-      ..add(DrawData(
-          position: Vec4(x: 0.0, y: 0.0, z: 0.0, w: 1.0),
-          plus: Vec2(x: 0.0, y: 0.0)))
-      ..add(DrawData(
-          position: Vec4(x: 0.0, y: 0.9, z: 0.0, w: 1.0),
-          plus: Vec2(x: 0.1, y: 0.0)));
-    gl.bufferData(WebGL.ARRAY_BUFFER, positions.toBuffer(), WebGL.STATIC_DRAW);
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(WebGL.COLOR_BUFFER_BIT | WebGL.DEPTH_BUFFER_BIT);
 
-    mapShader.use();
-
-    gl.drawArrays(WebGL.LINES, 0, 2);
+    terrain.paint(state);
+    military.paint(state);
+    building.paint();
   };
 
   loop();
-  Timer.periodic(Duration(seconds: 5), (_) => loop());
-}
-
-class DrawData implements GlData {
-  final Vec4 position;
-
-  final Vec2 plus;
-
-  DrawData({this.position, this.plus});
-
-  @override
-  List<Vec> get asGlData {
-    return [position, plus];
-  }
+  Timer.periodic(Duration(milliseconds: 100), (_) => loop());
 }

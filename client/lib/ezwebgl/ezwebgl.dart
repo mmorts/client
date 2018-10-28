@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:web_gl';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
+import 'package:jaguar_resty/jaguar_resty.dart' as resty;
+import 'package:image/image.dart' as imTools;
+
 part 'shader.dart';
+part 'texture.dart';
 part 'vec.dart';
 
 class Uniform {

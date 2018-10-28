@@ -1,19 +1,7 @@
+import 'dart:math';
+import 'dart:web_gl';
 
-abstract class Visualization {
-  int get visState;
-
-  Map<int, List<Sprite>> get spriteSetMap;
-
-  List<Sprite> get currentSpriteSet;
-}
-
-class Sprite {
-  int width;
-
-  int height;
-
-  List<int> data;
-}
+import 'package:meta/meta.dart';
 
 class Position2 {
   double x;
@@ -33,14 +21,22 @@ class Position3 implements Position2 {
   Position3({this.x: 0.0, this.y: 0.0, this.z: 0.0});
 }
 
-class Paint {
-  int width;
+class State {
+  final DateTime startTime;
 
-  int height;
+  final RenderingContext2 gl;
 
-  List<int> data;
+  int current;
 
-  void draw(Position2 pos) {
-    // TODO
+  Point<int> size;
+
+  State({DateTime start, this.size, @required this.gl})
+      : startTime = start ?? DateTime.now() {
+    current = DateTime.now().difference(startTime).inSeconds;
+    size = Point<int>(500, 500);
+  }
+
+  void newLoop(RenderingContext2 gl) {
+    current = DateTime.now().difference(startTime).inMilliseconds;
   }
 }
