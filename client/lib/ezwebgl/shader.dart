@@ -48,6 +48,11 @@ class ShaderProgram {
     getUniform(name).set1f(x);
   }
 
+  void setUniformMatrix4fv(String name, Mat4 matrix, {bool transpose: true}) {
+    var loc = gl.getUniformLocation(program, name);
+    gl.uniformMatrix4fv(loc, transpose, matrix.values);
+  }
+
   void dispose() {
     gl.deleteShader(vertex);
     gl.deleteShader(fragment);

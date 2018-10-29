@@ -1,6 +1,8 @@
+import 'dart:math' as math;
 import 'dart:async';
 import 'dart:web_gl';
 import 'dart:typed_data';
+import 'package:vector_math/vector_math.dart';
 
 import 'package:meta/meta.dart';
 

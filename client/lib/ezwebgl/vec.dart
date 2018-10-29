@@ -175,7 +175,26 @@ abstract class Vec {
   void operator []=(int index, double value);
 }
 
-class Vec1 implements Vec {
+abstract class _VecMixin implements Vec {
+  void assign(dynamic /* Iterable<double> | Vec */ value) {
+    if (value is Vector) {
+      value = (value as Vector).storage;
+    }
+    if (value is Iterable<double>) {
+      int max = math.min(value.length, count);
+      for (int i = 0; i < max; i++) {
+        this[i] = value.elementAt(i);
+      }
+    } else if (value is Vec) {
+      int max = math.min(value.count, count);
+      for (int i = 0; i < max; i++) {
+        this[i] = value[i];
+      }
+    }
+  }
+}
+
+class Vec1 extends Object with _VecMixin implements Vec {
   final int count = 1;
 
   final values = List<double>(1);
@@ -195,7 +214,7 @@ class Vec1 implements Vec {
   }
 }
 
-class Vec2 implements Vec {
+class Vec2 extends Object with _VecMixin implements Vec {
   final int count = 2;
 
   final values = List<double>(2);
@@ -219,7 +238,7 @@ class Vec2 implements Vec {
   }
 }
 
-class Vec3 implements Vec {
+class Vec3 extends Object with _VecMixin implements Vec {
   final int count = 3;
 
   final values = List<double>(3);
@@ -241,7 +260,7 @@ class Vec3 implements Vec {
   }
 }
 
-class Vec4 implements Vec {
+class Vec4 extends Object with _VecMixin implements Vec {
   final int count = 4;
 
   final values = List<double>(4);
@@ -263,5 +282,143 @@ class Vec4 implements Vec {
     values[1] = y;
     values[2] = z;
     values[3] = w;
+  }
+
+  factory Vec4.v(double x, [double y = 0.0, double z = 0.0, double w = 0.0]) =>
+      Vec4(x: x, y: y, z: z, w: w);
+}
+
+class Mat4 implements Vec {
+  final row0 = Vec4();
+  final row1 = Vec4();
+  final row2 = Vec4();
+  final row3 = Vec4();
+
+  final List<Vec4> rows;
+
+  Mat4._() : rows = List<Vec4>(4) {
+    rows[0] = row0;
+    rows[1] = row1;
+    rows[2] = row2;
+    rows[3] = row3;
+  }
+
+  factory Mat4([Vec4 r0, Vec4 r1, Vec4 r2, Vec4 r3]) {
+    final ret = Mat4._();
+
+    ret.row0.assign(r0);
+    ret.row1.assign(r1);
+    ret.row2.assign(r2);
+    ret.row3.assign(r3);
+
+    return ret;
+  }
+
+  factory Mat4.fromMatrix(Matrix4 other) => Mat4._()..assign(other);
+
+  factory Mat4.cells(
+      {double e00 = 0.0,
+      double e01 = 0.0,
+      double e02 = 0.0,
+      double e03 = 0.0,
+      double e10 = 0.0,
+      double e11 = 0.0,
+      double e12 = 0.0,
+      double e13 = 0.0,
+      double e20 = 0.0,
+      double e21 = 0.0,
+      double e22 = 0.0,
+      double e23 = 0.0,
+      double e30 = 0.0,
+      double e31 = 0.0,
+      double e32 = 0.0,
+      double e33 = 0.0}) {
+    final ret = Mat4._();
+
+    ret.set(0, 0, e00);
+    ret.set(0, 1, e01);
+    ret.set(0, 2, e02);
+    ret.set(0, 3, e03);
+    ret.set(1, 0, e10);
+    ret.set(1, 1, e11);
+    ret.set(1, 2, e12);
+    ret.set(1, 3, e13);
+    ret.set(2, 0, e20);
+    ret.set(2, 1, e21);
+    ret.set(2, 2, e22);
+    ret.set(2, 3, e23);
+    ret.set(3, 0, e30);
+    ret.set(3, 1, e31);
+    ret.set(3, 2, e32);
+    ret.set(3, 3, e33);
+
+    return ret;
+  }
+
+  factory Mat4.identity() => Mat4(Vec4(x: 1.0, w: 0.0), Vec4(y: 1.0, w: 0.0),
+      Vec4(z: 1.0, w: 0.0), Vec4(w: 1.0));
+
+  @override
+  void operator []=(int index, double value) {
+    rows[index ~/ 4][index % 4] = value;
+  }
+
+  @override
+  double operator [](int index) => rows[index ~/ 4][index % 4];
+
+  double get(int x, int y) => rows[x][y];
+  void set(int x, int y, double value) => rows[x][y] = value;
+
+  @override
+  Float32List get values => Float32List.fromList([
+        row0.x,
+        row0.y,
+        row0.z,
+        row0.w,
+        row1.x,
+        row1.y,
+        row1.z,
+        row1.w,
+        row2.x,
+        row2.y,
+        row2.z,
+        row2.w,
+        row3.x,
+        row3.y,
+        row3.z,
+        row3.w,
+      ]);
+
+  @override
+  int get count => 4 * 4;
+
+  void assign(value) {
+    if (value is Matrix4) {
+      for (int i = 0; i < 4; i++) {
+        rows[i].assign(value.getRow(i));
+      }
+    }
+  }
+
+  String toString() => values.toString();
+
+  static Mat4 ortho(double left, double right, double bottom, double top,
+      double near, double far) {
+    final double rml = right - left;
+    final double rpl = right + left;
+    final double tmb = top - bottom;
+    final double tpb = top + bottom;
+    final double fmn = far - near;
+    final double fpn = far + near;
+
+    return Mat4.cells(
+      e00: 2 / rml,
+      e11: 2 / tmb,
+      e22: -2 / fmn,
+      e33: 1.0,
+      e03: -rpl / rml,
+      e13: -tpb / tmb,
+      e23: -fpn / fmn,
+    );
   }
 }

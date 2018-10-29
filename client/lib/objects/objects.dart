@@ -3,6 +3,9 @@ import 'dart:web_gl';
 
 import 'package:meta/meta.dart';
 
+import 'package:client/ezwebgl/ezwebgl.dart';
+import 'package:vector_math/vector_math.dart';
+
 class Position2 {
   double x;
 
@@ -29,6 +32,8 @@ class State {
   int current;
 
   Point<int> size;
+
+  Mat4 projectionMatrix = Mat4();
 
   State({DateTime start, this.size, @required this.gl})
       : startTime = start ?? DateTime.now() {

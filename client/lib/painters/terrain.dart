@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'package:client/ezwebgl/ezwebgl.dart';
 
 import 'package:client/objects/objects.dart';
+import 'package:vector_math/vector_math.dart';
 
 TerrainPainter _painter;
 
@@ -29,13 +30,18 @@ class TerrainPainter {
     shader.use();
 
     gl.bindTexture(WebGL.TEXTURE_2D, texture);
-
     var textureLocation = gl.getUniformLocation(shader.program, "u_texture");
     gl.uniform1i(textureLocation, 0);
 
-    var resolutionLocation =
-        gl.getUniformLocation(shader.program, "resolution");
-    gl.uniform2f(resolutionLocation, gameState.size.x, gameState.size.y);
+    int deg = (gameState.current~/10000) % 35;
+
+    final mat = Matrix4.identity()
+      // ..rotateZ(pi * (-45 / 180))
+      ..rotateX(pi * (deg / 180))
+    ;
+    print(mat);
+    shader.setUniformMatrix4fv("model", Mat4.fromMatrix(mat));
+    shader.setUniformMatrix4fv("proj", gameState.projectionMatrix);
 
     // Set data
     DataArray()
@@ -80,9 +86,9 @@ class TerrainPainter {
 }
 
 class Terrain {
-  Position2 position = Position2(x: 100.0, y: 100.0);
+  Position2 position = Position2(x: 200.0, y: 100.0);
 
-  Point<double> size = Point<double>(512.0, 512.0);
+  Point<double> size = Point<double>(256.0, 256.0);
 
   Terrain() {
     if (_painter == null) throw Exception("TerrainPainter not bootstrapped!");
@@ -96,35 +102,19 @@ class Terrain {
 
 const _vertexCode = r"""
 #version 300 es
-in vec4 position;
-in vec2 texcoord;
 
-uniform vec2 resolution;
- 
-// uniform mat4 u_matrix;
+in vec4 position;
+
+in vec2 texcoord;
 
 out vec2 v_texcoord;
 
-vec4 resPos;
+uniform mat4 proj;
 
-mat4 rot = mat4(
-  vec4(1.0,0.5,-0.28867512941360474,0.0),
-  vec4(0.0,0.7499780058860779,-0.43299999833106995,0.0),
-  vec4(0.0,0.5,0.8660253882408142,0.0),
-  vec4(0.0,0.0,0.0,1.0));
+uniform mat4 model;
  
 void main() {
-  resPos.x = (position.x * 2.0) / resolution.x;
-  resPos.y = (position.y * 2.0) / resolution.y;
-  resPos.z = position.z;
-  resPos.w = position.w;
-  
-  resPos.x -= 1.0;
-  resPos.y -= 1.0;
-  resPos.y = -resPos.y;
-  
-  /*u_matrix * */
-  gl_Position = rot * resPos;
+  gl_Position = proj * model * position;
  
   v_texcoord = texcoord;
 }

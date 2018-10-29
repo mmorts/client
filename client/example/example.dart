@@ -2,10 +2,15 @@ import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 
 main() {
+  /*
   final mat = Matrix4.identity()
     ..scale(1.0, 0.866)
     ..multiply(Matrix4.skewX(pi / 6))
     ..rotateX(pi / 6);
+    */
+  final mat = Matrix4.identity()..rotateZ(pi * (-45 / 180))
+      // ..rotateX(pi * (35 / 180))
+      ;
   print(mat);
 }
 

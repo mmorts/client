@@ -39,7 +39,7 @@ class BuildingPainter {
         BuildingPainter._(shader: shader, buffer: buffer, texture: texture);
   }
 
-  void paint(Rectangle rect) {
+  void paint(Rectangle rect, {@required State gameState}) {
     // Set program
     shader.use();
 
@@ -50,7 +50,7 @@ class BuildingPainter {
 
     var resolutionLocation =
         gl.getUniformLocation(shader.program, "resolution");
-    gl.uniform2f(resolutionLocation, 1905, 641);
+    gl.uniform2f(resolutionLocation, gameState.size.x, gameState.size.y);
 
     // Set data
     DataArray()
@@ -85,8 +85,9 @@ class Building {
     if (_painter == null) throw Exception("Building not bootstrapped!");
   }
 
-  void paint() {
-    _painter.paint(Rectangle<double>(pos.x, pos.y, size.x, size.y));
+  void paint(State gameState) {
+    _painter.paint(Rectangle<double>(pos.x, pos.y, size.x, size.y),
+        gameState: gameState);
   }
 }
 

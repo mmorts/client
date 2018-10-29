@@ -6,9 +6,13 @@ import 'package:jaguar_resty/jaguar_resty.dart';
 
 import 'package:client/objects/objects.dart';
 
+import 'package:client/ezwebgl/ezwebgl.dart';
+
 import 'package:client/painters/terrain.dart';
 import 'package:client/painters/military.dart';
 import 'package:client/painters/building.dart';
+
+import 'package:vector_math/vector_math.dart';
 
 void main() async {
   globalClient = BrowserClient();
@@ -30,6 +34,13 @@ void main() async {
     gameCanvas.width = width;
     gameCanvas.height = height;
     gl.viewport(0, 0, width, height);
+
+    state.projectionMatrix =
+        Mat4.ortho(0.0, width.toDouble(), height.toDouble(), 0.0, 1.0, -1.0);
+    /*
+    print(mat);
+    print(mat.transposed().storage);
+    */
   };
 
   window.onLoad.listen((_) => adjust());
@@ -40,14 +51,14 @@ void main() async {
 
   Function init = () async {
     await TerrainPainter.bootstrap(gl);
-    await MilitaryPainter.bootstrap(gl);
+    // await MilitaryPainter.bootstrap(gl);
     await BuildingPainter.bootstrap(gl);
   };
 
   await init();
 
   final terrain = Terrain();
-  final military = Military();
+  // final military = Military();
   final building = Building();
 
   Function loop = () {
@@ -57,8 +68,8 @@ void main() async {
     gl.clear(WebGL.COLOR_BUFFER_BIT | WebGL.DEPTH_BUFFER_BIT);
 
     terrain.paint(state);
-    military.paint(state);
-    building.paint();
+    // military.paint(state);
+    building.paint(state);
   };
 
   loop();
