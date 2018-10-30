@@ -1,17 +1,19 @@
 import 'dart:math';
+import 'package:client/ezwebgl/vec.dart';
 import 'package:vector_math/vector_math.dart';
 
 main() {
-  /*
-  final mat = Matrix4.identity()
-    ..scale(1.0, 0.866)
-    ..multiply(Matrix4.skewX(pi / 6))
-    ..rotateX(pi / 6);
-    */
-  final mat = Matrix4.identity()..rotateZ(pi * (-45 / 180))
+  final mat = Mat4.identity()
+        ..rotateX(pi * (30 / 180))
+        ..rotateZ(pi * (45 / 180))
       // ..rotateX(pi * (35 / 180))
       ;
   print(mat);
+
+  final mat2 = Matrix4.identity()
+    ..rotateX(pi * (30 / 180))
+    ..rotateZ(pi * (45 / 180));
+  print(mat2);
 }
 
 /*

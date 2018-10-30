@@ -1,169 +1,13 @@
-part of 'ezwebgl.dart';
+import 'dart:math' as math;
+import 'dart:async';
+import 'dart:typed_data';
+import 'package:vector_math/vector_math.dart';
 
-abstract class BufData {
-  List<Vec> get asGlData;
-}
+import 'package:meta/meta.dart';
 
-class PosBuf implements BufData {
-  final Vec4 position;
-
-  PosBuf({@required this.position});
-
-  @override
-  List<Vec> get asGlData {
-    return [position];
-  }
-
-  static void setupAttributes(ShaderProgram program,
-      {String posName = "position"}) {
-    program.addAttribute(posName, size: 4);
-  }
-
-  static Buffer createBuffer(ShaderProgram program) {
-    Buffer buffer = program.gl.createBuffer();
-    program.gl.bindBuffer(WebGL.ARRAY_BUFFER, buffer);
-    setupAttributes(program);
-
-    return buffer;
-  }
-}
-
-class TexBuf implements BufData {
-  final Vec4 texCoords;
-
-  TexBuf({@required this.texCoords});
-
-  @override
-  List<Vec> get asGlData {
-    return [texCoords];
-  }
-
-  static void setupAttributes(ShaderProgram program,
-      {String texCoordName = "texcoord"}) {
-    program.addAttribute(texCoordName, size: 4);
-  }
-
-  static Buffer createBuffer(ShaderProgram program,
-      {String texCoordName = "texcoord"}) {
-    Buffer buffer = program.gl.createBuffer();
-    program.gl.bindBuffer(WebGL.ARRAY_BUFFER, buffer);
-    setupAttributes(program, texCoordName: texCoordName);
-
-    return buffer;
-  }
-}
-
-class PosTexBuf implements BufData {
-  final Vec4 position;
-
-  final Vec2 texCoords;
-
-  PosTexBuf({@required this.position, @required this.texCoords});
-
-  @override
-  List<Vec> get asGlData {
-    return [position, texCoords];
-  }
-
-  static void setupAttributes(ShaderProgram program,
-      {String posName = "position", String texCoordName = "texcoord"}) {
-    program.addAttribute(posName, size: 4, stride: 6 * 4);
-    program.addAttribute(texCoordName, size: 2, stride: 6 * 4, offset: 4 * 4);
-  }
-
-  static Buffer createBuffer(ShaderProgram program,
-      {String posName = "position", String texCoordName = "texcoord"}) {
-    Buffer buffer = program.gl.createBuffer();
-    program.gl.bindBuffer(WebGL.ARRAY_BUFFER, buffer);
-    setupAttributes(program, posName: posName, texCoordName: texCoordName);
-
-    return buffer;
-  }
-}
-
-class VecArray<V extends Vec> {
-  final elements = List<V>();
-
-  int get length => elements.length;
-
-  V operator [](int index) => elements[index];
-
-  void operator []=(int index, V value) => elements[index] = value;
-
-  Float32List toBuffer() {
-    int x = 0;
-    if (length != 0) {
-      x = elements.first.count;
-    }
-
-    final ret = Float32List(length * x);
-
-    for (int i = 0; i < length; i++) {
-      int ii = i * x;
-      for (int j = 0; j < x; j++) {
-        ret[ii + j] = elements[i][j];
-      }
-    }
-
-    return ret;
-  }
-
-  void add(V value) => elements.add(value);
-}
-
-class DataArray<V extends BufData> {
-  final elements = List<V>();
-
-  int get length => elements.length;
-
-  V operator [](int index) => elements[index];
-
-  void operator []=(int index, V value) => elements[index] = value;
-
-  Float32List toBuffer() {
-    int stride = 0;
-    if (length != 0) {
-      stride = elements.first.asGlData.fold(0, (v, vec) => v + vec.count);
-    }
-
-    final ret = Float32List(length * stride);
-
-    for (int i = 0; i < length; i++) {
-      int rowStart = i * stride;
-      List<Vec> vecs = elements[i].asGlData;
-      List<double> data = vecs.first.values;
-      int vecIndex = 1;
-      int dataIndex = 0;
-      for (int j = 0; j < stride; j++) {
-        if (dataIndex == data.length) {
-          data = vecs[vecIndex++].values;
-          dataIndex = 0;
-        }
-        ret[rowStart + j] = data[dataIndex++];
-      }
-    }
-
-    return ret;
-  }
-
-  void add(BufData data) {
-    elements.add(data);
-  }
-
-  /// Sends data to GPU
-  ///
-  /// [buffer] specifies which WebGL buffer shall be used to send data.
-  void drawArrays(
-      {@required RenderingContext2 gl,
-      @required Buffer buffer,
-      int usage: WebGL.STATIC_DRAW,
-      int mode: WebGL.TRIANGLES,
-      int offset: 0}) {
-    gl.bindBuffer(WebGL.ARRAY_BUFFER, buffer);
-    gl.bufferData(WebGL.ARRAY_BUFFER, toBuffer(), usage);
-    gl.drawArrays(mode, offset, length);
-  }
-}
+import 'package:jaguar_resty/jaguar_resty.dart' as resty;
+import 'package:image/image.dart' as imTools;
+import  'vec.dart';
 
 abstract class Vec {
   int get count;
@@ -449,6 +293,12 @@ class Mat4 implements Vec {
     }
   }
 
+  void scale({double x = 1.0, double y = 1.0, double z = 1.0}) {
+    cell00 *= x;
+    cell11 *= y;
+    cell22 *= z;
+  }
+
   void translate(
       {double x = 0.0, double y = 0.0, double z = 0.0, double w = 1.0}) {
     values[3] = (cell00 * x) + (cell01 * y) + (cell02 * z) + (cell03 * w);
@@ -457,21 +307,56 @@ class Mat4 implements Vec {
     values[15] = (cell30 * x) + (cell31 * y) + (cell32 * z) + (cell33 * w);
   }
 
+  void rotateX(double radians) {
+    final cosTheta = math.cos(radians);
+    final sinTheta = math.sin(radians);
+
+    double cell01Copy = cell01;
+    double cell02Copy = cell02;
+    double cell11Copy = cell11;
+    double cell12Copy = cell12;
+    double cell21Copy = cell21;
+    double cell22Copy = cell22;
+    double cell31Copy = cell31;
+    double cell32Copy = cell32;
+
+    cell01 = cell01Copy * cosTheta + cell02Copy * sinTheta;
+    cell02 = cell01Copy * -sinTheta + cell02Copy * cosTheta;
+
+    cell11 = cell11Copy * cosTheta + cell12Copy * sinTheta;
+    cell12 = cell11Copy * -sinTheta + cell12Copy * cosTheta;
+
+    cell21 = cell21Copy * cosTheta + cell22Copy * sinTheta;
+    cell22 = cell21Copy * -sinTheta + cell22Copy * cosTheta;
+
+    cell31 = cell31Copy * cosTheta + cell32Copy * sinTheta;
+    cell32 = cell31Copy * -sinTheta + cell32Copy * cosTheta;
+  }
+
   void rotateZ(double radians) {
     final cosTheta = math.cos(radians);
     final sinTheta = math.sin(radians);
 
-    cell00 = cell00 * cosTheta + cell01 * sinTheta;
-    cell01 = cell00 * -sinTheta + cell01 * cosTheta;
+    double cell00Copy = cell00;
+    double cell01Copy = cell01;
+    double cell10Copy = cell10;
+    double cell11Copy = cell11;
+    double cell20Copy = cell20;
+    double cell21Copy = cell21;
+    double cell30Copy = cell30;
+    double cell31Copy = cell31;
 
-    cell10 = cell10 * cosTheta + cell11 * sinTheta;
-    cell11 = cell10 * -sinTheta + cell11 * cosTheta;
+    cell00 = cell00Copy * cosTheta + cell01Copy * sinTheta;
+    cell01 = cell00Copy * -sinTheta + cell01Copy * cosTheta;
 
-    cell20 = cell20 * cosTheta + cell21 * sinTheta;
-    cell21 = cell20 * -sinTheta + cell21 * cosTheta;
+    cell10 = cell10Copy * cosTheta + cell11Copy * sinTheta;
+    cell11 = cell10Copy * -sinTheta + cell11Copy * cosTheta;
 
-    cell30 = cell30 * cosTheta + cell31 * sinTheta;
-    cell31 = cell30 * -sinTheta + cell31 * cosTheta;
+    cell20 = cell20Copy * cosTheta + cell21Copy * sinTheta;
+    cell21 = cell20Copy * -sinTheta + cell21Copy * cosTheta;
+
+    cell30 = cell30Copy * cosTheta + cell31Copy * sinTheta;
+    cell31 = cell30Copy * -sinTheta + cell31Copy * cosTheta;
   }
 
   String toString() => values.toString();

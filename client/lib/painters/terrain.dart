@@ -8,7 +8,6 @@ import 'package:meta/meta.dart';
 import 'package:client/ezwebgl/ezwebgl.dart';
 
 import 'package:client/objects/objects.dart';
-import 'package:vector_math/vector_math.dart';
 
 TerrainPainter _painter;
 
@@ -33,24 +32,15 @@ class TerrainPainter {
     var textureLocation = gl.getUniformLocation(shader.program, "u_texture");
     gl.uniform1i(textureLocation, 0);
 
-    int deg = (gameState.current ~/ 1000) % 180;
-
     final mat = Mat4.identity()
       ..translate(
           x: -(rect.left + (rect.width ~/ 2)),
           y: -(rect.top + (rect.height ~/ 2)))
-      ..rotateZ(pi * (-deg / 180))
+      ..rotateX(pi * (60 / 180))
+      ..rotateZ(pi * (45 / 180))
       ..translate(
           x: (rect.left + (rect.width ~/ 2)),
           y: (rect.top + (rect.height ~/ 2)));
-
-    final mat1 = Matrix4.identity()
-      ..translate(-rect.left, -rect.top)
-      ..rotateZ(pi * (-45 / 180))
-      // ..rotateX(pi * (deg / 180))
-      ..translate(rect.left, rect.top);
-
-    print("$deg $mat");
 
     shader.setUniformMatrix4fv("model", mat);
     shader.setUniformMatrix4fv("proj", gameState.projectionMatrix);
@@ -98,9 +88,9 @@ class TerrainPainter {
 }
 
 class Terrain {
-  Position2 position = Position2(x: 200.0, y: 100.0);
+  Position2 position = Position2(x: -256.0, y: -256.0);
 
-  Point<double> size = Point<double>(256.0, 256.0);
+  Point<double> size = Point<double>(512.0, 512.0);
 
   Terrain() {
     if (_painter == null) throw Exception("TerrainPainter not bootstrapped!");

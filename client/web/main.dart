@@ -35,8 +35,13 @@ void main() async {
     gameCanvas.height = height;
     gl.viewport(0, 0, width, height);
 
+    /*
     state.projectionMatrix =
         Mat4.ortho(0.0, width.toDouble(), height.toDouble(), 0.0, 1.0, -1.0);
+        */
+
+    state.projectionMatrix = Mat4.ortho(
+        -width / 2, width / 2, height / 2, -height / 2, -1000.0, 1000.0);
   };
 
   window.onLoad.listen((_) => adjust());
@@ -60,7 +65,7 @@ void main() async {
   Function loop = () {
     state.newLoop(gl);
 
-    gl.clearColor(0, 1, 0, 1);
+    gl.clearColor(0, 0, 0, 1);
     gl.clear(WebGL.COLOR_BUFFER_BIT | WebGL.DEPTH_BUFFER_BIT);
 
     terrain.paint(state);
