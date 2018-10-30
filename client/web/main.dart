@@ -37,10 +37,6 @@ void main() async {
 
     state.projectionMatrix =
         Mat4.ortho(0.0, width.toDouble(), height.toDouble(), 0.0, 1.0, -1.0);
-    /*
-    print(mat);
-    print(mat.transposed().storage);
-    */
   };
 
   window.onLoad.listen((_) => adjust());

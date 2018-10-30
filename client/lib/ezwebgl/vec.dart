@@ -289,27 +289,15 @@ class Vec4 extends Object with _VecMixin implements Vec {
 }
 
 class Mat4 implements Vec {
-  final row0 = Vec4();
-  final row1 = Vec4();
-  final row2 = Vec4();
-  final row3 = Vec4();
-
-  final List<Vec4> rows;
-
-  Mat4._() : rows = List<Vec4>(4) {
-    rows[0] = row0;
-    rows[1] = row1;
-    rows[2] = row2;
-    rows[3] = row3;
-  }
+  Mat4._() {}
 
   factory Mat4([Vec4 r0, Vec4 r1, Vec4 r2, Vec4 r3]) {
     final ret = Mat4._();
 
-    ret.row0.assign(r0);
-    ret.row1.assign(r1);
-    ret.row2.assign(r2);
-    ret.row3.assign(r3);
+    if (r0 != null) ret.row0 = r0;
+    if (r1 != null) ret.row1 = r1;
+    if (r2 != null) ret.row2 = r2;
+    if (r3 != null) ret.row3 = r3;
 
     return ret;
   }
@@ -317,40 +305,40 @@ class Mat4 implements Vec {
   factory Mat4.fromMatrix(Matrix4 other) => Mat4._()..assign(other);
 
   factory Mat4.cells(
-      {double e00 = 0.0,
-      double e01 = 0.0,
-      double e02 = 0.0,
-      double e03 = 0.0,
-      double e10 = 0.0,
-      double e11 = 0.0,
-      double e12 = 0.0,
-      double e13 = 0.0,
-      double e20 = 0.0,
-      double e21 = 0.0,
-      double e22 = 0.0,
-      double e23 = 0.0,
-      double e30 = 0.0,
-      double e31 = 0.0,
-      double e32 = 0.0,
-      double e33 = 0.0}) {
+      {double cell00 = 0.0,
+      double cell01 = 0.0,
+      double cell02 = 0.0,
+      double cell03 = 0.0,
+      double cell10 = 0.0,
+      double cell11 = 0.0,
+      double cell12 = 0.0,
+      double cell13 = 0.0,
+      double cell20 = 0.0,
+      double cell21 = 0.0,
+      double cell22 = 0.0,
+      double cell23 = 0.0,
+      double cell30 = 0.0,
+      double cell31 = 0.0,
+      double cell32 = 0.0,
+      double cell33 = 0.0}) {
     final ret = Mat4._();
 
-    ret.set(0, 0, e00);
-    ret.set(0, 1, e01);
-    ret.set(0, 2, e02);
-    ret.set(0, 3, e03);
-    ret.set(1, 0, e10);
-    ret.set(1, 1, e11);
-    ret.set(1, 2, e12);
-    ret.set(1, 3, e13);
-    ret.set(2, 0, e20);
-    ret.set(2, 1, e21);
-    ret.set(2, 2, e22);
-    ret.set(2, 3, e23);
-    ret.set(3, 0, e30);
-    ret.set(3, 1, e31);
-    ret.set(3, 2, e32);
-    ret.set(3, 3, e33);
+    ret.set(0, 0, cell00);
+    ret.set(0, 1, cell01);
+    ret.set(0, 2, cell02);
+    ret.set(0, 3, cell03);
+    ret.set(1, 0, cell10);
+    ret.set(1, 1, cell11);
+    ret.set(1, 2, cell12);
+    ret.set(1, 3, cell13);
+    ret.set(2, 0, cell20);
+    ret.set(2, 1, cell21);
+    ret.set(2, 2, cell22);
+    ret.set(2, 3, cell23);
+    ret.set(3, 0, cell30);
+    ret.set(3, 1, cell31);
+    ret.set(3, 2, cell32);
+    ret.set(3, 3, cell33);
 
     return ret;
   }
@@ -359,45 +347,131 @@ class Mat4 implements Vec {
       Vec4(z: 1.0, w: 0.0), Vec4(w: 1.0));
 
   @override
-  void operator []=(int index, double value) {
-    rows[index ~/ 4][index % 4] = value;
-  }
+  void operator []=(int index, double value) => values[index] = value;
 
   @override
-  double operator [](int index) => rows[index ~/ 4][index % 4];
+  double operator [](int index) => values[index];
 
-  double get(int x, int y) => rows[x][y];
-  void set(int x, int y, double value) => rows[x][y] = value;
+  double get(int row, int col) => values[(row * 4) + col];
+  void set(int row, int col, double value) => values[(row * 4) + col] = value;
 
   @override
-  Float32List get values => Float32List.fromList([
-        row0.x,
-        row0.y,
-        row0.z,
-        row0.w,
-        row1.x,
-        row1.y,
-        row1.z,
-        row1.w,
-        row2.x,
-        row2.y,
-        row2.z,
-        row2.w,
-        row3.x,
-        row3.y,
-        row3.z,
-        row3.w,
-      ]);
+  final Float32List values = Float32List(16);
 
   @override
   int get count => 4 * 4;
 
+  set row0(Vec4 value) {
+    values[0] = value[0];
+    values[1] = value[1];
+    values[2] = value[2];
+    values[3] = value[3];
+  }
+
+  set row1(Vec4 value) {
+    values[4] = value[0];
+    values[5] = value[1];
+    values[6] = value[2];
+    values[7] = value[3];
+  }
+
+  set row2(Vec4 value) {
+    values[8] = value[0];
+    values[9] = value[1];
+    values[10] = value[2];
+    values[11] = value[3];
+  }
+
+  set row3(Vec4 value) {
+    values[12] = value[0];
+    values[13] = value[1];
+    values[14] = value[2];
+    values[15] = value[3];
+  }
+
+  double get cell00 => values[0];
+  set cell00(double value) => values[0] = value;
+
+  double get cell01 => values[1];
+  set cell01(double value) => values[1] = value;
+
+  double get cell02 => values[2];
+  set cell02(double value) => values[2] = value;
+
+  double get cell03 => values[3];
+  set cell03(double value) => values[3] = value;
+
+  double get cell10 => values[4];
+  set cell10(double value) => values[4] = value;
+
+  double get cell11 => values[5];
+  set cell11(double value) => values[5] = value;
+
+  double get cell12 => values[6];
+  set cell12(double value) => values[6] = value;
+
+  double get cell13 => values[7];
+  set cell13(double value) => values[7] = value;
+
+  double get cell20 => values[8];
+  set cell20(double value) => values[8] = value;
+
+  double get cell21 => values[9];
+  set cell21(double value) => values[9] = value;
+
+  double get cell22 => values[10];
+  set cell22(double value) => values[10] = value;
+
+  double get cell23 => values[11];
+  set cell23(double value) => values[11] = value;
+
+  double get cell30 => values[12];
+  set cell30(double value) => values[12] = value;
+
+  double get cell31 => values[13];
+  set cell31(double value) => values[13] = value;
+
+  double get cell32 => values[14];
+  set cell32(double value) => values[14] = value;
+
+  double get cell33 => values[15];
+  set cell33(double value) => values[15] = value;
+
   void assign(value) {
     if (value is Matrix4) {
-      for (int i = 0; i < 4; i++) {
-        rows[i].assign(value.getRow(i));
+      for (int i = 0; i < 16; i++) {
+        values[i] = value[i];
+      }
+    } else if (value is Mat4) {
+      for (int i = 0; i < 16; i++) {
+        values[i] = value[i];
       }
     }
+  }
+
+  void translate(
+      {double x = 0.0, double y = 0.0, double z = 0.0, double w = 1.0}) {
+    values[3] = (cell00 * x) + (cell01 * y) + (cell02 * z) + (cell03 * w);
+    values[7] = (cell10 * x) + (cell11 * y) + (cell12 * z) + (cell13 * w);
+    values[11] = (cell20 * x) + (cell21 * y) + (cell22 * z) + (cell23 * w);
+    values[15] = (cell30 * x) + (cell31 * y) + (cell32 * z) + (cell33 * w);
+  }
+
+  void rotateZ(double radians) {
+    final cosTheta = math.cos(radians);
+    final sinTheta = math.sin(radians);
+
+    cell00 = cell00 * cosTheta + cell01 * sinTheta;
+    cell01 = cell00 * -sinTheta + cell01 * cosTheta;
+
+    cell10 = cell10 * cosTheta + cell11 * sinTheta;
+    cell11 = cell10 * -sinTheta + cell11 * cosTheta;
+
+    cell20 = cell20 * cosTheta + cell21 * sinTheta;
+    cell21 = cell20 * -sinTheta + cell21 * cosTheta;
+
+    cell30 = cell30 * cosTheta + cell31 * sinTheta;
+    cell31 = cell30 * -sinTheta + cell31 * cosTheta;
   }
 
   String toString() => values.toString();
@@ -412,13 +486,13 @@ class Mat4 implements Vec {
     final double fpn = far + near;
 
     return Mat4.cells(
-      e00: 2 / rml,
-      e11: 2 / tmb,
-      e22: -2 / fmn,
-      e33: 1.0,
-      e03: -rpl / rml,
-      e13: -tpb / tmb,
-      e23: -fpn / fmn,
+      cell00: 2 / rml,
+      cell11: 2 / tmb,
+      cell22: -2 / fmn,
+      cell33: 1.0,
+      cell03: -rpl / rml,
+      cell13: -tpb / tmb,
+      cell23: -fpn / fmn,
     );
   }
 }

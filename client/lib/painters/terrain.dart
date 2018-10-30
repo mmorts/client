@@ -33,14 +33,26 @@ class TerrainPainter {
     var textureLocation = gl.getUniformLocation(shader.program, "u_texture");
     gl.uniform1i(textureLocation, 0);
 
-    int deg = (gameState.current~/10000) % 35;
+    int deg = (gameState.current ~/ 1000) % 180;
 
-    final mat = Matrix4.identity()
-      // ..rotateZ(pi * (-45 / 180))
-      ..rotateX(pi * (deg / 180))
-    ;
-    print(mat);
-    shader.setUniformMatrix4fv("model", Mat4.fromMatrix(mat));
+    final mat = Mat4.identity()
+      ..translate(
+          x: -(rect.left + (rect.width ~/ 2)),
+          y: -(rect.top + (rect.height ~/ 2)))
+      ..rotateZ(pi * (-deg / 180))
+      ..translate(
+          x: (rect.left + (rect.width ~/ 2)),
+          y: (rect.top + (rect.height ~/ 2)));
+
+    final mat1 = Matrix4.identity()
+      ..translate(-rect.left, -rect.top)
+      ..rotateZ(pi * (-45 / 180))
+      // ..rotateX(pi * (deg / 180))
+      ..translate(rect.left, rect.top);
+
+    print("$deg $mat");
+
+    shader.setUniformMatrix4fv("model", mat);
     shader.setUniformMatrix4fv("proj", gameState.projectionMatrix);
 
     // Set data
