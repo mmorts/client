@@ -60,7 +60,10 @@ void main() async {
 
   final terrain = Terrain();
   // final military = Military();
-  final building = Building();
+  final barrack = Building(
+      size: Point<double>(295.0, 207.0), pos: Position2(), spriteId: 2);
+  final bamboo =
+      Building(size: Point<double>(78.0, 90.0), pos: Position2(x: ), spriteId: 2);
 
   Function loop = () {
     state.newLoop(gl);
@@ -70,7 +73,7 @@ void main() async {
 
     terrain.paint(state);
     // military.paint(state);
-    building.paint(state);
+    bamboo.paint(state);
   };
 
   loop();

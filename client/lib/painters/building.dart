@@ -10,6 +10,14 @@ import 'package:client/objects/objects.dart';
 
 BuildingPainter _painter;
 
+class _PaintProps {
+  final Rectangle rect;
+
+  final int spriteId;
+
+  _PaintProps({@required this.rect, @required this.spriteId});
+}
+
 class BuildingPainter {
   final RenderingContext2 gl;
 
@@ -17,10 +25,10 @@ class BuildingPainter {
 
   final Buffer buffer;
 
-  final Texture texture;
+  final Map<int, Texture> textures;
 
   BuildingPainter._(
-      {@required this.shader, @required this.buffer, @required this.texture})
+      {@required this.shader, @required this.buffer, @required this.textures})
       : gl = shader.gl;
 
   static Future<void> bootstrap(RenderingContext2 gl) async {
@@ -32,18 +40,22 @@ class BuildingPainter {
 
     Buffer buffer = PosTexBuf.createBuffer(shader);
 
-    Texture texture =
+    Texture bambooTexture =
+        await texFromUrl("sprites/building/bamboo/1.png", gl: gl);
+    Texture barrackTexture =
         await texFromUrl("sprites/building/barrack/1.png", gl: gl);
 
-    _painter =
-        BuildingPainter._(shader: shader, buffer: buffer, texture: texture);
+    _painter = BuildingPainter._(shader: shader, buffer: buffer, textures: {
+      1: barrackTexture,
+      2: bambooTexture,
+    });
   }
 
-  void paint(Rectangle rect, {@required State gameState}) {
+  void paint(_PaintProps props, {@required State gameState}) {
     // Set program
     shader.use();
 
-    gl.bindTexture(WebGL.TEXTURE_2D, texture);
+    gl.bindTexture(WebGL.TEXTURE_2D, textures[props.spriteId]);
 
     var textureLocation = gl.getUniformLocation(shader.program, "u_texture");
     gl.uniform1i(textureLocation, 0);
@@ -52,70 +64,70 @@ class BuildingPainter {
         gl.getUniformLocation(shader.program, "resolution");
     gl.uniform2f(resolutionLocation, gameState.size.x, gameState.size.y);
 
+    shader.setUniformMatrix4fv("proj", gameState.projectionMatrix);
+
     // Set data
     DataArray()
       ..add(PosTexBuf(
-          position: Vec4(x: rect.left, y: rect.top),
+          position: Vec4(x: props.rect.left, y: props.rect.top),
           texCoords: Vec2(x: 0.0, y: 0.0)))
       ..add(PosTexBuf(
-          position: Vec4(x: rect.right, y: rect.top),
+          position: Vec4(x: props.rect.right, y: props.rect.top),
           texCoords: Vec2(x: 1.0, y: 0.0)))
       ..add(PosTexBuf(
-          position: Vec4(x: rect.left, y: rect.bottom),
+          position: Vec4(x: props.rect.left, y: props.rect.bottom),
           texCoords: Vec2(x: 0.0, y: 1.0)))
       ..add(PosTexBuf(
-          position: Vec4(x: rect.right, y: rect.top),
+          position: Vec4(x: props.rect.right, y: props.rect.top),
           texCoords: Vec2(x: 1.0, y: 0.0)))
       ..add(PosTexBuf(
-          position: Vec4(x: rect.left, y: rect.bottom),
+          position: Vec4(x: props.rect.left, y: props.rect.bottom),
           texCoords: Vec2(x: 0.0, y: 1.0)))
       ..add(PosTexBuf(
-          position: Vec4(x: rect.right, y: rect.bottom),
+          position: Vec4(x: props.rect.right, y: props.rect.bottom),
           texCoords: Vec2(x: 1.0, y: 1.0)))
       ..drawArrays(gl: gl, buffer: buffer);
   }
 }
 
 class Building {
-  Position2 pos = Position2();
+  Position2 pos;
 
-  final size = Point<double>(295.0, 207.0);
+  Point<double> size = Point<double>(295.0, 207.0);
 
-  Building() {
+  int spriteId;
+
+  Building({@required this.pos, @required this.size, @required this.spriteId}) {
     if (_painter == null) throw Exception("Building not bootstrapped!");
   }
 
   void paint(State gameState) {
-    _painter.paint(Rectangle<double>(pos.x, pos.y, size.x, size.y),
+    _painter.paint(
+        _PaintProps(
+            rect: Rectangle<double>(
+              pos.x,
+              pos.y,
+              size.x,
+              size.y,
+            ),
+            spriteId: spriteId),
         gameState: gameState);
   }
 }
 
 const _vertexCode = r"""
 #version 300 es
-in vec4 position;
-in vec2 texcoord;
 
-uniform vec2 resolution;
- 
-// uniform mat4 u_matrix;
+in vec4 position;
+
+in vec2 texcoord;
 
 out vec2 v_texcoord;
 
-vec4 resPos;
+uniform mat4 proj;
  
 void main() {
-  resPos.x = (position.x * 2.0) / resolution.x;
-  resPos.y = (position.y * 2.0) / resolution.y;
-  resPos.z = position.z;
-  resPos.w = position.w;
-  
-  resPos.x -= 1.0;
-  resPos.y -= 1.0;
-  resPos.y = -resPos.y;
-  
-  /*u_matrix * */
-  gl_Position = resPos;
+  gl_Position = proj * position;
  
   v_texcoord = texcoord;
 }
