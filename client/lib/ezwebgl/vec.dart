@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:image/image.dart' as imTools;
-import  'vec.dart';
+import 'vec.dart';
 
 abstract class Vec {
   int get count;
@@ -130,6 +130,15 @@ class Vec4 extends Object with _VecMixin implements Vec {
 
   factory Vec4.v(double x, [double y = 0.0, double z = 0.0, double w = 0.0]) =>
       Vec4(x: x, y: y, z: z, w: w);
+
+  double dot(Vec4 other) {
+    return values[0] * other[0] +
+        values[1] * other[1] +
+        values[2] * other[2] +
+        values[3] * other[3];
+  }
+
+  String toString() => "Vec4($x, $y, $z, $w)";
 }
 
 class Mat4 implements Vec {
@@ -147,6 +156,12 @@ class Mat4 implements Vec {
   }
 
   factory Mat4.fromMatrix(Matrix4 other) => Mat4._()..assign(other);
+
+  Mat4.fill(double value) {
+    for (int i = 0; i < 16; i++) {
+      values[i] = value;
+    }
+  }
 
   factory Mat4.cells(
       {double cell00 = 0.0,
@@ -204,6 +219,14 @@ class Mat4 implements Vec {
 
   @override
   int get count => 4 * 4;
+
+  Vec4 get row0 => Vec4.v(values[0], values[1], values[2], values[3]);
+
+  Vec4 get row1 => Vec4.v(values[4], values[5], values[6], values[7]);
+
+  Vec4 get row2 => Vec4.v(values[8], values[9], values[10], values[11]);
+
+  Vec4 get row3 => Vec4.v(values[12], values[13], values[14], values[15]);
 
   set row0(Vec4 value) {
     values[0] = value[0];
@@ -358,6 +381,136 @@ class Mat4 implements Vec {
     cell30 = cell30Copy * cosTheta + cell31Copy * sinTheta;
     cell31 = cell30Copy * -sinTheta + cell31Copy * cosTheta;
   }
+
+  Mat4 inverse() {
+    Mat4 invOut = Mat4();
+
+    invOut[0] = values[5] * values[10] * values[15] -
+        values[5] * values[11] * values[14] -
+        values[9] * values[6] * values[15] +
+        values[9] * values[7] * values[14] +
+        values[13] * values[6] * values[11] -
+        values[13] * values[7] * values[10];
+
+    invOut[4] = -values[4] * values[10] * values[15] +
+        values[4] * values[11] * values[14] +
+        values[8] * values[6] * values[15] -
+        values[8] * values[7] * values[14] -
+        values[12] * values[6] * values[11] +
+        values[12] * values[7] * values[10];
+
+    invOut[8] = values[4] * values[9] * values[15] -
+        values[4] * values[11] * values[13] -
+        values[8] * values[5] * values[15] +
+        values[8] * values[7] * values[13] +
+        values[12] * values[5] * values[11] -
+        values[12] * values[7] * values[9];
+
+    invOut[12] = -values[4] * values[9] * values[14] +
+        values[4] * values[10] * values[13] +
+        values[8] * values[5] * values[14] -
+        values[8] * values[6] * values[13] -
+        values[12] * values[5] * values[10] +
+        values[12] * values[6] * values[9];
+
+    invOut[1] = -values[1] * values[10] * values[15] +
+        values[1] * values[11] * values[14] +
+        values[9] * values[2] * values[15] -
+        values[9] * values[3] * values[14] -
+        values[13] * values[2] * values[11] +
+        values[13] * values[3] * values[10];
+
+    invOut[5] = values[0] * values[10] * values[15] -
+        values[0] * values[11] * values[14] -
+        values[8] * values[2] * values[15] +
+        values[8] * values[3] * values[14] +
+        values[12] * values[2] * values[11] -
+        values[12] * values[3] * values[10];
+
+    invOut[9] = -values[0] * values[9] * values[15] +
+        values[0] * values[11] * values[13] +
+        values[8] * values[1] * values[15] -
+        values[8] * values[3] * values[13] -
+        values[12] * values[1] * values[11] +
+        values[12] * values[3] * values[9];
+
+    invOut[13] = values[0] * values[9] * values[14] -
+        values[0] * values[10] * values[13] -
+        values[8] * values[1] * values[14] +
+        values[8] * values[2] * values[13] +
+        values[12] * values[1] * values[10] -
+        values[12] * values[2] * values[9];
+
+    invOut[2] = values[1] * values[6] * values[15] -
+        values[1] * values[7] * values[14] -
+        values[5] * values[2] * values[15] +
+        values[5] * values[3] * values[14] +
+        values[13] * values[2] * values[7] -
+        values[13] * values[3] * values[6];
+
+    invOut[6] = -values[0] * values[6] * values[15] +
+        values[0] * values[7] * values[14] +
+        values[4] * values[2] * values[15] -
+        values[4] * values[3] * values[14] -
+        values[12] * values[2] * values[7] +
+        values[12] * values[3] * values[6];
+
+    invOut[10] = values[0] * values[5] * values[15] -
+        values[0] * values[7] * values[13] -
+        values[4] * values[1] * values[15] +
+        values[4] * values[3] * values[13] +
+        values[12] * values[1] * values[7] -
+        values[12] * values[3] * values[5];
+
+    invOut[14] = -values[0] * values[5] * values[14] +
+        values[0] * values[6] * values[13] +
+        values[4] * values[1] * values[14] -
+        values[4] * values[2] * values[13] -
+        values[12] * values[1] * values[6] +
+        values[12] * values[2] * values[5];
+
+    invOut[3] = -values[1] * values[6] * values[11] +
+        values[1] * values[7] * values[10] +
+        values[5] * values[2] * values[11] -
+        values[5] * values[3] * values[10] -
+        values[9] * values[2] * values[7] +
+        values[9] * values[3] * values[6];
+
+    invOut[7] = values[0] * values[6] * values[11] -
+        values[0] * values[7] * values[10] -
+        values[4] * values[2] * values[11] +
+        values[4] * values[3] * values[10] +
+        values[8] * values[2] * values[7] -
+        values[8] * values[3] * values[6];
+
+    invOut[11] = -values[0] * values[5] * values[11] +
+        values[0] * values[7] * values[9] +
+        values[4] * values[1] * values[11] -
+        values[4] * values[3] * values[9] -
+        values[8] * values[1] * values[7] +
+        values[8] * values[3] * values[5];
+
+    invOut[15] = values[0] * values[5] * values[10] -
+        values[0] * values[6] * values[9] -
+        values[4] * values[1] * values[10] +
+        values[4] * values[2] * values[9] +
+        values[8] * values[1] * values[6] -
+        values[8] * values[2] * values[5];
+
+    double det = values[0] * invOut[0] +
+        values[1] * invOut[4] +
+        values[2] * invOut[8] +
+        values[3] * invOut[12];
+
+    det = 1.0 / det;
+
+    for (int i = 0; i < 16; i++) invOut[i] = invOut[i] * det;
+
+    return invOut;
+  }
+
+  Vec4 dot(Vec4 other) => Vec4.v(
+      row0.dot(other), row1.dot(other), row2.dot(other), row3.dot(other));
 
   String toString() => values.toString();
 

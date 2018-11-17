@@ -24,7 +24,7 @@ html, body {
   background-color: saddlebrown;
 }
 
-#mouse-coords {
+.c-coord {
   display: flex;
 }
 
