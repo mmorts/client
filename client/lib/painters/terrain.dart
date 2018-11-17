@@ -64,7 +64,7 @@ class TerrainPainter {
     _painter = TerrainPainter(
       shader: shader,
       buffer: buffer,
-      texture: texture,
+      texture: texture.texture,
     );
   }
 }

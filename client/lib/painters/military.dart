@@ -56,7 +56,7 @@ class MilitaryDirTextures {
     do {
       resp = await resty.get(path + "/$frameCount.png").go();
       if (resp.statusCode != 404) {
-        ret.add(texFromBytes(resp.bytes, gl: gl));
+        ret.add(texFromBytes(resp.bytes, gl: gl).texture);
       }
       frameCount++;
     } while (resp.statusCode != 404);

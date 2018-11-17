@@ -1,23 +1,20 @@
 part of 'ezwebgl.dart';
 
-Future<Texture> texFromUrl(String url, {@required RenderingContext2 gl}) async {
-  final resp = await resty.get(url).go();
-  imTools.Image image = imTools.PngDecoder().decodeImage(resp.bytes);
+class SizedTexture {
+  final Texture texture;
 
-  final Texture texture = gl.createTexture();
-  gl.bindTexture(WebGL.TEXTURE_2D, texture);
+  final math.Point size;
 
-  gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
-  gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.CLAMP_TO_EDGE);
-  gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.CLAMP_TO_EDGE);
-
-  gl.texImage2D2(WebGL.TEXTURE_2D, 0, WebGL.RGBA, image.width, image.height, 0,
-      WebGL.RGBA, WebGL.UNSIGNED_BYTE, image.getBytes(), 0);
-
-  return texture;
+  SizedTexture(this.texture, this.size);
 }
 
-Texture texFromBytes(List<int> bytes, {@required RenderingContext2 gl}) {
+Future<SizedTexture> texFromUrl(String url,
+    {@required RenderingContext2 gl}) async {
+  final resp = await resty.get(url).go();
+  return texFromBytes(resp.bytes, gl: gl);
+}
+
+SizedTexture texFromBytes(List<int> bytes, {@required RenderingContext2 gl}) {
   imTools.Image image = imTools.PngDecoder().decodeImage(bytes);
 
   final Texture texture = gl.createTexture();
@@ -30,5 +27,6 @@ Texture texFromBytes(List<int> bytes, {@required RenderingContext2 gl}) {
   gl.texImage2D2(WebGL.TEXTURE_2D, 0, WebGL.RGBA, image.width, image.height, 0,
       WebGL.RGBA, WebGL.UNSIGNED_BYTE, image.getBytes(), 0);
 
-  return texture;
+  return SizedTexture(texture,
+      math.Point<double>(image.width.toDouble(), image.height.toDouble()));
 }

@@ -25,7 +25,7 @@ class BuildingPainter {
 
   final Buffer buffer;
 
-  final Map<int, Texture> textures;
+  final Map<int, SizedTexture> textures;
 
   BuildingPainter._(
       {@required this.shader, @required this.buffer, @required this.textures})
@@ -40,9 +40,9 @@ class BuildingPainter {
 
     Buffer buffer = PosTexBuf.createBuffer(shader);
 
-    Texture bambooTexture =
+    SizedTexture bambooTexture =
         await texFromUrl("sprites/building/bamboo/1.png", gl: gl);
-    Texture barrackTexture =
+    SizedTexture barrackTexture =
         await texFromUrl("sprites/building/barrack/1.png", gl: gl);
 
     _painter = BuildingPainter._(shader: shader, buffer: buffer, textures: {
@@ -51,11 +51,15 @@ class BuildingPainter {
     });
   }
 
+  Point getSizeForSpriteId(int spriteId) {
+    return textures[spriteId].size;
+  }
+
   void paint(_PaintProps props, {@required State gameState}) {
     // Set program
     shader.use();
 
-    gl.bindTexture(WebGL.TEXTURE_2D, textures[props.spriteId]);
+    gl.bindTexture(WebGL.TEXTURE_2D, textures[props.spriteId].texture);
 
     var textureLocation = gl.getUniformLocation(shader.program, "u_texture");
     gl.uniform1i(textureLocation, 0);
@@ -99,6 +103,7 @@ class Building {
 
   Building({@required this.pos, @required this.size, @required this.spriteId}) {
     if (_painter == null) throw Exception("Building not bootstrapped!");
+    size = _painter.getSizeForSpriteId(spriteId);
   }
 
   void paint(State gameState) {
@@ -106,7 +111,7 @@ class Building {
         _PaintProps(
             rect: Rectangle<double>(
               pos.x,
-              pos.y,
+              pos.y - size.y + 22,
               size.x,
               size.y,
             ),

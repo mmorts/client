@@ -69,10 +69,8 @@ void main() async {
   final terrain3 = Terrain()..position = Position2(x: 0, y: -512.0);
   final terrain4 = Terrain()..position = Position2(x: -512.0, y: 0);
   // final military = Military();
-  final barrack = Building(
-      size: Point<double>(295.0, 207.0), pos: Position2(), spriteId: 2);
-  final bamboo =
-      Building(size: Point<double>(78.0, 90.0), pos: Position2(), spriteId: 2);
+  final barrack = Building(pos: Position2(), spriteId: 1);
+  final bamboo = Building(pos: Position2(), spriteId: 2);
   final highlight = TileHighlight();
 
   Function loop = () {
@@ -88,7 +86,8 @@ void main() async {
 
     highlight.paint(state);
     // military.paint(state);
-    // bamboo.paint(state);
+    bamboo.paint(state);
+    barrack.paint(state);
   };
 
   final mouseCoordUi = PointView.mount(querySelector("#mouse-coords"));
