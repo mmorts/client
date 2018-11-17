@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:image/image.dart' as imTools;
-import  'vec.dart';
+import 'vec.dart';
 
 export 'vec.dart';
 
@@ -47,6 +47,9 @@ class PosBuf implements BufData {
   final Vec4 position;
 
   PosBuf({@required this.position});
+
+  PosBuf.coords({double x: 0.0, double y: 0.0, double z: 0.0, double w: 1.0})
+      : position = Vec4.v(x, y, z, w);
 
   @override
   List<Vec> get asGlData {
@@ -98,6 +101,16 @@ class PosTexBuf implements BufData {
   final Vec2 texCoords;
 
   PosTexBuf({@required this.position, @required this.texCoords});
+
+  PosTexBuf.coords(
+      {double x: 0.0,
+      double y: 0.0,
+      double z: 0.0,
+      double w: 1.0,
+      double tx: 0.0,
+      double ty: 0.0})
+      : position = Vec4.v(x, y, z, w),
+        texCoords = Vec2.init(tx, ty);
 
   @override
   List<Vec> get asGlData {
@@ -194,10 +207,10 @@ class DataArray<V extends BufData> {
   /// [buffer] specifies which WebGL buffer shall be used to send data.
   void drawArrays(
       {@required RenderingContext2 gl,
-        @required Buffer buffer,
-        int usage: WebGL.STATIC_DRAW,
-        int mode: WebGL.TRIANGLES,
-        int offset: 0}) {
+      @required Buffer buffer,
+      int usage: WebGL.STATIC_DRAW,
+      int mode: WebGL.TRIANGLES,
+      int offset: 0}) {
     gl.bindBuffer(WebGL.ARRAY_BUFFER, buffer);
     gl.bufferData(WebGL.ARRAY_BUFFER, toBuffer(), usage);
     gl.drawArrays(mode, offset, length);

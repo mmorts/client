@@ -11,8 +11,9 @@ import 'package:client/ezwebgl/ezwebgl.dart';
 import 'package:client/painters/terrain.dart';
 import 'package:client/painters/military.dart';
 import 'package:client/painters/building.dart';
+import 'package:client/painters/tiles_highlight.dart';
 
-import 'package:vector_math/vector_math.dart';
+import 'package:client/ui/ui.dart';
 
 void main() async {
   globalClient = BrowserClient();
@@ -54,6 +55,7 @@ void main() async {
     await TerrainPainter.bootstrap(gl);
     // await MilitaryPainter.bootstrap(gl);
     await BuildingPainter.bootstrap(gl);
+    await TileHighlightPainter.bootstrap(gl);
   };
 
   await init();
@@ -64,6 +66,7 @@ void main() async {
       size: Point<double>(295.0, 207.0), pos: Position2(), spriteId: 2);
   final bamboo =
       Building(size: Point<double>(78.0, 90.0), pos: Position2(), spriteId: 2);
+  final highlight = TileHighlight();
 
   Function loop = () {
     state.newLoop(gl);
@@ -72,9 +75,17 @@ void main() async {
     gl.clear(WebGL.COLOR_BUFFER_BIT | WebGL.DEPTH_BUFFER_BIT);
 
     terrain.paint(state);
+    highlight.paint(state);
     // military.paint(state);
     bamboo.paint(state);
   };
+
+  final mouseCoordUi = MouseCoords.mount(querySelector("#mouse-coords"));
+
+  gameCanvas.onMouseMove.listen((e) {
+    mouseCoordUi.updateData(
+        e.offset - Point(gameCanvas.width / 2, gameCanvas.height / 2));
+  });
 
   loop();
   Timer.periodic(Duration(milliseconds: 100), (_) => loop());
