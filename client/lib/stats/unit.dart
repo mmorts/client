@@ -10,26 +10,24 @@ class Resources {
   int stone;
 }
 
-class Frame {
-  String path;
-
+class FrameInfo {
   Point<int> hotspot;
 }
 
-class FrameAnimation {
-  List<Frame> frames;
+class FrameSet {
+  List<FrameInfo> frames;
 }
 
 class UnitSprite {
-  FrameAnimation s;
+  FrameSet s;
 
-  FrameAnimation sw;
+  FrameSet sw;
 
-  FrameAnimation w;
+  FrameSet w;
 
-  FrameAnimation nw;
+  FrameSet nw;
 
-  FrameAnimation n;
+  FrameSet n;
 }
 
 class UnitStats {
@@ -40,6 +38,16 @@ class UnitStats {
   int armor;
 
   int pierceArmor;
+
+  Point<double> size;
+
+  Point<double> selectionSize;
+}
+
+class BuildingSprite {
+  Point<double> size;
+
+  Point<double> selectionSize;
 
 
 }
