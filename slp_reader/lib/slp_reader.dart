@@ -13,7 +13,7 @@ class Buffer {
     _data = _src.skip(0);
   }
 
-  void rewind() => _data = _src.skip(0);
+  void rewind([int count = 0]) => _data = _src.skip(count);
 
   Buffer branch() => Buffer(_data.skip(0));
 
@@ -211,14 +211,16 @@ class Frame {
 
   String toString() => "Frame()";
 
-  static Frame parse(Buffer buffer, FrameInfo info, List<Color> palette) {
-    buffer.skip(info.outlineTableOffset);
+  static Frame parse(Buffer buffer, int i, List<Color> palette) {
+    buffer.rewind(32 + (i * 32));
+    final info = FrameInfo.parse(buffer);
+
+    buffer.rewind(info.outlineTableOffset);
 
     List<RowPadding> outlineRows =
         RowPadding.parseAllRows(buffer, info.height, info.width);
 
-    buffer.rewind();
-    buffer.skip(info.cmdTableOffset);
+    buffer.rewind(info.cmdTableOffset);
 
     List<int> lineOffsets = buffer.uint32List(info.height);
 
@@ -227,9 +229,8 @@ class Frame {
 
     for (int i = 0; i < info.height; i++) {
       final row = image[i];
-      buffer.rewind();
-      buffer.skip(lineOffsets[i]);
-      final lines = parseLine(buffer, 1, palette);
+      buffer.rewind(lineOffsets[i]);
+      final lines = parseLine(buffer, 1, palette, outlineRows[i].width);
       _replaceRange(row, outlineRows[i].leftPadding, lines);
     }
 
@@ -244,7 +245,8 @@ void _replaceRange<T>(List<T> dst, int index, Iterable<T> n) {
   }
 }
 
-List<Color> parseLine(Buffer buffer, int player, List<Color> palette) {
+List<Color> parseLine(
+    Buffer buffer, int player, List<Color> palette, int pixelCount) {
   final ret = <Color>[];
   int playerPaletteIndex = player * 16;
   bool finished = false;
@@ -313,12 +315,30 @@ List<Color> parseLine(Buffer buffer, int player, List<Color> palette) {
         ret.addAll(colors);
         break;
       case 0xb:
-        throw Exception("Shadow command not implemented!");
+        int length = firstByte >> 4;
+        if (length == 0) {
+          length = buffer.byte;
+        }
+        // TODO print(buffer.bytes(length));
         // TODO
         break;
       case 0xe:
-        throw Exception("Extended command not implemented!");
-        // TODO
+        command = firstByte >> 4;
+        // print(command);
+        switch (command) {
+          case 0x4:
+            ret.add(Color.transparent);
+            // ret.add(palette[player * 16]);
+            break;
+          case 0x5:
+            int length = buffer.byte;
+            ret.addAll(List<Color>.generate(length, (i) => Color.transparent));
+            // TODO
+            break;
+          default:
+            // TODO
+            throw Exception("Unexpected extended command!");
+        }
         break;
       // Command end
       case 0xf:
