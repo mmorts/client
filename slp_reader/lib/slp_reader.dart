@@ -1,10 +1,23 @@
 import 'package:meta/meta.dart';
 import 'dart:typed_data';
+import 'package:image/image.dart' as img;
+
+import 'package:slp_reader/palette.dart';
 
 class Buffer {
+  Iterable<int> _src;
+
   Iterable<int> _data;
 
-  Buffer(this._data);
+  Buffer(this._src) {
+    _data = _src.skip(0);
+  }
+
+  void rewind() => _data = _src.skip(0);
+
+  Buffer branch() => Buffer(_data.skip(0));
+
+  int get pos => _src.length - _data.length;
 
   void skip(int count) {
     if (_data.length < count)
@@ -20,9 +33,21 @@ class Buffer {
     return ret;
   }
 
+  int get byte {
+    int ret = _data.first;
+    _data = _data.skip(1);
+    return ret;
+  }
+
   int get uint32 => next(4).buffer.asByteData().getUint32(0, Endian.little);
 
   int get uint16 => next(2).buffer.asByteData().getUint16(0, Endian.little);
+
+  Uint8List bytes(int length) => next(length);
+
+  Uint32List uint32List(int length) => next(length * 4).buffer.asUint32List();
+
+  Uint16List uint16List(int length) => next(length * 2).buffer.asUint16List();
 }
 
 class Header {
@@ -101,24 +126,27 @@ class FrameInfo {
   }
 }
 
-class OutlineRowInfo {
-  int left;
-  int right;
+class RowPadding {
+  final int rowWidth;
+  final int leftPadding;
+  final int rightPadding;
 
-  OutlineRowInfo({this.left, this.right});
+  RowPadding({this.leftPadding, this.rightPadding, this.rowWidth});
 
-  String toString() => "OutlineRow($left, $right)";
+  int get width => rowWidth - leftPadding - rightPadding;
 
-  static OutlineRowInfo parse(Buffer buffer) {
+  String toString() => "OutlineRow($leftPadding, $rightPadding)";
+
+  static RowPadding parse(Buffer buffer, int width) {
     int left = buffer.uint16;
     int right = buffer.uint16;
-    return OutlineRowInfo(left: left, right: right);
+    return RowPadding(leftPadding: left, rightPadding: right, rowWidth: width);
   }
 
-  static List<OutlineRowInfo> parseAllRows(Buffer buffer, int height) {
-    final ret = List<OutlineRowInfo>(height);
+  static List<RowPadding> parseAllRows(Buffer buffer, int height, int width) {
+    final ret = List<RowPadding>(height);
     for (int i = 0; i < height; i++) {
-      ret[i] = parse(buffer);
+      ret[i] = parse(buffer, width);
     }
     return ret;
   }
@@ -154,18 +182,151 @@ String bytesToString(Iterable<int> bytes) {
 class Frame {
   final FrameInfo info;
 
-  final List<OutlineRowInfo> outlineRows;
+  final List<RowPadding> rowPaddings;
 
-  Frame(this.info, this.outlineRows);
+  final List<List<Color>> image;
+
+  Frame(this.info, this.rowPaddings, this.image);
+
+  img.Image get makeMask {
+    final maskImage = img.Image(info.width, info.height);
+    for (int h = 0; h < info.height; h++) {
+      final row = rowPaddings[h];
+      for (int c = row.leftPadding; c < info.width - row.rightPadding; c++) {
+        maskImage.setPixel(c, h, 0xffffffff);
+      }
+    }
+    return maskImage;
+  }
+
+  img.Image get makeImage {
+    final maskImage = img.Image(info.width, info.height);
+    for (int r = 0; r < info.height; r++) {
+      for (int c = 0; c < info.width; c++) {
+        maskImage.setPixel(c, r, image[r][c].rgba);
+      }
+    }
+    return maskImage;
+  }
 
   String toString() => "Frame()";
 
-  static Frame parse(Buffer buffer, FrameInfo info) {
+  static Frame parse(Buffer buffer, FrameInfo info, List<Color> palette) {
     buffer.skip(info.outlineTableOffset);
 
-    List<OutlineRowInfo> outlineRows =
-        OutlineRowInfo.parseAllRows(buffer, info.height);
+    List<RowPadding> outlineRows =
+        RowPadding.parseAllRows(buffer, info.height, info.width);
 
-    return Frame(info, outlineRows);
+    buffer.rewind();
+    buffer.skip(info.cmdTableOffset);
+
+    List<int> lineOffsets = buffer.uint32List(info.height);
+
+    final image = List<List<Color>>.generate(
+        info.height, (i) => List<Color>.filled(info.width, Color.transparent));
+
+    for (int i = 0; i < info.height; i++) {
+      final row = image[i];
+      buffer.rewind();
+      buffer.skip(lineOffsets[i]);
+      final lines = parseLine(buffer, 1, palette);
+      _replaceRange(row, outlineRows[i].leftPadding, lines);
+    }
+
+    return Frame(info, outlineRows, image);
   }
+}
+
+void _replaceRange<T>(List<T> dst, int index, Iterable<T> n) {
+  for (int i = index; i < i + n.length; i++) {
+    dst[i] = n.first;
+    n = n.skip(1);
+  }
+}
+
+List<Color> parseLine(Buffer buffer, int player, List<Color> palette) {
+  final ret = <Color>[];
+  int playerPaletteIndex = player * 16;
+  bool finished = false;
+  do {
+    int firstByte = buffer.byte;
+    int command = firstByte & 0xF;
+    switch (command) {
+      // Lesser block copy
+      case 0x0:
+      case 0x4:
+      case 0x8:
+      case 0xc:
+        final int length = firstByte >> 2;
+        final colors = buffer.bytes(length).map((i) => palette[i]);
+        ret.addAll(colors);
+        break;
+      // Greater block copy
+      case 0x2:
+        final int length = ((firstByte & 0xF0) << 0x4) | buffer.byte;
+        final colors = buffer.bytes(length).map((i) => palette[i]);
+        ret.addAll(colors);
+        break;
+      // Lesser skip
+      case 0x1:
+      case 0x5:
+      case 0x9:
+      case 0xd:
+        final int length = firstByte >> 2;
+        final colors = List<Color>.filled(length, Color.transparent);
+        ret.addAll(colors);
+        break;
+      // Greater skip
+      case 0x3:
+        final int length = ((firstByte & 0xF0) << 0x4) | buffer.byte;
+        final colors = List<Color>.filled(length, Color.transparent);
+        ret.addAll(colors);
+        break;
+      // Player color block copy
+      case 0x6:
+        int length = firstByte >> 4;
+        if (length == 0) {
+          length = buffer.byte;
+        }
+        final colors =
+            buffer.bytes(length).map((i) => palette[playerPaletteIndex + i]);
+        ret.addAll(colors);
+        break;
+      // Fill
+      case 0x7:
+        int length = firstByte >> 4;
+        if (length == 0) {
+          length = buffer.byte;
+        }
+        final int index = buffer.byte;
+        final colors = List<Color>.filled(length, palette[index]);
+        ret.addAll(colors);
+        break;
+      case 0xa:
+        int length = firstByte >> 4;
+        if (length == 0) {
+          length = buffer.byte;
+        }
+        final int index = buffer.byte;
+        final colors =
+            List<Color>.filled(length, palette[playerPaletteIndex + index]);
+        ret.addAll(colors);
+        break;
+      case 0xb:
+        throw Exception("Shadow command not implemented!");
+        // TODO
+        break;
+      case 0xe:
+        throw Exception("Extended command not implemented!");
+        // TODO
+        break;
+      // Command end
+      case 0xf:
+        finished = true;
+        break;
+      default:
+        throw Exception("Unknown command!");
+    }
+  } while (!finished);
+  return ret;
 }
