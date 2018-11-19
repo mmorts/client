@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:meta/meta.dart';
 import 'package:image/image.dart' as img;
 
@@ -50,6 +51,8 @@ class FrameInfo {
       @required this.height,
       @required this.hotspotX,
       @required this.hotspotY});
+
+  Point get hotspot => Point(hotspotX, hotspotY);
 
   String toString() => "FrameInfo(cmdTableOffset: $cmdTableOffset, "
       "outlineTableOffset: $outlineTableOffset, "
@@ -163,6 +166,8 @@ class Frame {
     }
     return maskImage;
   }
+
+  List<int> get makeImagePng => img.encodePng(makeImage);
 
   String toString() => "Frame()";
 
@@ -304,4 +309,18 @@ List<Color> parseLine(
     }
   } while (!finished);
   return ret;
+}
+
+List<Frame> readSlp(List<Color> palette, List<int> bytes) {
+  final buffer = Buffer(bytes);
+  final header = Header.parse(buffer);
+
+  final frames = List<Frame>(header.numFrames);
+
+  for (int i = 0; i < header.numFrames; i++) {
+    final frame = Frame.parse(buffer, i, palette);
+    frames[i] = frame;
+  }
+
+  return frames;
 }

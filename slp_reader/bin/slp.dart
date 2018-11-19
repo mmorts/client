@@ -29,7 +29,8 @@ main() async {
 
   {
     String base = "bin/data/corpse";
-    List<Frame> frames = await readSlp(palette, File("$base.slp"));
+    List<Frame> frames =
+        readSlp(palette, await File("$base.slp").readAsBytes());
 
     for (int i = 0; i < frames.length; i++) {
       final frame = frames[i];
@@ -58,21 +59,4 @@ main() async {
     }
   }
   */
-}
-
-Future<List<Frame>> readSlp(List<Color> palette, File src) async {
-  final bytes = await src.readAsBytes();
-  var buffer = Buffer(bytes);
-  final header = Header.parse(buffer);
-
-  print(header);
-
-  final frames = List<Frame>(header.numFrames);
-
-  for (int i = 0; i < header.numFrames; i++) {
-    final frame = Frame.parse(buffer, i, palette);
-    frames[i] = frame;
-  }
-
-  return frames;
 }
