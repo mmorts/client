@@ -1,0 +1,12 @@
+sprite: "barrack"
+construction_speed: 20
+hp: 100
+unlock_age: 0
+
+recruit:
+  - militia
+  - pikeman
+
+research:
+  - arson
+  - squire

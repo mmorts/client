@@ -5,6 +5,8 @@ import 'package:slp_reader/palette.dart';
 
 import 'package:image/image.dart' as img;
 
+import 'package:slp_reader/buffer.dart';
+
 main() async {
   final paletteFile = await File("bin/data/AOE2_Beta.pal").readAsBytes();
   final palette = parse(paletteFile);

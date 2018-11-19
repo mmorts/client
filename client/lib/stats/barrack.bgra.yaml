@@ -1,0 +1,24 @@
+# An example building sprite sheet
+constructing:
+  layers:
+    - sprite: "cnst2x2"
+      x: 12
+      y: 12
+normal:
+  layers:
+    - sprite: "barrack_shadow"
+      x: 12
+      y: 12
+      # loop: true (defaults to false)
+    - sprite: "barrack"
+      x: 12
+      y: 12
+    - sprite: "fire2x2"
+      on: attack
+      x: 12
+      y: 12
+dead:
+  layers:
+    - sprite: "barrack"
+      x: 12
+      y: 12
