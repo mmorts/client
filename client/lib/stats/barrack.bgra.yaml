@@ -4,8 +4,9 @@ constructing:
     - sprite: "cnst2x2"
       x: 12
       y: 12
+
 normal:
-  - sprites:
+  layer0:
       - sprite: "barrack_shadow"
         x: 12
         y: 12
@@ -17,7 +18,7 @@ normal:
         on: attack
         x: 12
         y: 12
-  - sprites:
+  layer1:
       - sprite: "barrack_shadow"
         x: 12
         y: 12

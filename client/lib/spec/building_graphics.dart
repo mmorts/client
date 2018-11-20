@@ -38,8 +38,8 @@ class BuildingLayerSpec {
   final List<SpriteRefSpec> sprites;
   final int depth;
   BuildingLayerSpec({@required this.sprites, this.depth: 0});
-  static Future<BuildingLayerSpec> decode(Map data) async {
-    List<Map> spritesRaw = (data["sprite"] as List).cast<Map>();
+  static BuildingLayerSpec decode(Map data, LayerRepo layerRepo) {
+    List<Map> spritesRaw = (data["sprites"] as List).cast<Map>();
     final int length = spritesRaw.length;
     final sprites = List<SpriteRefSpec>(length);
     for (int i = 0; i < length; i++) {
@@ -68,12 +68,14 @@ class BuildingGraphicsSpec {
       @required this.dying,
       @required this.damage});
 
-  static List<BuildingLayerSpec> _parse(List value) {
-    // TODO
-  }
+  static List<BuildingLayerSpec> _parse(List value, LayerRepo layerRepo) =>
+      value
+          .cast<Map>()
+          .map((m) => BuildingLayerSpec.decode(m, layerRepo))
+          .toList();
 
-  static BuildingGraphicsSpec decode(Map data) {
-    List<BuildingLayerSpec> standing = _parse(data["standing"]);
+  static BuildingGraphicsSpec decode(Map data, LayerRepo layerRepo) {
+    List<BuildingLayerSpec> standing = _parse(data["standing"], layerRepo);
     // TODO
     return BuildingGraphicsSpec(standing: standing);
   }
