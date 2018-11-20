@@ -1,17 +1,13 @@
 import 'dart:math';
 
 class SpriteSpec {
-  /// Rate at which the sprite shall be animated
-  final double rate;
-
   final List<Point<double>> hotspot;
 
-  SpriteSpec({this.rate, this.hotspot});
+  SpriteSpec({this.hotspot});
 
   int get numFrames => hotspot.length;
 
   static SpriteSpec decode(Map data) {
-    final double rate = data["rate"] ?? 0.0;
     List<Point<double>> hotspots;
     if (data.containsKey("frames")) {
       hotspots = (data["frames"] as List)
@@ -26,6 +22,6 @@ class SpriteSpec {
       throw Exception("Invalid sprite file format!");
     }
 
-    return SpriteSpec(rate: rate, hotspot: hotspots);
+    return SpriteSpec(hotspot: hotspots);
   }
 }

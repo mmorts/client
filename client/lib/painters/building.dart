@@ -8,6 +8,8 @@ import 'package:client/ezwebgl/ezwebgl.dart';
 
 import 'package:client/objects/objects.dart';
 
+import 'package:client/painters/loader/loader.dart';
+
 BuildingPainter _painter;
 
 class _PaintProps {
@@ -25,7 +27,7 @@ class BuildingPainter {
 
   final Buffer buffer;
 
-  final Map<int, SizedTexture> textures;
+  final Map<int, Map<int, Sprite>> textures;
 
   BuildingPainter._(
       {@required this.shader, @required this.buffer, @required this.textures})
