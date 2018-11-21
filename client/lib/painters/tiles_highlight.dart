@@ -4,11 +4,9 @@ import 'dart:math';
 
 import 'package:meta/meta.dart';
 
-import 'package:client/ezwebgl/ezwebgl.dart';
+import 'package:ezwebgl/ezwebgl.dart';
 
 import 'package:client/objects/objects.dart';
-
-import 'matrices/matrices.dart';
 
 TileHighlightPainter _painter;
 

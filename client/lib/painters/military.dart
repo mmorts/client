@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 
-import 'package:client/ezwebgl/ezwebgl.dart';
+import 'package:ezwebgl/ezwebgl.dart';
 
 import 'package:client/objects/objects.dart';
 

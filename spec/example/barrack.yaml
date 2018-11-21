@@ -1,0 +1,6 @@
+standing:
+  layer0:
+    sprites:
+      - sprite: barrack
+        offset: [12, 12]
+        # loop: true (defaults to false)

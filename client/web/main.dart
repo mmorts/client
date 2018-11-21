@@ -6,7 +6,7 @@ import 'package:jaguar_resty/jaguar_resty.dart';
 
 import 'package:client/objects/objects.dart';
 
-import 'package:client/ezwebgl/ezwebgl.dart';
+import 'package:ezwebgl/ezwebgl.dart';
 
 import 'package:client/painters/terrain.dart';
 import 'package:client/painters/military.dart';
@@ -15,8 +15,6 @@ import 'package:client/painters/tiles_highlight.dart';
 
 import 'package:client/ui/ui.dart';
 
-import 'package:client/geo/geo.dart';
-
 final iso64 = Iso.square(ortho: 64.0);
 
 void main() async {
@@ -24,9 +22,10 @@ void main() async {
 
   CanvasElement gameCanvas = querySelector("#game-canvas");
   RenderingContext2 gl = gameCanvas.getContext("webgl2");
-
   gl.enable(WebGL.BLEND);
   gl.blendFunc(WebGL.SRC_ALPHA, WebGL.ONE_MINUS_SRC_ALPHA);
+
+  // TODO load
 
   final state = State(gl: gl);
 

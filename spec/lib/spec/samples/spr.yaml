@@ -1,0 +1,4 @@
+# An example sprite sheet
+frames:
+  - hotspot: [120, 120]
+  - hotspot: [120, 120]

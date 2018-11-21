@@ -5,11 +5,9 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
-import 'package:client/ezwebgl/ezwebgl.dart';
+import 'package:ezwebgl/ezwebgl.dart';
 
 import 'package:client/objects/objects.dart';
-
-import 'matrices/matrices.dart';
 
 TerrainPainter _painter;
 
