@@ -30,5 +30,3 @@ class BuildingSprite {
 
   BuildingSprite({this.civilizations});
 }
-
-List<BuildingSprite> paintSchemas;
