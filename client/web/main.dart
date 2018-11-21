@@ -10,7 +10,7 @@ import 'package:ezwebgl/ezwebgl.dart';
 
 import 'package:client/painters/terrain.dart';
 import 'package:client/painters/military.dart';
-import 'package:client/painters/building.dart';
+import 'package:client/painters/painter.dart';
 import 'package:client/painters/tiles_highlight.dart';
 
 import 'package:client/ui/ui.dart';

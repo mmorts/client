@@ -114,14 +114,18 @@ class BuildingGraphicsSpec {
   BuildingGraphicsStateSpec garrison;
   // The graphics shown when dying.
   BuildingGraphicsStateSpec dying;
-  Map<String, BuildingGraphicsStateSpec> damage;
+  BuildingGraphicsStateSpec damage25;
+  BuildingGraphicsStateSpec damage50;
+  BuildingGraphicsStateSpec damage75;
 
   BuildingGraphicsSpec(
       {@required this.constructing,
       @required this.standing,
       @required this.garrison,
       @required this.dying,
-      @required this.damage});
+      @required this.damage25,
+      @required this.damage50,
+      @required this.damage75});
 
   Map<String, dynamic> toJson() => serializer.toMap(this);
 

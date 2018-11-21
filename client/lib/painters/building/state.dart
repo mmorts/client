@@ -2,16 +2,22 @@ import 'package:ezwebgl/ezwebgl.dart';
 import 'package:meta/meta.dart';
 import 'package:client/objects/objects.dart';
 
-class BuildingPaintState {
-  // TODO
+enum BuildingState {
+  constructing,
+  standing,
+  dead,
 }
 
 class Building {
+  final int id;
+
+  int hp;
+
+  BuildingState state;
+
   Position2 pos;
 
-  int spriteId;
-
-  Building({@required this.pos, @required this.spriteId}) {}
+  Building(this.id, {@required this.pos});
 
   void paint(State gameState) {
     /* TODO

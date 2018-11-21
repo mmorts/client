@@ -89,13 +89,12 @@ abstract class _$BuildingGraphicsSpecSerializer
         _buildingGraphicsStateSpecSerializer.toMap(model.garrison));
     setMapValue(
         ret, 'dying', _buildingGraphicsStateSpecSerializer.toMap(model.dying));
-    setMapValue(
-        ret,
-        'damage',
-        codeMap(
-            model.damage,
-            (val) => _buildingGraphicsStateSpecSerializer
-                .toMap(val as BuildingGraphicsStateSpec)));
+    setMapValue(ret, 'damage25',
+        _buildingGraphicsStateSpecSerializer.toMap(model.damage25));
+    setMapValue(ret, 'damage50',
+        _buildingGraphicsStateSpecSerializer.toMap(model.damage50));
+    setMapValue(ret, 'damage75',
+        _buildingGraphicsStateSpecSerializer.toMap(model.damage75));
     return ret;
   }
 
@@ -111,8 +110,12 @@ abstract class _$BuildingGraphicsSpecSerializer
         _buildingGraphicsStateSpecSerializer.fromMap(map['garrison'] as Map);
     obj.dying =
         _buildingGraphicsStateSpecSerializer.fromMap(map['dying'] as Map);
-    obj.damage = codeMap<BuildingGraphicsStateSpec>(map['damage'] as Map,
-        (val) => _buildingGraphicsStateSpecSerializer.fromMap(val as Map));
+    obj.damage25 =
+        _buildingGraphicsStateSpecSerializer.fromMap(map['damage25'] as Map);
+    obj.damage50 =
+        _buildingGraphicsStateSpecSerializer.fromMap(map['damage50'] as Map);
+    obj.damage75 =
+        _buildingGraphicsStateSpecSerializer.fromMap(map['damage75'] as Map);
     return obj;
   }
 }
