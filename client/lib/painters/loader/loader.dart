@@ -6,10 +6,7 @@ import 'package:yaml/yaml.dart';
 import 'package:image/image.dart' as img;
 import 'package:client/ezwebgl/ezwebgl.dart';
 
-abstract class Io {
-  Future<List<int>> readSpriteFile(String name, String file);
-  Future<List<int>> readBuildingGraphicFile(String name);
-}
+import 'io.dart';
 
 class Frame {
   final int index;

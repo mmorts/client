@@ -1,5 +1,5 @@
 import 'package:http/http.dart';
-import 'loader.dart';
+import 'io.dart';
 
 class HttpIo implements Io {
   final Client client;
@@ -12,5 +12,10 @@ class HttpIo implements Io {
     if (resp.statusCode != 200)
       throw Exception("Request failed with status code: ${resp.statusCode}");
     return resp.bodyBytes;
+  }
+
+  @override
+  Future<List<int>> readBuildingGraphicFile(String name) {
+    // TODO
   }
 }

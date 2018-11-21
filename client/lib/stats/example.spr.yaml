@@ -1,7 +1,0 @@
-# An example sprite sheet
-rate: 0.2
-frames:
-  - hx: 120
-    hy: 120
-  - hx: 122
-    hy: 120

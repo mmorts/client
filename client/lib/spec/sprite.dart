@@ -8,19 +8,11 @@ class SpriteSpec {
   int get numFrames => hotspot.length;
 
   static SpriteSpec decode(Map data) {
-    List<Point<double>> hotspots;
-    if (data.containsKey("frames")) {
-      hotspots = (data["frames"] as List)
-          .cast<Map>()
-          .map((Map p) => Point<double>(p["hx"].toDouble(), p["hy"].toDouble()))
-          .toList();
-    } else if (data["hx"] is! int && data["hy"] is! int) {
-      final hotspot = Point<double>(data["x"].toDouble(), data["y"].toDouble());
-      final int numFrames = data["numFrames"] ?? 1;
-      hotspots = List<Point<double>>.filled(numFrames, hotspot);
-    } else {
-      throw Exception("Invalid sprite file format!");
-    }
+    final List<Point<double>> hotspots =
+        (data["frames"] as List).cast<Map>().map((Map p) {
+      List<num> offset = p["offset"]?.cast<num>();
+      return Point<double>(offset[0].toDouble(), offset[1].toDouble());
+    }).toList();
 
     return SpriteSpec(hotspot: hotspots);
   }
