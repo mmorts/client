@@ -3,35 +3,16 @@ import 'package:meta/meta.dart';
 import 'package:client/objects/objects.dart';
 import 'package:loader/loader.dart';
 
+import 'package:client/objects/player.dart';
+
 import 'painter.dart';
-import 'sprite.dart';
+import 'package:client/objects/game.dart';
+import 'package:client/painters/sprite_repo.dart';
 
 enum BuildingState {
   constructing,
   standing,
   dead,
-}
-
-class Player {
-  final int id;
-
-  final int civ;
-
-  int age;
-
-  Player(this.id, this.civ, {this.age});
-}
-
-class SpriteRepo {
-  final List<BuildingSprite> buildings;
-
-  SpriteRepo({this.buildings});
-}
-
-class Game {
-  final SpriteRepo spriteRepo;
-
-  Game({this.spriteRepo});
 }
 
 class Building {

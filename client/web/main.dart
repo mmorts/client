@@ -5,6 +5,7 @@ import 'package:http/browser_client.dart';
 import 'package:jaguar_resty/jaguar_resty.dart';
 
 import 'package:client/objects/objects.dart';
+import 'package:loader/http.dart';
 
 import 'package:ezwebgl/ezwebgl.dart';
 
@@ -16,6 +17,11 @@ import 'package:client/painters/tiles_highlight.dart';
 import 'package:client/ui/ui.dart';
 
 final iso64 = Iso.square(ortho: 64.0);
+final io = HttpIo(BrowserClient());
+
+Future<void> load() async {
+  // TODO
+}
 
 void main() async {
   globalClient = BrowserClient();
@@ -24,6 +30,8 @@ void main() async {
   RenderingContext2 gl = gameCanvas.getContext("webgl2");
   gl.enable(WebGL.BLEND);
   gl.blendFunc(WebGL.SRC_ALPHA, WebGL.ONE_MINUS_SRC_ALPHA);
+
+  final io = HttpIo(BrowserClient());
 
   // TODO load
 

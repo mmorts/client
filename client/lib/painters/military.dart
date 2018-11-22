@@ -123,7 +123,7 @@ class MilitaryPainter {
     shader.use();
 
     Iterable<Texture> texs =
-    textures.by(state: unitState.verb, dir: unitState.dir);
+        textures.by(state: unitState.verb, dir: unitState.dir);
     if (shouldMirrorDir[unitState.dir]) {
       // TODO mirror
     }
@@ -136,7 +136,7 @@ class MilitaryPainter {
     gl.uniform1i(textureLocation, 0);
 
     var resolutionLocation =
-    gl.getUniformLocation(shader.program, "resolution");
+        gl.getUniformLocation(shader.program, "resolution");
     gl.uniform2f(resolutionLocation, gameState.size.x, gameState.size.y);
 
     // Set data

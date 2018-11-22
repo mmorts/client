@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:async';
 import 'dart:web_gl';
 
 import 'package:meta/meta.dart';
@@ -9,8 +8,7 @@ import 'package:ezwebgl/ezwebgl.dart';
 import 'package:client/objects/objects.dart';
 
 import 'package:loader/loader.dart';
-
-BuildingPainter _painter;
+import 'package:client/painters/sprite_repo.dart';
 
 class BuildingPaintData {
   final List<SpriteRef> sprites;
@@ -32,7 +30,7 @@ class BuildingPainter {
   BuildingPainter._({@required this.shader, @required this.buffer})
       : gl = shader.gl;
 
-  static Future<void> bootstrap(RenderingContext2 gl) async {
+  static BuildingPainter make(RenderingContext2 gl) {
     ShaderProgram shader = ShaderProgram.prepare(
       gl: gl,
       vertex: _vertexCode,
@@ -41,7 +39,7 @@ class BuildingPainter {
 
     Buffer buffer = PosTexBuf.createBuffer(shader);
 
-    _painter = BuildingPainter._(shader: shader, buffer: buffer);
+    return BuildingPainter._(shader: shader, buffer: buffer);
   }
 
   void paintSprite(State gameState, Rectangle rect, Texture texture) {

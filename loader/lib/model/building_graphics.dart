@@ -1,4 +1,4 @@
-import 'package:loader/loader.dart';
+import 'sprite_ref.dart';
 
 class BuildingSpriteAge {
   final List<SpriteRef> constructing;
@@ -11,12 +11,12 @@ class BuildingSpriteAge {
 
   BuildingSpriteAge(
       {this.constructing,
-      this.standing,
-      this.garrison,
-      this.dying,
-      this.damage25,
-      this.damage50,
-      this.damage75});
+        this.standing,
+        this.garrison,
+        this.dying,
+        this.damage25,
+        this.damage50,
+        this.damage75});
 }
 
 class BuildingSpriteCiv {

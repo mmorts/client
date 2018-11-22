@@ -8,40 +8,18 @@ import 'package:ezwebgl/ezwebgl.dart';
 
 import 'io.dart';
 
-class Frame {
-  final int index;
+import 'package:loader/model/model.dart';
 
-  final Texture texture;
-
-  final Point<double> size;
-
-  final Point hotspot;
-
-  Frame(
-      {@required this.index,
-      @required this.texture,
-      @required this.size,
-      @required this.hotspot});
-}
-
-class Sprite {
-  final List<Frame> frames;
-
-  final int length;
-
-  Sprite({@required List<Frame> frames})
-      : frames = frames,
-        length = frames.length;
-}
-
-class GameAsset {
+class GameSpec {
   final RenderingContext2 gl;
 
   final Io io;
 
   final sprites = <String, Sprite>{};
 
-  GameAsset({@required this.gl, @required this.io});
+  final buildingGraphics = <String, BuildingGraphicsSpec>{};
+
+  GameSpec({@required this.gl, @required this.io});
 
   Future<Sprite> loadSprite(String name) async {
     final sps = SpriteSpec.decode(loadYaml(
@@ -67,18 +45,4 @@ class GameAsset {
         loadYaml(String.fromCharCodes(await io.readBuildingGraphicFile(name))));
     // TODO
   }
-}
-
-class SpriteRef {
-  final Sprite sprite;
-
-  final Point<int> offset;
-
-  final int rate;
-
-  final bool loop;
-
-  SpriteRef({this.sprite, this.offset, this.rate, this.loop});
-
-  List<Frame> get frames => sprite.frames;
 }
