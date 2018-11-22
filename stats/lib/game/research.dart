@@ -47,13 +47,13 @@ enum UnitParameter {
   attackRate,
   buildingAttackBonus,
   accuracy,
-  autoHealRate,
+  selfHealRate,
   garrisonCapacity,
   garrisonHealRate,
 }
 
 class UnitParameterChange {
-  final Unit byUnit;
+  final UnitStat byUnit;
   final UnitLine byUnitLine;
   final List<AttackType> byAttackType;
   final List<AttackClass> byAttackClass;

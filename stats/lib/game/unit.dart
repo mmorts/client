@@ -2,7 +2,7 @@ part of 'civilization.dart';
 
 // TODO implement monk healing
 
-class Unit {
+class UnitStat {
   final String name;
 
   final Shape shape;
@@ -41,10 +41,10 @@ class Unit {
 
   final int buildingAttackBonus;
 
-  final int autoHealRate;
+  final int selfHealRate;
 
   /// Attack bonus against unit classes
-  final Map<int, int> attackBonus;
+  final Map<AttackClass, int> attackBonus;
 
   final int accuracy;
 
@@ -52,7 +52,7 @@ class Unit {
 
   final int garrisonHealRate;
 
-  Unit({
+  UnitStat({
     @required this.name,
     @required this.shape,
     @required this.attackType,
@@ -74,7 +74,7 @@ class Unit {
     @required this.buildingAttackBonus,
     @required this.attackBonus,
     @required this.accuracy,
-    @required this.autoHealRate,
+    @required this.selfHealRate,
     @required this.garrisonCapacity,
     @required this.garrisonHealRate,
   });
@@ -89,7 +89,7 @@ class Upgrade<T> {
 }
 
 class UnitLine {
-  final Unit unit;
+  final UnitStat unit;
 
   final Availability<Upgrade<UnitLine>> upgrade;
 

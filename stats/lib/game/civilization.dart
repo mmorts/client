@@ -11,7 +11,7 @@ class Availability<E> {
   final E entity;
 
   /// Should have this building for [entity] to be available
-  final Building hasBuilding;
+  final BuildingStat hasBuilding;
 
   /// Age after which unit is available for recruitment
   final int age;
@@ -22,32 +22,32 @@ class Availability<E> {
   Availability({this.entity, this.hasBuilding, this.age, this.research});
 }
 
-class CivAge {
+class CivAgeStat {
   final List<ParameterChanges> bonus;
 
-  CivAge({this.bonus});
+  CivAgeStat({this.bonus});
 }
 
-class Starting {
+class StartingStat {
   final int villagers;
-  final Map<Unit, int> units;
+  final Map<UnitStat, int> units;
   // TODO final Map<Building, int> buildings;
-  Starting({
+  StartingStat({
     @required this.villagers,
     @required this.units,
     // TODO @required this.buildings,
   });
 }
 
-class Civilization {
+class CivilizationStat {
   final String name;
-  final List<CivAge> ages;
-  final Map<int, Availability<Building>> buildings;
+  final List<CivAgeStat> ages;
+  final Map<int, Availability<BuildingStat>> buildings;
   final List<Availability<ParameterChanges>> civBonus;
   final List<Availability<ParameterChanges>> teamBonus;
-  final Starting startWith;
+  final StartingStat startWith;
 
-  Civilization(
+  CivilizationStat(
       {@required this.name,
       @required this.ages,
       @required this.buildings,
@@ -56,9 +56,9 @@ class Civilization {
       @required this.startWith});
 }
 
-class Game {
+class GameStat {
   final List<String> ages;
-  final List<Civilization> civs;
+  final List<CivilizationStat> civs;
 
-  Game({@required this.civs, @required this.ages});
+  GameStat({@required this.civs, @required this.ages});
 }

@@ -1,6 +1,6 @@
 part of 'civilization.dart';
 
-class Building {
+class BuildingStat {
   final String name;
   final Shape shape;
   final Resource cost;
@@ -10,10 +10,10 @@ class Building {
   final int garrisonHealRate;
   final int popSpace;
   final int popFill;
-  final List<Availability<Unit>> units;
+  final List<Availability<UnitStat>> units;
   final List<Availability<Research>> researches;
 
-  Building({
+  BuildingStat({
     @required this.name,
     @required this.shape,
     @required this.cost,

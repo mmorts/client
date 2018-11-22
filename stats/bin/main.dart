@@ -1,6 +1,6 @@
-import 'package:loader/loader.dart';
+import 'package:stats/stats.dart';
 
-final britons = Civilization(
+final britons = CivilizationStat(
   name: "Britons",
   ages: [
     /*
@@ -13,4 +13,4 @@ final britons = Civilization(
 );
 
 final game =
-    Game(civs: [britons], ages: ["Dark", "Feudal", "Castle", "Imperial"]);
+    GameStat(civs: [britons], ages: ["Dark", "Feudal", "Castle", "Imperial"]);
