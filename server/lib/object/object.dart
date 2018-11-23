@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:stats/stats.dart';
 
 part 'building.dart';

@@ -15,7 +15,7 @@ class UnitStat {
 
   final Resource cost;
 
-  final double creationTime;
+  final double trainTime;
 
   final double speed;
 
@@ -33,7 +33,7 @@ class UnitStat {
 
   final double maxRange;
 
-  final int blastRadius;
+  final double blastRadius;
 
   final int attack;
 
@@ -56,7 +56,7 @@ class UnitStat {
     @required this.attackType,
     @required this.damageClass,
     @required this.cost,
-    @required this.creationTime,
+    @required this.trainTime,
     @required this.speed,
     @required this.los,
     @required this.hp,

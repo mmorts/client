@@ -30,6 +30,10 @@ class Player {
 
   void applyResearch(Research research) {
     researched[research.id] = true;
+    for(final change in research.effect.unit) {
+      // TODO if(change.)
+      // TODO
+    }
     // TODO apply research effect
   }
 }

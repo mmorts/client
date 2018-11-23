@@ -15,6 +15,16 @@ class Resource {
       @required this.gold,
       @required this.stone});
 
+  Resource clone() =>
+      Resource(wood: wood, food: food, stone: stone, gold: gold);
+
+  void toValid() {
+    if(wood.isNegative) wood = 0;
+    if(food.isNegative) food = 0;
+    if(stone.isNegative) stone = 0;
+    if(gold.isNegative) gold = 0;
+  }
+
   bool operator ==(Object other) {
     if (other is Resource) {
       if (wood != other.wood) return false;

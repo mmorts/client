@@ -2,6 +2,11 @@ part of 'civilization.dart';
 
 // TODO cartography
 
+enum ChangeMultiplier {
+  absolute,
+  percent,
+}
+
 class ParameterChanges {
   final List<UnitParameterChange> unit;
   final List<BuildingParameterChange> building;
@@ -45,7 +50,6 @@ enum UnitParameter {
   blastRadius,
   attack,
   attackRate,
-  buildingAttackBonus,
   accuracy,
   selfHealRate,
   garrisonCapacity,
@@ -58,14 +62,16 @@ class UnitParameterChange {
   final List<AttackType> byAttackType;
   final List<DamageClass> byDamageClass;
   final UnitParameter parameter;
-  final double change;
+  final int change;
+  final ChangeMultiplier multiplier;
   UnitParameterChange(
       {@required this.byUnit,
       @required this.byUnitLine,
       @required this.byAttackType,
       @required this.byDamageClass,
       @required this.parameter,
-      @required this.change});
+      @required this.change,
+      @required this.multiplier});
 }
 
 enum BuildingParameter {
