@@ -7,6 +7,8 @@ import 'commands/commands.dart';
 
 import 'package:stats/stats.dart';
 
+typedef VoidFunc = void Function();
+
 /// Currently ongoing activity
 abstract class Activity {}
 
@@ -30,10 +32,9 @@ class ResearchActivity {
       @required this.building,
       @required this.research,
       @required this.seconds,
-      @required this.cost}) {
-    _timer = Timer(Duration(seconds: seconds), () {
-      // TODO
-    });
+      @required this.cost,
+      VoidFunc onComplete}) {
+    _timer = Timer(Duration(seconds: seconds), onComplete);
   }
 
   void pause() {
@@ -127,12 +128,18 @@ class Game {
     // Calculate seconds
     int seconds = research.research.time;
 
+    // TODO send research added notification
+    // TODO link to building, so that this is cancelled when the building is lost
     activities.research.add(ResearchActivity(
         player: player,
         building: building,
         research: research.research,
         seconds: seconds,
-        cost: cost));
+        cost: cost,
+        onComplete: () {
+          player.applyResearch(research.research);
+          // TODO send research completed notification
+        }));
     return null;
   }
 }

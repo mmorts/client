@@ -27,4 +27,9 @@ class Player {
     if(!researched.containsKey(research.research.id)) return false;
     return true;
   }
+
+  void applyResearch(Research research) {
+    researched[research.id] = true;
+    // TODO apply research effect
+  }
 }
