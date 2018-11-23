@@ -9,13 +9,22 @@ class Player {
 
   final CivilizationStat civilization;
 
-  final research = <int, bool>{};
+  final researched = <int, bool>{};
 
   int age;
+
+  Resource resources;
 
   // TODO player stats
 
   // TODO diplomacy
 
   Player(this.id, this.civilization);
+
+  bool isResearchUnlocked(Locked<Research> research) {
+    if(age < research.age) return false;
+    // TODO check if [hasBuilding] is met
+    if(!researched.containsKey(research.research.id)) return false;
+    return true;
+  }
 }

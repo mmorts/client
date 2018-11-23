@@ -7,7 +7,7 @@ part 'villager.dart';
 part 'research.dart';
 
 /// Defines criteria when the [entity] becomes available.
-class Availability<E> {
+class Locked<E> {
   final E entity;
 
   /// Should have this building for [entity] to be available
@@ -19,7 +19,7 @@ class Availability<E> {
   /// Research after which unit is available for recruitment
   final Research research;
 
-  Availability({this.entity, this.hasBuilding, this.age, this.research});
+  Locked({this.entity, this.hasBuilding, this.age, this.research});
 }
 
 class CivAgeStat {
@@ -42,9 +42,9 @@ class StartingStat {
 class CivilizationStat {
   final String name;
   final List<CivAgeStat> ages;
-  final Map<int, Availability<BuildingStat>> buildings;
-  final List<Availability<ParameterChanges>> civBonus;
-  final List<Availability<ParameterChanges>> teamBonus;
+  final Map<int, Locked<BuildingStat>> buildings;
+  final List<Locked<ParameterChanges>> civBonus;
+  final List<Locked<ParameterChanges>> teamBonus;
   final StartingStat startWith;
 
   CivilizationStat(

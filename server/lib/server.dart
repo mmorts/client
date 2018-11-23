@@ -1,66 +1,140 @@
+import 'dart:async';
 import 'ability.dart';
 import 'package:meta/meta.dart';
+import 'object/object.dart';
+import 'spatial/tile.dart';
+import 'commands/commands.dart';
 
-class Tile {
-  /// Is the tile water or land
-  final bool isWater;
+import 'package:stats/stats.dart';
 
-  final Position position;
+/// Currently ongoing activity
+abstract class Activity {}
 
-  /// Objects contained in the tile
-  final List<GameObject> objects;
+class ResearchActivity {
+  final Player player;
 
-  Tile(
-      {this.isWater: false,
-      @required this.position,
-      @required this.objects});
+  /// Building at which this activity occurs
+  final Building building;
 
-  /// Elevation of the tile
-  double get elevation => position.z;
+  final Research research;
+
+  final Resource cost;
+
+  /// Tick at which this activity completes
+  final int seconds;
+
+  Timer _timer;
+
+  ResearchActivity(
+      {@required this.player,
+      @required this.building,
+      @required this.research,
+      @required this.seconds,
+      @required this.cost}) {
+    _timer = Timer(Duration(seconds: seconds), () {
+      // TODO
+    });
+  }
+
+  void pause() {
+    throw Exception("Pause not implemented!");
+  }
 }
 
-/// A object in the game that has a visual representation
-class GameObject {
-  int player;
+class Activities {
+  final research = <ResearchActivity>[];
 
-  Position pos;
-
-  // TODO bounding box
-
-  GameObject({this.player, this.pos});
-}
-
-/// A three dimensional position in the game
-class Position {
-  double x;
-
-  double y;
-
-  double z;
+  Activities();
 }
 
 class Game {
+  DateTime _startTime;
+  int _curTick = 0;
+
   final List<Tile> tiles;
 
-  final Map<String, GameObject> objects;
+  final Map<int, dynamic> objects;
 
   final List<Player> players;
 
   final List<Team> teams;
+
+  final activities = Activities();
 
   Game(
       {@required this.tiles,
       @required this.objects,
       @required this.players,
       @required this.teams});
-}
 
-class Player {
-  final int id;
+  int get curTick => _curTick;
 
-  final Map<String, GameObject> objects;
+  DateTime get startTime => _startTime;
 
-  Player({@required this.id, @required this.objects});
+  void start() {
+    _startTime = DateTime.now();
+    // TODO set things in motion
+  }
+
+  void processTick() {
+    for (;;) {
+      // TODO implement pausing the game
+      _curTick = DateTime.now().difference(_startTime).inMilliseconds;
+
+      // TODO
+    }
+  }
+
+  final _wrongCommands = <int, int>{};
+
+  /// Queues "research" commands
+  String addResearchCommand(Player player, ResearchCommand cmd) {
+    // Check if building exists
+    Building building = player.buildings[cmd.buildingId];
+    if (building == null) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Building does not exist!";
+    }
+
+    // Check if research is already performed
+    if (player.researched.containsKey(cmd.researchId)) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Research already performed!";
+    }
+
+    // Check if research exists
+    Locked<Research> research = building.stat.researches[cmd.researchId];
+    if (research == null) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Research does not exist!";
+    }
+
+    // Check if research is unlocked
+    if (!player.isResearchUnlocked(research)) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Research is not unlocked!";
+    }
+
+    // Calculate cost
+    Resource cost = research.research.cost;
+
+    // Check if resources exist
+    if (player.resources < cost) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Not enough resources!";
+    }
+
+    // Calculate seconds
+    int seconds = research.research.time;
+
+    activities.research.add(ResearchActivity(
+        player: player,
+        building: building,
+        research: research.research,
+        seconds: seconds,
+        cost: cost));
+    return null;
+  }
 }
 
 class Team {

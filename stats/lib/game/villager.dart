@@ -1,11 +1,11 @@
 part of 'civilization.dart';
 
 class Villager {
-  final Resource cost;
-
   final Shape shape;
 
-  final double creationSpeed;
+  final Resource cost;
+
+  final double creationTime;
 
   final double speed;
 
@@ -17,15 +17,13 @@ class Villager {
 
   final int pierceArmor;
 
+  final int faith;
+
   final double minRange;
 
-  final double range;
-
-  final int blastRadius;
+  final double maxRange;
 
   final int attack;
-
-  final int buildingAttackBonus;
 
   final Resource workRate;
 
@@ -34,17 +32,16 @@ class Villager {
   Villager(
       {@required this.shape,
         @required this.cost,
-        @required this.creationSpeed,
+        @required this.creationTime,
         @required this.speed,
         @required this.los,
         @required this.hp,
         @required this.armor,
         @required this.pierceArmor,
+        @required this.faith,
         @required this.minRange,
-        @required this.range,
-        @required this.blastRadius,
+        @required this.maxRange,
         @required this.attack,
-        @required this.buildingAttackBonus,
         @required this.workRate,
         @required this.resCarry});
 }

@@ -1,7 +1,6 @@
 part of 'civilization.dart';
 
 // TODO cartography
-// TODO research/bonus to reduce research cost
 
 class ParameterChanges {
   final List<UnitParameterChange> unit;
@@ -15,6 +14,8 @@ class ParameterChanges {
 }
 
 class Research {
+  final int id;
+
   final String name;
 
   final Resource cost;
@@ -24,7 +25,7 @@ class Research {
   // Number of seconds to research
   final int time;
 
-  Research({this.name, this.time, this.cost, this.effect});
+  Research({this.id, this.name, this.time, this.cost, this.effect});
 }
 
 enum UnitParameter {
@@ -32,13 +33,12 @@ enum UnitParameter {
   cost2,
   cost3,
   cost4,
-  creationSpeed,
+  trainTime,
   speed,
   los,
   hp,
   armor,
   pierceArmor,
-  terrainDefenseBonus,
   faith,
   minRange,
   maxRange,
@@ -56,14 +56,14 @@ class UnitParameterChange {
   final UnitStat byUnit;
   final UnitLine byUnitLine;
   final List<AttackType> byAttackType;
-  final List<AttackClass> byAttackClass;
+  final List<DamageClass> byDamageClass;
   final UnitParameter parameter;
   final double change;
   UnitParameterChange(
       {@required this.byUnit,
       @required this.byUnitLine,
       @required this.byAttackType,
-      @required this.byAttackClass,
+      @required this.byDamageClass,
       @required this.parameter,
       @required this.change});
 }
@@ -73,10 +73,12 @@ enum BuildingParameter {
   cost2,
   cost3,
   cost4,
+  buildTime,
   hp,
   los,
   garrisonCapacity,
   garrisonHealRate,
+  popSpace,
 }
 
 class BuildingParameterChange {
