@@ -7,7 +7,7 @@ class VillagerStatInfo {
 
   Resource cost;
 
-  double trainTime;
+  int trainTime;
 
   double speed;
 

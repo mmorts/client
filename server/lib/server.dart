@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'ability.dart';
 import 'package:meta/meta.dart';
 import 'object/object.dart';
 import 'spatial/tile.dart';
@@ -7,46 +5,7 @@ import 'commands/commands.dart';
 
 import 'package:stats/stats.dart';
 
-typedef VoidFunc = void Function();
-
-/// Currently ongoing activity
-abstract class Activity {}
-
-class ResearchActivity {
-  final Player player;
-
-  /// Building at which this activity occurs
-  final Building building;
-
-  final Research research;
-
-  final Resource cost;
-
-  /// Tick at which this activity completes
-  final int seconds;
-
-  Timer _timer;
-
-  ResearchActivity(
-      {@required this.player,
-      @required this.building,
-      @required this.research,
-      @required this.seconds,
-      @required this.cost,
-      VoidFunc onComplete}) {
-    _timer = Timer(Duration(seconds: seconds), onComplete);
-  }
-
-  void pause() {
-    throw Exception("Pause not implemented!");
-  }
-}
-
-class Activities {
-  final research = <ResearchActivity>[];
-
-  Activities();
-}
+import 'activity/activity.dart';
 
 class Game {
   DateTime _startTime;
@@ -118,7 +77,6 @@ class Game {
 
     // Calculate cost
     Resource cost = research.research.cost;
-    // TODO calculate bonus
 
     // Check if resources exist
     if (player.resources < cost) {
@@ -128,12 +86,12 @@ class Game {
 
     // Calculate seconds
     int seconds = research.research.time;
-    // TODO calculate bonus
+
+    // TODO queue research in building
 
     // TODO send research added notification
     // TODO link to building, so that this is cancelled when the building is lost
     activities.research.add(ResearchActivity(
-        player: player,
         building: building,
         research: research.research,
         seconds: seconds,
@@ -154,14 +112,13 @@ class Game {
     }
 
     // Check if the building can recruit villager
-    if(!building.template.canRecruitVillager) {
+    if (!building.template.canRecruitVillager) {
       _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
       return "Building cannot recruit villager!";
     }
 
     // Calculate cost
-    Resource cost = player.statInfo;
-    // TODO calculate bonus
+    Resource cost = player.statInfo.villager.cost;
 
     // Check if resources exist
     if (player.resources < cost) {
@@ -169,7 +126,15 @@ class Game {
       return "Not enough resources!";
     }
 
-    // TODO
+    // TODO Queue villager in building
+
+    activities.villagerCreation.add(VillagerCreateActivity(
+        building: building,
+        cost: cost,
+        seconds: player.statInfo.villager.trainTime,
+        onComplete: () {
+          // TODO
+        }));
   }
 }
 

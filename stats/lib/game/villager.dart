@@ -5,7 +5,7 @@ class VillagerStat {
 
   final Resource cost;
 
-  final double trainTime;
+  final int trainTime;
 
   final double speed;
 
