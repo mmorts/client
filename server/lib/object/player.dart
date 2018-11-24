@@ -135,6 +135,10 @@ class Player {
       applyBuildingResearch(change);
     }
 
+    for(final change in research.effect.villager) {
+      statInfo.villager.
+    }
+
     // TODO
   }
 

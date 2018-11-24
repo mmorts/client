@@ -122,14 +122,15 @@ enum VillagerParameter {
   cost2,
   cost3,
   cost4,
-  creationSpeed,
+  trainTime,
   speed,
   los,
   hp,
   armor,
   pierceArmor,
+  faith,
   minRange,
-  range,
+  maxRange,
   blastRadius,
   attack,
   attackRate,
@@ -144,10 +145,11 @@ enum VillagerParameter {
   resCarry4,
 }
 
-class VillageParameterChange {
-  final UnitParameter parameter;
-  final double change;
-  VillageParameterChange({this.parameter, this.change});
+class VillagerParameterChange {
+  final VillagerParameter parameter;
+  final int change;
+  final ChangeMultiplier multiplier;
+  VillagerParameterChange({this.parameter, this.change, this.multiplier});
 }
 
 enum MarketParameter {
