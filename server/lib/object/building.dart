@@ -222,7 +222,9 @@ class Building {
 
   // TODO set garrison point
 
-  final queue = <dynamic>[];
+  final queue = <Activity>[];
+
+  final recruitable = <int, UnitStatInfo>{};
 
   Building(this.id, this.template, this.player) {
     statInfo = player.statInfo.buildings[template.id];
@@ -242,8 +244,17 @@ class Building {
 
   void enqueue(Activity activity) {
     queue.add(activity);
-    if(queue.length == 1) {
+    if (queue.length == 1) {
       activity.start();
     }
+  }
+
+  void updateQueue() {
+    if (queue.isEmpty) return;
+    if (queue.first.hasFinished) {
+      queue.removeAt(0);
+    }
+    if (queue.isEmpty) return;
+    queue.first.start();
   }
 }

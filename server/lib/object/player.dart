@@ -17,6 +17,8 @@ class PlayerStatInfo {
 class Player {
   final int id;
 
+  final activities = Activities();
+
   final statInfo = PlayerStatInfo();
 
   final units = <int, Unit>{};
@@ -142,6 +144,22 @@ class Player {
     // TODO market
 
     // TODO monk
+  }
+
+  void addVillager(Building building) {
+    // TODO
+    int id;
+    // TODO find a place to put the villager
+    final villager = Villager(id, statInfo.villager.template, this);
+    villagers[id] = villager;
+  }
+
+  void addUnit(Building building, UnitStatInfo statInfo) {
+    // TODO
+    int id;
+    // TODO find a place to put the unit
+    final unit = Unit(id, statInfo.template, this);
+    units[id] = unit;
   }
 
   void firePopSpaceEvent() {

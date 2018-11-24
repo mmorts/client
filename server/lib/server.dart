@@ -19,8 +19,6 @@ class Game {
 
   final List<Team> teams;
 
-  final activities = Activities();
-
   Game(
       {@required this.tiles,
       @required this.objects,
@@ -84,11 +82,9 @@ class Game {
       return "Not enough resources!";
     }
 
-    // TODO queue research in building
-
     // TODO send research added notification
     // TODO link to building, so that this is cancelled when the building is lost
-    int id;
+    final int id = player.activities.newId;
     final activity = ResearchActivity(
       id,
       player: player,
@@ -96,7 +92,7 @@ class Game {
       research: research.research,
       cost: cost,
     );
-    activities.research[id] = activity;
+    player.activities.research[id] = activity;
     building.enqueue(activity);
     return null;
   }
@@ -115,6 +111,8 @@ class Game {
       return "Building cannot recruit villager!";
     }
 
+    // TODO take amount into consideration
+
     // Calculate cost
     Resource cost = player.statInfo.villager.cost;
 
@@ -124,16 +122,44 @@ class Game {
       return "Not enough resources!";
     }
 
-    // TODO Queue villager in building
-    int id;
+    final int id = player.activities.newId;
     final activity = VillagerCreateActivity(
-      1,
+      id,
+      player: player,
       building: building,
       cost: cost,
     );
-    activities.villagerCreation[id] = activity;
+    player.activities.villagerCreation[id] = activity;
     building.enqueue(activity);
     return null;
+  }
+
+  String addRecruitArmyCommand(Player player, RecruitArmy cmd) {
+    // Check if building exists
+    Building building = player.buildings[cmd.buildingId];
+    if (building == null) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Building does not exist!";
+    }
+
+    final statInfo = building.recruitable[cmd.unitId];
+    if(statInfo == null) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Unit not recruitable!";
+    }
+
+    // TODO take amount into consideration
+
+    Resource cost = statInfo.cost;
+
+    // Check if resources exist
+    if (player.resources < cost) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Not enough resources!";
+    }
+
+    int id = player.activities.newId;
+    // TODO
   }
 }
 
