@@ -142,6 +142,18 @@ class Game {
         }));
     return null;
   }
+
+  String addRecruitVillagerCommand(Player player, RecruitVillager command) {
+    // Check if building exists
+    Building building = player.buildings[cmd.buildingId];
+    if (building == null) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Building does not exist!";
+    }
+
+    // TODO Check if the building can recruit villager
+    // TODO
+  }
 }
 
 class Team {

@@ -31,6 +31,7 @@ class BuildingStat {
   final int garrisonCapacity;
   final int garrisonHealRate;
   final int popSpace;
+  final bool canRecruitVillager;
   final Map<int, Locked<UnitStat>> units;
   final Map<int, Locked<Research>> researches;
 
@@ -58,6 +59,7 @@ class BuildingStat {
     @required this.garrisonCapacity,
     @required this.garrisonHealRate,
     @required this.popSpace,
+    @required this.canRecruitVillager,
     @required this.units,
     @required this.researches,
   });
