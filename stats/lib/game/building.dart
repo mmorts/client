@@ -1,8 +1,16 @@
 part of 'civilization.dart';
 
+enum BuildingType {
+  resource,
+  military,
+  gates,
+}
+
 // TODO garrison type
 
 class BuildingStat {
+  final int id;
+  final BuildingType type;
   final String name;
   final Shape shape;
   final List<DamageClass> damageClass;
@@ -35,7 +43,8 @@ class BuildingStat {
   final Map<int, Locked<UnitStat>> units;
   final Map<int, Locked<Research>> researches;
 
-  BuildingStat({
+  BuildingStat(this.id, {
+    this.type,
     @required this.name,
     @required this.shape,
     @required this.damageClass,

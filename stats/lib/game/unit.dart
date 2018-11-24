@@ -5,6 +5,8 @@ part of 'civilization.dart';
 // TODO garrison type
 
 class UnitStat {
+  final int id;
+
   final String name;
 
   final Shape shape;
@@ -50,7 +52,8 @@ class UnitStat {
 
   final int garrisonHealRate;
 
-  UnitStat({
+  UnitStat(
+    this.id, {
     @required this.name,
     @required this.shape,
     @required this.attackType,
@@ -76,18 +79,10 @@ class UnitStat {
   });
 }
 
-class Upgrade<T> {
-  final T unit;
-
-  final Resource cost;
-
-  Upgrade({this.unit, this.cost});
-}
-
 class UnitLine {
   final UnitStat unit;
 
-  final Locked<Upgrade<UnitLine>> upgrade;
+  final Locked<UnitLine> upgrade;
 
   UnitLine({this.unit, this.upgrade});
 }

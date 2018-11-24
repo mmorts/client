@@ -69,7 +69,7 @@ class UnitStatInfo {
     return ret;
   }
 
-  void addUnitResearch(UnitParameterChange change) {
+  void applyResearch(UnitParameterChange change) {
     switch (change.parameter) {
       case UnitParameter.cost1:
         if (change.multiplier == ChangeMultiplier.absolute) {
@@ -193,18 +193,32 @@ class UnitStatInfo {
         // TODO
         break;
     }
-    // TODO
   }
 }
 
 class Unit {
   final int id;
 
-  UnitStatInfo stat;
+  final UnitStat template;
+
+  UnitStatInfo statInfo;
 
   Player player;
 
   int hp;
 
-  Unit(this.id, this.stat);
+  Unit(this.id, this.template, this.player) {
+    statInfo = player.statInfo.units[template.id];
+    hp = statInfo.hp;
+  }
+
+  void convert(Player toPlayer) {
+    // TODO cancel on-going events
+    player.units.remove(id);
+    player.firePopSpaceEvent();
+
+    player = toPlayer;
+    player.units[id] = this;
+    statInfo = player.statInfo.units[template.id];
+  }
 }

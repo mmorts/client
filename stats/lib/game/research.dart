@@ -61,9 +61,13 @@ class UnitParameterChange {
   final UnitLine byUnitLine;
   final List<AttackType> byAttackType;
   final List<DamageClass> byDamageClass;
+
   final UnitParameter parameter;
+
   final int change;
+
   final ChangeMultiplier multiplier;
+
   UnitParameterChange(
       {@required this.byUnit,
       @required this.byUnitLine,
@@ -80,17 +84,37 @@ enum BuildingParameter {
   cost3,
   cost4,
   buildTime,
-  hp,
   los,
+  hp,
+  armor,
+  pierceArmor,
+  faith,
+  minRange,
+  maxRange,
+  blastRadius,
+  attack,
+  attackRate,
+  selfHealRate,
+  baseProjectiles,
+  maxProjectiles,
+  accuracy,
   garrisonCapacity,
   garrisonHealRate,
   popSpace,
 }
 
 class BuildingParameterChange {
-  final UnitParameter parameter;
-  final double change;
-  BuildingParameterChange({this.parameter, this.change});
+  final List<BuildingStat> buildings;
+  final BuildingType byType;
+  final BuildingParameter parameter;
+  final int change;
+  final ChangeMultiplier multiplier;
+  BuildingParameterChange(
+      {this.buildings,
+      this.byType,
+      this.parameter,
+      this.change,
+      this.multiplier});
 }
 
 enum VillagerParameter {
@@ -108,6 +132,7 @@ enum VillagerParameter {
   range,
   blastRadius,
   attack,
+  attackRate,
   buildingAttackBonus,
   workRate1,
   workRate2,

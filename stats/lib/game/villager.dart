@@ -1,11 +1,11 @@
 part of 'civilization.dart';
 
-class Villager {
+class VillagerStat {
   final Shape shape;
 
   final Resource cost;
 
-  final double creationTime;
+  final double trainTime;
 
   final double speed;
 
@@ -25,14 +25,16 @@ class Villager {
 
   final int attack;
 
+  final int attackRate;
+
   final Resource workRate;
 
   final Resource resCarry;
 
-  Villager(
+  VillagerStat(
       {@required this.shape,
         @required this.cost,
-        @required this.creationTime,
+        @required this.trainTime,
         @required this.speed,
         @required this.los,
         @required this.hp,
@@ -42,6 +44,7 @@ class Villager {
         @required this.minRange,
         @required this.maxRange,
         @required this.attack,
+        @required this.attackRate,
         @required this.workRate,
         @required this.resCarry});
 }

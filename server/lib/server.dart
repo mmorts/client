@@ -104,7 +104,7 @@ class Game {
     }
 
     // Check if research exists
-    Locked<Research> research = building.stat.researches[cmd.researchId];
+    Locked<Research> research = building.template.researches[cmd.researchId];
     if (research == null) {
       _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
       return "Research does not exist!";
@@ -118,6 +118,7 @@ class Game {
 
     // Calculate cost
     Resource cost = research.research.cost;
+    // TODO calculate bonus
 
     // Check if resources exist
     if (player.resources < cost) {
@@ -127,6 +128,7 @@ class Game {
 
     // Calculate seconds
     int seconds = research.research.time;
+    // TODO calculate bonus
 
     // TODO send research added notification
     // TODO link to building, so that this is cancelled when the building is lost
@@ -143,7 +145,7 @@ class Game {
     return null;
   }
 
-  String addRecruitVillagerCommand(Player player, RecruitVillager command) {
+  String addRecruitVillagerCommand(Player player, RecruitVillager cmd) {
     // Check if building exists
     Building building = player.buildings[cmd.buildingId];
     if (building == null) {
@@ -151,7 +153,22 @@ class Game {
       return "Building does not exist!";
     }
 
-    // TODO Check if the building can recruit villager
+    // Check if the building can recruit villager
+    if(!building.template.canRecruitVillager) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Building cannot recruit villager!";
+    }
+
+    // Calculate cost
+    Resource cost = player.statInfo;
+    // TODO calculate bonus
+
+    // Check if resources exist
+    if (player.resources < cost) {
+      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
+      return "Not enough resources!";
+    }
+
     // TODO
   }
 }
