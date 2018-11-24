@@ -136,10 +136,12 @@ class Player {
     }
 
     for(final change in research.effect.villager) {
-      statInfo.villager.
+      statInfo.villager.applyResearch(change);
     }
 
-    // TODO
+    // TODO market
+
+    // TODO monk
   }
 
   void firePopSpaceEvent() {

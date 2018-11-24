@@ -10,7 +10,7 @@ enum ChangeMultiplier {
 class ParameterChanges {
   final List<UnitParameterChange> unit;
   final List<BuildingParameterChange> building;
-  final List<VillageParameterChange> villager;
+  final List<VillagerParameterChange> villager;
   final List<MarketParameterChange> market;
   final int age;
 
