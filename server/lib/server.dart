@@ -84,22 +84,20 @@ class Game {
       return "Not enough resources!";
     }
 
-    // Calculate seconds
-    int seconds = research.research.time;
-
     // TODO queue research in building
 
     // TODO send research added notification
     // TODO link to building, so that this is cancelled when the building is lost
-    activities.research.add(ResearchActivity(
-        building: building,
-        research: research.research,
-        seconds: seconds,
-        cost: cost,
-        onComplete: () {
-          player.applyResearch(research.research);
-          // TODO send research completed notification
-        }));
+    int id;
+    final activity = ResearchActivity(
+      id,
+      player: player,
+      building: building,
+      research: research.research,
+      cost: cost,
+    );
+    activities.research[id] = activity;
+    building.enqueue(activity);
     return null;
   }
 
@@ -127,14 +125,15 @@ class Game {
     }
 
     // TODO Queue villager in building
-
-    activities.villagerCreation.add(VillagerCreateActivity(
-        building: building,
-        cost: cost,
-        seconds: player.statInfo.villager.trainTime,
-        onComplete: () {
-          // TODO
-        }));
+    int id;
+    final activity = VillagerCreateActivity(
+      1,
+      building: building,
+      cost: cost,
+    );
+    activities.villagerCreation[id] = activity;
+    building.enqueue(activity);
+    return null;
   }
 }
 

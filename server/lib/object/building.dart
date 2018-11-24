@@ -222,6 +222,8 @@ class Building {
 
   // TODO set garrison point
 
+  final queue = <dynamic>[];
+
   Building(this.id, this.template, this.player) {
     statInfo = player.statInfo.buildings[template.id];
     hp = statInfo.hp;
@@ -236,5 +238,12 @@ class Building {
     player = toPlayer;
     player.buildings[id] = this;
     statInfo = player.statInfo.buildings[template.id];
+  }
+
+  void enqueue(Activity activity) {
+    queue.add(activity);
+    if(queue.length == 1) {
+      activity.start();
+    }
   }
 }

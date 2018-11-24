@@ -6,9 +6,17 @@ import 'package:stats/stats.dart';
 typedef VoidFunc = void Function();
 
 /// Currently ongoing activity
-abstract class Activity {}
+abstract class Activity {
+  void start();
 
-class ResearchActivity {
+  void pause();
+}
+
+class ResearchActivity implements Activity {
+  final int id;
+
+  final Player player;
+
   /// Building at which this activity occurs
   final Building building;
 
@@ -16,45 +24,63 @@ class ResearchActivity {
 
   final Resource cost;
 
-  /// Tick at which this activity completes
-  final int seconds;
-
   Timer _timer;
 
-  ResearchActivity(
-      {@required this.building,
-        @required this.research,
-        @required this.seconds,
-        @required this.cost,
-        VoidFunc onComplete}) {
-    _timer = Timer(Duration(seconds: seconds), onComplete);
+  ResearchActivity(this.id,
+      {@required this.player,
+      @required this.building,
+      @required this.research,
+      @required this.cost});
+
+  void start() {
+    _timer = Timer(Duration(seconds: research.time), _onFinish);
   }
 
   void pause() {
     throw Exception("Pause not implemented!");
   }
+
+  void _onFinish() {
+    if (player != building.player) return;
+
+    player.applyResearch(research);
+    // TODO send research completed notification
+  }
 }
 
-class VillagerCreateActivity {
+class VillagerCreateActivity implements Activity {
+  final int id;
+
+  final Player player;
+
   final Building building;
 
   final Resource cost;
 
-  /// Tick at which this activity completes
-  final int seconds;
-
   Timer _timer;
 
-  VillagerCreateActivity(
-      {this.building, this.cost, this.seconds, VoidFunc onComplete}) {
-    _timer = Timer(Duration(seconds: seconds), onComplete);
+  VillagerCreateActivity(this.id, {this.player, this.building, this.cost});
+
+  void start() {
+    _timer =
+        Timer(Duration(seconds: player.statInfo.villager.trainTime), _onFinish);
+  }
+
+  void pause() {
+    throw Exception("Pause not implemented!");
+  }
+
+  void _onFinish() {
+    if (player != building.player) return;
+
+    // TODO
   }
 }
 
 class Activities {
-  final villagerCreation = <VillagerCreateActivity>[];
+  final villagerCreation = <int, VillagerCreateActivity>{};
 
-  final research = <ResearchActivity>[];
+  final research = <int, ResearchActivity>{};
 
   Activities();
 }
