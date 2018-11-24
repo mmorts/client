@@ -48,3 +48,27 @@ class BuildBuilding {
 class RepairBuilding {
   // TODO
 }
+
+class ChopWood {
+  // TODO
+}
+
+class Forage {
+  // TODO
+}
+
+class Farm {
+  // TODO
+}
+
+class Hunt {
+  // TODO
+}
+
+class MineStone {
+  // TODO
+}
+
+class MineGold {
+  // TODO
+}

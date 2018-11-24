@@ -143,7 +143,7 @@ class Game {
     }
 
     final statInfo = building.recruitable[cmd.unitId];
-    if(statInfo == null) {
+    if (statInfo == null) {
       _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
       return "Unit not recruitable!";
     }
@@ -159,7 +159,10 @@ class Game {
     }
 
     int id = player.activities.newId;
-    // TODO
+    final activity = UnitRecruitmentActivity(id,
+        player: player, building: building, cost: cost, statInfo: statInfo);
+    building.enqueue(activity);
+    return null;
   }
 }
 

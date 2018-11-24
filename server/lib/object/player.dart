@@ -147,6 +147,7 @@ class Player {
   }
 
   void addVillager(Building building) {
+    // TODO what if population is reached?
     // TODO
     int id;
     // TODO find a place to put the villager
@@ -155,6 +156,7 @@ class Player {
   }
 
   void addUnit(Building building, UnitStatInfo statInfo) {
+    // TODO what if population is reached?
     // TODO
     int id;
     // TODO find a place to put the unit
