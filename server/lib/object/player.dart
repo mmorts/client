@@ -1,8 +1,6 @@
 part of 'object.dart';
 
 class PlayerStatInfo {
-  final VillagerStatInfo villager;
-
   final units = <int, UnitStatInfo>{};
 
   final unitsByAttackType = <AttackType, List<UnitStatInfo>>{};
@@ -11,7 +9,7 @@ class PlayerStatInfo {
 
   final buildings = <int, BuildingStatInfo>{};
 
-  PlayerStatInfo({this.villager});
+  PlayerStatInfo();
 }
 
 class Player {
@@ -24,8 +22,6 @@ class Player {
   final units = <int, Unit>{};
 
   final buildings = <int, Building>{};
-
-  final villagers = <int, Villager>{};
 
   final CivilizationStat civilization;
 
@@ -105,20 +101,20 @@ class Player {
       buildingStatInfo.applyResearch(change);
     };
 
-    if(change.buildings == null && change.byType != null) {
-      for(final building in statInfo.buildings.values) {
+    if (change.buildings == null && change.byType != null) {
+      for (final building in statInfo.buildings.values) {
         apply(building.template);
       }
     } else {
-      if(change.buildings != null) {
-        for(final building in change.buildings) {
+      if (change.buildings != null) {
+        for (final building in change.buildings) {
           apply(building);
         }
       }
 
-      if(change.byType != null) {
-        for(final building in statInfo.buildings.values) {
-          if(building.template.type == change.byType) {
+      if (change.byType != null) {
+        for (final building in statInfo.buildings.values) {
+          if (building.template.type == change.byType) {
             apply(building.template);
           }
         }
@@ -137,22 +133,9 @@ class Player {
       applyBuildingResearch(change);
     }
 
-    for(final change in research.effect.villager) {
-      statInfo.villager.applyResearch(change);
-    }
-
     // TODO market
 
     // TODO monk
-  }
-
-  void addVillager(Building building) {
-    // TODO what if population is reached?
-    // TODO
-    int id;
-    // TODO find a place to put the villager
-    final villager = Villager(id, statInfo.villager.template, this);
-    villagers[id] = villager;
   }
 
   void addUnit(Building building, UnitStatInfo statInfo) {

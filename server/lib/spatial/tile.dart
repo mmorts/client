@@ -5,8 +5,6 @@ class Position {
   double x;
 
   double y;
-
-  double z;
 }
 
 class Tile {
@@ -22,7 +20,4 @@ class Tile {
       {this.isWater: false,
         @required this.position,
         @required this.objects});
-
-  /// Elevation of the tile
-  double get elevation => position.z;
 }

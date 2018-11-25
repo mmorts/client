@@ -10,12 +10,11 @@ enum ChangeMultiplier {
 class ParameterChanges {
   final List<UnitParameterChange> unit;
   final List<BuildingParameterChange> building;
-  final List<VillagerParameterChange> villager;
   final List<MarketParameterChange> market;
   final int age;
 
   ParameterChanges(
-      {this.unit, this.building, this.villager, this.market, this.age});
+      {this.unit, this.building, this.market, this.age});
 }
 
 class Research {
@@ -54,6 +53,14 @@ enum UnitParameter {
   selfHealRate,
   garrisonCapacity,
   garrisonHealRate,
+  workRate1,
+  workRate2,
+  workRate3,
+  workRate4,
+  resCarry1,
+  resCarry2,
+  resCarry3,
+  resCarry4,
 }
 
 class UnitParameterChange {
@@ -115,41 +122,6 @@ class BuildingParameterChange {
       this.parameter,
       this.change,
       this.multiplier});
-}
-
-enum VillagerParameter {
-  cost1,
-  cost2,
-  cost3,
-  cost4,
-  trainTime,
-  speed,
-  los,
-  hp,
-  armor,
-  pierceArmor,
-  faith,
-  minRange,
-  maxRange,
-  blastRadius,
-  attack,
-  attackRate,
-  buildingAttackBonus,
-  workRate1,
-  workRate2,
-  workRate3,
-  workRate4,
-  resCarry1,
-  resCarry2,
-  resCarry3,
-  resCarry4,
-}
-
-class VillagerParameterChange {
-  final VillagerParameter parameter;
-  final int change;
-  final ChangeMultiplier multiplier;
-  VillagerParameterChange({this.parameter, this.change, this.multiplier});
 }
 
 enum MarketParameter {

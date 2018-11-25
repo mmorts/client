@@ -97,43 +97,6 @@ class Game {
     return null;
   }
 
-  String addRecruitVillagerCommand(Player player, RecruitVillager cmd) {
-    // Check if building exists
-    Building building = player.buildings[cmd.buildingId];
-    if (building == null) {
-      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
-      return "Building does not exist!";
-    }
-
-    // Check if the building can recruit villager
-    if (!building.template.canRecruitVillager) {
-      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
-      return "Building cannot recruit villager!";
-    }
-
-    // TODO take amount into consideration
-
-    // Calculate cost
-    Resource cost = player.statInfo.villager.cost;
-
-    // Check if resources exist
-    if (player.resources < cost) {
-      _wrongCommands[player.id] = (_wrongCommands[player.id] ?? 0) + 1;
-      return "Not enough resources!";
-    }
-
-    final int id = player.activities.newId;
-    final activity = VillagerCreateActivity(
-      id,
-      player: player,
-      building: building,
-      cost: cost,
-    );
-    player.activities.villagerCreation[id] = activity;
-    building.enqueue(activity);
-    return null;
-  }
-
   String addRecruitArmyCommand(Player player, RecruitArmy cmd) {
     // Check if building exists
     Building building = player.buildings[cmd.buildingId];
@@ -161,8 +124,28 @@ class Game {
     int id = player.activities.newId;
     final activity = UnitRecruitmentActivity(id,
         player: player, building: building, cost: cost, statInfo: statInfo);
+    player.activities.unitCreation[id] = activity;
     building.enqueue(activity);
     return null;
+  }
+
+  String addMoveUnit(Player player, MoveUnits cmd) {
+
+    // Collect all units
+    final units = <int, Unit>{};
+    for(final id in cmd.unitId) {
+      units[id] = player.units[id];
+    }
+
+    // TODO remove from other formation
+
+    // TODO put into formation
+
+    // TODO Compute pathing
+
+    // TODO set the move task
+
+    // TODO
   }
 }
 

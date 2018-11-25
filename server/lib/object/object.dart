@@ -8,4 +8,3 @@ part 'building.dart';
 part 'game.dart';
 part 'player.dart';
 part 'unit.dart';
-part 'villager.dart';

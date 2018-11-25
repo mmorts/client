@@ -60,45 +60,6 @@ class ResearchActivity implements Activity {
   bool get hasFinished => _finished;
 }
 
-class VillagerCreateActivity implements Activity {
-  final int id;
-
-  final Player player;
-
-  final Building building;
-
-  final Resource cost;
-
-  Timer _timer;
-
-  bool _finished = false;
-
-  VillagerCreateActivity(this.id,
-      {@required this.player, @required this.building, @required this.cost});
-
-  void start() {
-    _timer =
-        Timer(Duration(seconds: player.statInfo.villager.trainTime), _onFinish);
-  }
-
-  void pause() {
-    throw Exception("Pause not implemented!");
-  }
-
-  void _onFinish() {
-    _finished = true;
-    if (player != building.player) return;
-
-    player.addVillager(building);
-    building.updateQueue();
-    // TODO
-  }
-
-  bool get hasStarted => _timer != null;
-
-  bool get hasFinished => _finished;
-}
-
 class UnitRecruitmentActivity implements Activity {
   final int id;
 
@@ -122,7 +83,7 @@ class UnitRecruitmentActivity implements Activity {
 
   void start() {
     _timer =
-        Timer(Duration(seconds: player.statInfo.villager.trainTime), _onFinish);
+        Timer(Duration(seconds:statInfo.trainTime), _onFinish);
   }
 
   void pause() {
@@ -145,7 +106,7 @@ class UnitRecruitmentActivity implements Activity {
 }
 
 class Activities {
-  final villagerCreation = <int, VillagerCreateActivity>{};
+  final unitCreation = <int, UnitRecruitmentActivity>{};
 
   final research = <int, ResearchActivity>{};
 

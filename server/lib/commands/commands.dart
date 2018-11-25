@@ -1,3 +1,4 @@
+import 'package:server/spatial/tile.dart';
 
 abstract class Command {
   int get type;
@@ -30,7 +31,9 @@ class RecruitArmy {
 }
 
 class MoveUnits {
-  // TODO
+  final List<int> unitId;
+  final Position pos;
+  MoveUnits({this.unitId, this.pos});
 }
 
 class AttackUnit {
@@ -38,6 +41,10 @@ class AttackUnit {
 }
 
 class AttackBuilding {
+  // TODO
+}
+
+class AttackGround {
   // TODO
 }
 

@@ -4,7 +4,7 @@ class UnitStatInfo {
   final Player player;
   final UnitStat template;
   Resource cost;
-  double trainTime;
+  int trainTime;
   double speed;
   double los;
   int hp;
@@ -23,6 +23,8 @@ class UnitStatInfo {
   int accuracy;
   int garrisonCapacity;
   int garrisonHealRate;
+  Resource workRate;
+  Resource resCarry;
 
   UnitStatInfo(
     this.player,
@@ -44,27 +46,34 @@ class UnitStatInfo {
     @required this.selfHealRate,
     @required this.garrisonCapacity,
     @required this.garrisonHealRate,
+    @required this.workRate,
+    @required this.resCarry,
   });
 
   factory UnitStatInfo.fromStat(Player player, UnitStat stat) {
-    final ret = UnitStatInfo(player, stat,
-        cost: stat.cost.clone(),
-        trainTime: stat.trainTime,
-        speed: stat.speed,
-        los: stat.los,
-        hp: stat.hp,
-        armor: stat.armor,
-        pierceArmor: stat.pierceArmor,
-        faith: stat.faith,
-        minRange: stat.minRange,
-        maxRange: stat.maxRange,
-        blastRadius: stat.blastRadius,
-        attack: stat.attack,
-        attackRate: stat.attackRate,
-        accuracy: stat.accuracy,
-        selfHealRate: stat.selfHealRate,
-        garrisonCapacity: stat.garrisonCapacity,
-        garrisonHealRate: stat.garrisonHealRate);
+    final ret = UnitStatInfo(
+      player,
+      stat,
+      cost: stat.cost.clone(),
+      trainTime: stat.trainTime,
+      speed: stat.speed,
+      los: stat.los,
+      hp: stat.hp,
+      armor: stat.armor,
+      pierceArmor: stat.pierceArmor,
+      faith: stat.faith,
+      minRange: stat.minRange,
+      maxRange: stat.maxRange,
+      blastRadius: stat.blastRadius,
+      attack: stat.attack,
+      attackRate: stat.attackRate,
+      accuracy: stat.accuracy,
+      selfHealRate: stat.selfHealRate,
+      garrisonCapacity: stat.garrisonCapacity,
+      garrisonHealRate: stat.garrisonHealRate,
+      workRate: stat.workRate.clone(),
+      resCarry: stat.resCarry.clone(),
+    );
     ret.attackBonus.addAll(stat.attackBonus);
     return ret;
   }
@@ -191,6 +200,70 @@ class UnitStatInfo {
         break;
       case UnitParameter.garrisonHealRate:
         // TODO
+        break;
+      case UnitParameter.workRate1:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          workRate.wood += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          workRate.wood += (change.change * template.workRate.wood) ~/ 100;
+        }
+        if (workRate.wood < 0) workRate.wood = 0;
+        break;
+      case UnitParameter.workRate2:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          workRate.food += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          workRate.food += (change.change * template.workRate.food) ~/ 100;
+        }
+        if (workRate.food < 0) workRate.food = 0;
+        break;
+      case UnitParameter.workRate3:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          workRate.stone += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          workRate.stone += (change.change * template.workRate.stone) ~/ 100;
+        }
+        if (workRate.stone < 0) workRate.stone = 0;
+        break;
+      case UnitParameter.workRate4:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          workRate.gold += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          workRate.gold += (change.change * template.workRate.gold) ~/ 100;
+        }
+        if (workRate.gold < 0) workRate.gold = 0;
+        break;
+      case UnitParameter.resCarry1:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          resCarry.wood += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          resCarry.wood += (change.change * template.resCarry.wood) ~/ 100;
+        }
+        if (resCarry.wood < 0) resCarry.wood = 0;
+        break;
+      case UnitParameter.resCarry2:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          resCarry.food += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          resCarry.food += (change.change * template.resCarry.food) ~/ 100;
+        }
+        if (resCarry.food < 0) resCarry.food = 0;
+        break;
+      case UnitParameter.resCarry3:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          resCarry.stone += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          resCarry.stone += (change.change * template.resCarry.stone) ~/ 100;
+        }
+        if (resCarry.stone < 0) resCarry.stone = 0;
+        break;
+      case UnitParameter.resCarry4:
+        if (change.multiplier == ChangeMultiplier.absolute) {
+          resCarry.gold += change.change;
+        } else if (change.multiplier == ChangeMultiplier.percent) {
+          resCarry.gold += (change.change * template.resCarry.gold) ~/ 100;
+        }
+        if (resCarry.gold < 0) resCarry.gold = 0;
         break;
     }
   }

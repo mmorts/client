@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 part 'unit.dart';
 part 'building.dart';
 part 'common.dart';
-part 'villager.dart';
 part 'research.dart';
 
 /// Defines criteria when the [entity] becomes available.
