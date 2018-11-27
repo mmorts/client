@@ -33,4 +33,11 @@ class Position {
     final yDiff = y - other.y;
     return sqrt(xDiff * xDiff + yDiff * yDiff);
   }
+
+  void copy(Position other) {
+    x = other.x;
+    y = other.y;
+  }
+
+  Position clone() => Position(x: x, y: y);
 }

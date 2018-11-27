@@ -1,9 +1,8 @@
 import 'package:pathing/src/geom.dart';
 
 abstract class TerrainType {
-  static const filled = 0x1;
-  static const land = 0x2;
-  static const water = 0x4;
+  static const land = 0x1;
+  static const water = 0x2;
 }
 
 class Tile {
@@ -11,6 +10,7 @@ class Tile {
   final int numVTiles;
   final Position pos;
   int terrainType;
+  dynamic owner;
 
   Tile(
       {this.numHTiles,
@@ -19,7 +19,7 @@ class Tile {
       this.terrainType: TerrainType.land});
 
   bool isWalkableBy(int type) {
-    if (terrainType & TerrainType.filled != 0) return false;
+    if (owner != null) return false;
     return terrainType & type != 0;
   }
 
@@ -123,17 +123,17 @@ class TileMap {
   }
 
   Path findPath(Position start, Position end, int terrainType) {
-    final open = <int, Path>{};
-    final closed = <int, Path>{};
+    final open = <int, _Path>{};
+    final closed = <int, _Path>{};
 
     final endTile = _getTileAt(end);
 
-    Path current = Path(null, _getTileAt(start), 0, end.distanceTo(start));
+    var current = _Path(null, _getTileAt(start), 0, end.distanceTo(start));
     open[current.tile.flatPos] = current;
 
     do {
       current = open.values.first;
-      for (Path ct in open.values) {
+      for (_Path ct in open.values) {
         if (ct.fcost < current.fcost) {
           current = ct;
         }
@@ -142,7 +142,12 @@ class TileMap {
       closed[current.tile.flatPos] = current;
 
       if (current.tile.flatPos == endTile.flatPos) {
-        return current;
+        Path ret = Path(null, current.tile);
+        while(current.parent != null) {
+          current = current.parent;
+          ret = Path(ret, current.tile);
+        };
+        return ret;
       }
 
       for (Tile neigh in getWalkableNeighbours(current.tile.pos, terrainType)) {
@@ -154,7 +159,7 @@ class TileMap {
         final neighFCost = distance + end.distanceTo(neigh.pos);
         final existing = open[neigh.flatPos];
         if (existing == null || neighFCost <= existing.fcost) {
-          final newFind = Path(current, neigh, distance, neighFCost);
+          final newFind = _Path(current, neigh, distance, neighFCost);
           open[neigh.flatPos] = newFind;
         }
       }
@@ -162,10 +167,22 @@ class TileMap {
 
     return null;
   }
+
+  int flatPosOf(Position pos) => (pos.y * numHTiles) + pos.x;
+
+  Tile tileAt(Position pos) => tiles[flatPosOf(pos)];
 }
 
 class Path {
-  final Path parent;
+  final Path child;
+
+  final Tile tile;
+
+  Path(this.child, this.tile);
+}
+
+class _Path {
+  final _Path parent;
 
   final Tile tile;
 
@@ -173,7 +190,7 @@ class Path {
 
   final double fcost;
 
-  Path(this.parent, this.tile, this.distance, this.fcost);
+  _Path(this.parent, this.tile, this.distance, this.fcost);
 
   String toString() {
     return "${tile.pos.x}:${tile.pos.y} -> $parent";

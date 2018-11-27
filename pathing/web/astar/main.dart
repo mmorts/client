@@ -18,7 +18,7 @@ void styleTile(Tile t) {
     tEl.classes.add("water");
   }
 
-  if (t.terrainType & TerrainType.filled != 0) {
+  if (t.owner != null) {
     tEl.classes.add("occupied");
   }
 }
@@ -33,15 +33,15 @@ void drawPath(Path path) {
     tEl.classes.addAll(
         ["tile", "tile-${t.flatPos}", "tile-${t.pos.x}-${t.pos.y}", "path"]);
     if (p == path) {
-      tEl.classes.add("end");
-    }
-    if (p.parent == null) {
       tEl.classes.add("start");
+    }
+    if (p.child == null) {
+      tEl.classes.add("end");
     }
     tEl.style.left = "${t.pos.x * 50}px";
     tEl.style.top = "${t.pos.y * 50}px";
     viewport.children.add(tEl);
-    p = p.parent;
+    p = p.child;
   }
 }
 
