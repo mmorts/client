@@ -1,12 +1,12 @@
 import 'package:pathing/src/geom.dart';
 import 'pathing.dart';
-import 'formation.dart';
+import 'movement.dart';
 
 class Unit {
   final int id;
   Player player;
   Position pos;
-  Formation formation;
+  Movement formation;
 
   Unit(this.id, {this.player, this.pos, this.formation});
 }
@@ -16,7 +16,7 @@ class Player {
   final Game game;
   final units = <int, Unit>{};
   final buildings = <int, dynamic>{};
-  final formations = <int, Formation>{};
+  final formations = <int, Movement>{};
 
   Player(this.id, this.game);
 
@@ -29,7 +29,7 @@ class Player {
 }
 
 class Game {
-  final map = TileMap(20, 20);
+  final map = TileMap(100, 100);
   final players = <int, Player>{};
   final buildings = <int, dynamic>{};
   final units = <int, Unit>{};
@@ -45,7 +45,7 @@ class Game {
   void compute() {
     for (Player player in players.values) {
       final finished = <int>[];
-      for (Formation formation in player.formations.values) {
+      for (Movement formation in player.formations.values) {
         formation.tick();
         if (formation.finished) {
           formation.dispose();

@@ -41,3 +41,7 @@ class Position {
 
   Position clone() => Position(x: x, y: y);
 }
+
+abstract class HasPosition {
+  Position get pos;
+}
