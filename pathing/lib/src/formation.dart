@@ -16,7 +16,7 @@ enum FormationRole {
 abstract class HasFormationRole implements HasPosition {
   int get id;
   int get typeId;
-  int get distance;
+  Point<int> distance;
   FormationRole get formationRole;
 }
 
@@ -35,7 +35,7 @@ class LineFormation {
     return fragileTypes;
   }
 
-  List<Position> format(List<HasFormationRole> units, Rectangle<int> area) {
+  void format(List<HasFormationRole> units, Rectangle<int> area) {
     final fragiles = <int, HasFormationRole>{};
     final protectors = <int, HasFormationRole>{};
 
@@ -49,6 +49,15 @@ class LineFormation {
 
     final protectorsTypes = splitByType(units);
     final fragileTypes = splitByType(units);
+
+    for (int unitTypeId in protectors.keys) {
+      List<HasFormationRole> units = protectorsTypes[unitTypeId];
+      final int width = units.first.distance.x * 2;
+      int numFit = area.width ~/ width;
+      int numRows = (units.length / numFit).ceil();
+      int spaceTaken = numRows * units.first.distance.y;
+      // TODO
+    }
 
     // TODO
   }
