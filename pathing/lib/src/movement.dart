@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'geom.dart';
 import 'pathing.dart';
 import 'unit.dart';
+import 'formation.dart';
 
 class UnitInMovement {
   final int id;
@@ -8,6 +10,8 @@ class UnitInMovement {
   final Unit unit;
 
   Path path;
+
+  FormationSpot spot;
 
   // TODO speed
 
@@ -32,25 +36,39 @@ class Movement {
       }
       unit.formation = this;
 
-      this.units[unit.id] = UnitInMovement(unit)
-        ..path = map.findPath(unit.pos, destination, TerrainType.land).child;
+      this.units[unit.id] = UnitInMovement(unit);
     }
+
+    recomputeAllPaths();
   }
 
   bool _finished = false;
 
   bool get finished => _finished;
 
+  FormationResult formation;
+
   void recomputeAllPaths() {
+    final line = LineFormation();
+    formation = line.format(
+        units.values.map((u) => u.unit), Point<int>(5, 100));
+    formation.transform(destination);
     for (final unit in units.values) {
-      unit.path =
-          map.findPath(unit.unit.pos, destination, TerrainType.land).child;
+      FormationSpot spot = formation.getFreeSpotFor(unit.unit.stat.id);
+      spot.unit = unit.unit;
+      unit.spot = spot;
+      unit.path = map
+          .findPath(unit.unit.pos, spot.transformedSpot, TerrainType.land)
+          ?.child;
+      // TODO get to closest point.
     }
   }
 
   void recomputeUnitPath(UnitInMovement unit) {
-    unit.path =
-        map.findPath(unit.unit.pos, destination, TerrainType.land).child;
+    unit.path = map
+        .findPath(unit.unit.pos, unit.spot.transformedSpot, TerrainType.land)
+        ?.child;
+    // TODO get to closest point.
   }
 
   void tick() {

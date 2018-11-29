@@ -35,7 +35,9 @@ final unitEls = <int, DivElement>{};
 
 int formationIdGen = 0;
 
-final int tileSize = 5;
+final int tileSize = 25;
+
+final selected = <Unit>[];
 
 void main() {
   Player player1 = Player(1, game);
@@ -43,6 +45,17 @@ void main() {
 
   Unit unit1 = game.players[1].addUnit(pos: Position(x: 0, y: 0));
   Unit unit2 = game.players[1].addUnit(pos: Position(x: 1, y: 0));
+  Unit unit3 = game.players[1].addUnit(pos: Position(x: 2, y: 0));
+  Unit unit4 = game.players[1].addUnit(pos: Position(x: 3, y: 0));
+  Unit unit5 = game.players[1].addUnit(pos: Position(x: 4, y: 0));
+  Unit unit6 = game.players[1].addUnit(pos: Position(x: 5, y: 0));
+  Unit unit7 = game.players[1].addUnit(pos: Position(x: 6, y: 0));
+  Unit unit8 = game.players[1].addUnit(pos: Position(x: 7, y: 0));
+  Unit unit9 = game.players[1].addUnit(pos: Position(x: 8, y: 0));
+  Unit unit10 = game.players[1].addUnit(pos: Position(x: 9, y: 0));
+
+  selected.addAll(
+      [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10]);
 
   for (Tile t in map.tiles.values) {
     final tEl = DivElement();
@@ -58,8 +71,9 @@ void main() {
     tEl.onClick.listen((MouseEvent event) {
       event.preventDefault();
       if (event.button == 0) {
-        if(t.owner == null) t.owner = 'x';
-        else if(t.owner == 'x') t.owner = null;
+        if (t.owner == null)
+          t.owner = 'x';
+        else if (t.owner == 'x') t.owner = null;
         styleTile(t);
       }
     });
@@ -67,7 +81,7 @@ void main() {
       if (event.ctrlKey) return;
       event.preventDefault();
       final int id = formationIdGen++;
-      game.players[1].formations[id] = Movement(id, map, t.pos, [unit1, unit2]);
+      game.players[1].formations[id] = Movement(id, map, t.pos, selected);
     });
   }
 

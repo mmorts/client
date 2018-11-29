@@ -1,4 +1,5 @@
 import 'package:pathing/src/geom.dart';
+import 'unit.dart';
 
 abstract class TerrainType {
   static const land = 0x1;
@@ -19,6 +20,7 @@ class Tile {
       this.terrainType: TerrainType.land});
 
   bool isWalkableBy(int type) {
+    // if(owner != null && owner is! Unit) return false;
     if (owner != null) return false;
     return terrainType & type != 0;
   }
