@@ -29,6 +29,11 @@ void styleUnit(Unit t) {
   DivElement tEl = viewport.querySelector(".unit-${t.id}");
   tEl.style.left = "${t.pos.x * tileSize}px";
   tEl.style.top = "${t.pos.y * tileSize}px";
+
+  tEl.classes.remove("selected");
+  if (selected.containsKey(t.id)) {
+    tEl.classes.add("selected");
+  }
 }
 
 final unitEls = <int, DivElement>{};
@@ -37,7 +42,9 @@ int formationIdGen = 0;
 
 final int tileSize = 25;
 
-final selected = <Unit>[];
+int curPlayer = 1;
+
+final selected = Map<int, Unit>();
 
 void main() {
   Player player1 = Player(1, game);
@@ -54,8 +61,16 @@ void main() {
   Unit unit9 = game.players[1].addUnit(pos: Position(x: 8, y: 0));
   Unit unit10 = game.players[1].addUnit(pos: Position(x: 9, y: 0));
 
-  selected.addAll(
-      [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10]);
+  selected[unit1.id] = unit1;
+  selected[unit2.id] = unit2;
+  selected[unit3.id] = unit3;
+  selected[unit4.id] = unit4;
+  selected[unit5.id] = unit5;
+  selected[unit6.id] = unit6;
+  selected[unit7.id] = unit7;
+  selected[unit8.id] = unit8;
+  selected[unit9.id] = unit9;
+  selected[unit10.id] = unit10;
 
   for (Tile t in map.tiles.values) {
     final tEl = DivElement();
@@ -81,7 +96,8 @@ void main() {
       if (event.ctrlKey) return;
       event.preventDefault();
       final int id = formationIdGen++;
-      game.players[1].formations[id] = Movement(id, map, t.pos, selected);
+      game.players[1].formations[id] =
+          Movement(id, map, t.pos, selected.values);
     });
   }
 
@@ -99,6 +115,19 @@ void main() {
         unitEl.style.height = "${tileSize}px";
         unitEls[unit.id] = unitEl;
         viewport.children.add(unitEl);
+
+        unitEl.onClick.listen((e) {
+          if (e.shiftKey) {
+            if (selected.containsKey(unit.id)) {
+              selected.remove(unit.id);
+            } else {
+              selected[unit.id] = unit;
+            }
+          } else {
+            selected.clear();
+            selected[unit.id] = unit;
+          }
+        });
       }
 
       styleUnit(unit);

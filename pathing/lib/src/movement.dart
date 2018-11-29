@@ -29,7 +29,7 @@ class Movement {
 
   final Position destination;
 
-  Movement(this.id, this.map, this.destination, List<Unit> units) {
+  Movement(this.id, this.map, this.destination, Iterable<Unit> units) {
     for (Unit unit in units) {
       if (unit.formation != null) {
         unit.formation.removeUnit(unit);

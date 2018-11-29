@@ -54,6 +54,8 @@ html, body {
   position: absolute;
   color: white;
   font-size: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 .unit-pl1 {
@@ -62,4 +64,8 @@ html, body {
 
 .unit-pl2 {
   background-color: red;
+}
+
+.unit.selected {
+  border: 1px solid white;
 }
