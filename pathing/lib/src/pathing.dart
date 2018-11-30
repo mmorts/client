@@ -20,8 +20,9 @@ class Tile {
       this.terrainType: TerrainType.land});
 
   bool isWalkableBy(int type) {
-    // if(owner != null && owner is! Unit) return false;
-    if (owner != null) return false;
+    // TODO
+    if(owner != null && owner is! Unit) return false;
+    // if (owner != null) return false;
     return terrainType & type != 0;
   }
 
@@ -144,11 +145,12 @@ class TileMap {
       closed[current.tile.flatPos] = current;
 
       if (current.tile.flatPos == endTile.flatPos) {
-        Path ret = Path(null, current.tile);
-        while(current.parent != null) {
+        Path ret = Path(null, current.tile, current.fcost);
+        while (current.parent != null) {
           current = current.parent;
-          ret = Path(ret, current.tile);
-        };
+          ret = Path(ret, current.tile, current.fcost);
+        }
+        ;
         return ret;
       }
 
@@ -180,7 +182,9 @@ class Path {
 
   final Tile tile;
 
-  Path(this.child, this.tile);
+  final double fcost;
+
+  Path(this.child, this.tile, this.fcost);
 }
 
 class _Path {

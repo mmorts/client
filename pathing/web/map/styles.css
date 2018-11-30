@@ -17,6 +17,7 @@ html, body {
 
 #viewport {
   position: relative;
+  user-select: none;
 }
 
 .tile {

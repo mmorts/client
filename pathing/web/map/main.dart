@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:html';
 import 'package:pathing/pathing.dart';
 
-final game = Game();
+final game = Game(Stats(units: {0: militia}));
 TileMap get map => game.map;
 
 final viewport = querySelector('#viewport');
@@ -46,20 +46,23 @@ int curPlayer = 1;
 
 final selected = Map<int, Unit>();
 
+final militia = UnitStat(0,
+    distance: Point<int>(1, 1), formationRole: FormationRole.protector);
+
 void main() {
   Player player1 = Player(1, game);
   game.players[player1.id] = player1;
 
-  Unit unit1 = game.players[1].addUnit(pos: Position(x: 0, y: 0));
-  Unit unit2 = game.players[1].addUnit(pos: Position(x: 1, y: 0));
-  Unit unit3 = game.players[1].addUnit(pos: Position(x: 2, y: 0));
-  Unit unit4 = game.players[1].addUnit(pos: Position(x: 3, y: 0));
-  Unit unit5 = game.players[1].addUnit(pos: Position(x: 4, y: 0));
-  Unit unit6 = game.players[1].addUnit(pos: Position(x: 5, y: 0));
-  Unit unit7 = game.players[1].addUnit(pos: Position(x: 6, y: 0));
-  Unit unit8 = game.players[1].addUnit(pos: Position(x: 7, y: 0));
-  Unit unit9 = game.players[1].addUnit(pos: Position(x: 8, y: 0));
-  Unit unit10 = game.players[1].addUnit(pos: Position(x: 9, y: 0));
+  Unit unit1 = game.players[1].addUnit(0, pos: Position(x: 10, y: 40));
+  Unit unit2 = game.players[1].addUnit(0, pos: Position(x: 11, y: 40));
+  Unit unit3 = game.players[1].addUnit(0, pos: Position(x: 12, y: 40));
+  Unit unit4 = game.players[1].addUnit(0, pos: Position(x: 13, y: 40));
+  Unit unit5 = game.players[1].addUnit(0, pos: Position(x: 14, y: 40));
+  Unit unit6 = game.players[1].addUnit(0, pos: Position(x: 15, y: 40));
+  Unit unit7 = game.players[1].addUnit(0, pos: Position(x: 16, y: 40));
+  Unit unit8 = game.players[1].addUnit(0, pos: Position(x: 17, y: 40));
+  Unit unit9 = game.players[1].addUnit(0, pos: Position(x: 18, y: 40));
+  Unit unit10 = game.players[1].addUnit(0, pos: Position(x: 19, y: 40));
 
   selected[unit1.id] = unit1;
   selected[unit2.id] = unit2;
@@ -96,8 +99,10 @@ void main() {
       if (event.ctrlKey) return;
       event.preventDefault();
       final int id = formationIdGen++;
-      game.players[1].formations[id] =
-          Movement(id, map, t.pos, selected.values);
+      game.players[1].formations[id] = MovementWithFormation(
+          id, game, t.pos, selected.values,
+          formation: LineFormation());
+      // NoFormationMovement(id, map, t.pos, selected.values);
     });
   }
 

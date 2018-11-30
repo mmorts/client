@@ -1,26 +1,6 @@
-import 'dart:math';
-import 'geom.dart';
-import 'pathing.dart';
-import 'unit.dart';
-import 'formation.dart';
+part of 'movement.dart';
 
-class UnitInMovement {
-  final int id;
-
-  final Unit unit;
-
-  Path path;
-
-  FormationSpot spot;
-
-  // TODO speed
-
-  UnitInMovement(Unit unit)
-      : id = unit.id,
-        unit = unit;
-}
-
-class Movement {
+class NoFormationMovement implements Movement {
   final int id;
   final TileMap map;
 
@@ -29,12 +9,13 @@ class Movement {
 
   final Position destination;
 
-  Movement(this.id, this.map, this.destination, Iterable<Unit> units) {
+  NoFormationMovement(
+      this.id, this.map, this.destination, Iterable<Unit> units) {
     for (Unit unit in units) {
-      if (unit.formation != null) {
-        unit.formation.removeUnit(unit);
+      if (unit.movement != null) {
+        unit.movement.removeUnit(unit);
       }
-      unit.formation = this;
+      unit.movement = this;
 
       this.units[unit.id] = UnitInMovement(unit);
     }
@@ -46,28 +27,17 @@ class Movement {
 
   bool get finished => _finished;
 
-  FormationResult formation;
-
   void recomputeAllPaths() {
-    final line = LineFormation();
-    formation = line.format(
-        units.values.map((u) => u.unit), Point<int>(5, 100));
-    formation.transform(destination);
     for (final unit in units.values) {
-      FormationSpot spot = formation.getFreeSpotFor(unit.unit.stat.id);
-      spot.unit = unit.unit;
-      unit.spot = spot;
-      unit.path = map
-          .findPath(unit.unit.pos, spot.transformedSpot, TerrainType.land)
-          ?.child;
+      unit.path =
+          map.findPath(unit.unit.pos, destination, TerrainType.land)?.child;
       // TODO get to closest point.
     }
   }
 
   void recomputeUnitPath(UnitInMovement unit) {
-    unit.path = map
-        .findPath(unit.unit.pos, unit.spot.transformedSpot, TerrainType.land)
-        ?.child;
+    unit.path =
+        map.findPath(unit.unit.pos, destination, TerrainType.land)?.child;
     // TODO get to closest point.
   }
 
@@ -81,6 +51,8 @@ class Movement {
       if (!next.isWalkableBy(TerrainType.land)) {
         if (next.owner is Unit) {
           final obs = next.owner;
+          // TODO if it has been a while recompute path
+          // TODO if it is close enough, end movement
           if (units.containsKey(obs.id)) continue;
         }
         recomputeUnitPath(unit);
@@ -104,13 +76,13 @@ class Movement {
   /// Removed units from this formation
   void removeUnit(Unit unit) {
     units.remove(unit.id);
-    unit.formation = null;
+    unit.movement = null;
     recomputeAllPaths();
   }
 
   void dispose() {
     for (final unit in units.values) {
-      unit.unit.formation = null;
+      unit.unit.movement = null;
     }
   }
 }

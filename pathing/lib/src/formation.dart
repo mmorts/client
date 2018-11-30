@@ -12,11 +12,13 @@ enum Formation {
 class FormationSpot {
   final Position spot;
 
+  final int unitType;
+
   Unit unit;
 
   Position transformedSpot;
 
-  FormationSpot(this.spot);
+  FormationSpot(this.spot, this.unitType);
 }
 
 class FormationResult {
@@ -24,7 +26,9 @@ class FormationResult {
 
   final List<FormationSpot> spots;
 
-  FormationResult(this.spotsMap, this.spots);
+  final FormationSpot reference;
+
+  FormationResult(this.spotsMap, this.spots, this.reference);
 
   void transform(Position to) {
     spots.forEach((s) =>
@@ -43,43 +47,34 @@ class FormationResult {
   }
 }
 
-class LineFormation {
-  Map<int, List<Unit>> splitByType(Iterable<Unit> units) {
-    final fragileTypes = <int, List<Unit>>{};
-    for (Unit unit in units) {
-      List<Unit> type = fragileTypes[unit.stat.id];
-      if (type == null) {
-        type = <Unit>[];
-        fragileTypes[unit.stat.id] = type;
-      }
-      type.add(unit);
-    }
-    return fragileTypes;
-  }
+abstract class FormationMaker {
+  FormationResult format(Map<int, Map<int, Unit>> units, Point<int> area,
+      Map<int, UnitStat> stats);
+}
 
-  FormationResult format(Iterable<Unit> units, Point<int> area) {
-    final fragiles = <int, Unit>{};
-    final protectors = <int, Unit>{};
+class LineFormation implements FormationMaker {
+  FormationResult format(Map<int, Map<int, Unit>> units, Point<int> area,
+      Map<int, UnitStat> stats) {
+    final fragiles = <int, Map<int, Unit>>{};
+    final protectors = <int, Map<int, Unit>>{};
 
-    for (Unit unit in units) {
-      if (unit.stat.formationRole == FormationRole.fragile) {
-        fragiles[unit.id] = unit;
-      } else if (unit.stat.formationRole == FormationRole.protector) {
-        protectors[unit.id] = unit;
+    for (int unitTypeId in units.keys) {
+      final stat = stats[unitTypeId];
+      if (stat.formationRole == FormationRole.fragile) {
+        fragiles[unitTypeId] = units[unitTypeId];
+      } else if (stat.formationRole == FormationRole.protector) {
+        protectors[unitTypeId] = units[unitTypeId];
       }
     }
-
-    final protectorsTypes = splitByType(protectors.values);
-    final fragileTypes = splitByType(fragiles.values);
 
     final spotsMap = <int, List<FormationSpot>>{};
     final spots = <FormationSpot>[];
 
     int vSpaceTaken = 0;
 
-    Function allocator = (Map<int, List<Unit>> unitMapping) {
+    Function allocator = (Map<int, Map<int, Unit>> unitMapping) {
       for (int unitTypeId in unitMapping.keys) {
-        final List<Unit> units = unitMapping[unitTypeId];
+        final Map<int, Unit> units = unitMapping[unitTypeId];
         final int numUnits = units.length;
         final int unitWidth = 1; // TODO units.first.stat.distance.x * 2;
         final int unitHeight = 1; // TODO units.first.stat.distance.y * 2;
@@ -89,9 +84,17 @@ class LineFormation {
 
         final currentSpots = <FormationSpot>[];
         for (int i = 0; i < numRows; i++) {
-          for (int j = 0; j < maxInRow; j++) {
-            final spot = FormationSpot(Position(
-                x: ((j - maxInRow ~/ 2) * unitWidth).toInt(), y: vSpaceTaken));
+          int maxInThisRow = maxInRow;
+          if(i == numRows - 1) {
+            maxInThisRow = numUnits % maxInRow;
+            if(maxInThisRow == 0) maxInThisRow = maxInRow;
+          }
+          for (int j = 0; j < maxInThisRow; j++) {
+            final spot = FormationSpot(
+                Position(
+                    x: ((j - maxInThisRow ~/ 2) * unitWidth).toInt(),
+                    y: vSpaceTaken),
+                unitTypeId);
             currentSpots.add(spot);
             spots.add(spot);
           }
@@ -101,9 +104,12 @@ class LineFormation {
       }
     };
 
-    allocator(protectorsTypes);
-    allocator(fragileTypes);
+    allocator(protectors);
+    allocator(fragiles);
 
-    return FormationResult(spotsMap, spots);
+    FormationSpot reference =
+        spots.firstWhere((s) => s.spot.x == 0 && s.spot.y == 0);
+
+    return FormationResult(spotsMap, spots, reference);
   }
 }

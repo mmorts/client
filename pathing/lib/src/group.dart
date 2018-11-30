@@ -53,13 +53,13 @@ List<Group> group(List<HasPosition> units, double distance) {
 
     Group inGroup;
     for (Group group in groups) {
-      if(!group.contains(unit.pos)) continue;
+      if (!group.contains(unit.pos)) continue;
       group.addMember(unit);
       inGroup = group;
       break;
     }
 
-    if(inGroup == null) {
+    if (inGroup == null) {
       groups.add(Group(distance)..addMember(unit));
     }
   }
