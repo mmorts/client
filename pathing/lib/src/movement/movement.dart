@@ -16,7 +16,9 @@ class UnitInMovement {
 
   FormationSpot spot;
 
-  int speed = 1;
+  int acceleration = 0;
+
+  int needsUpdate = 0;
 
   UnitInMovement(Unit unit)
       : id = unit.id,

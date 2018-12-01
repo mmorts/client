@@ -112,6 +112,9 @@ class MovementWithFormation implements Movement {
     }
 
     while (_reference.path != null) {
+      if (_reference.needsUpdate-- > 0) {
+        break;
+      }
       Tile next = map.tiles[_reference.path.tile.flatPos];
       // TODO if diagonal check we have space on sides
       if (!next.isWalkableBy(TerrainType.land)) {
@@ -129,6 +132,7 @@ class MovementWithFormation implements Movement {
       Tile present = map.tileAt(_reference.unit.pos);
       present.owner = null;
       next.owner = _reference.unit;
+      _reference.needsUpdate = _reference.unit.stat.speed;
 
       _reference.unit.pos.copy(next.pos);
       _reference.path = _reference.path.child;
@@ -142,6 +146,9 @@ class MovementWithFormation implements Movement {
 
     for (final unit in units.values) {
       if (unit != _reference) {
+        if (unit.needsUpdate-- > 0) {
+          continue;
+        }
         if (unit.path == null) {
           // TODO check if we have reached the destination
           // TODO what if this is null?
@@ -166,6 +173,14 @@ class MovementWithFormation implements Movement {
 
         unit.unit.pos.copy(next.pos);
         unit.path = unit.path.child;
+
+        if (unit.path != null)
+          unit.acceleration = 2;
+        else
+          unit.acceleration = 0;
+        if (unit.acceleration != 0) print(unit.acceleration);
+        unit.needsUpdate = unit.unit.stat.speed - unit.acceleration;
+
         if (unit.path != null) {
           // allFinished = false;
         }

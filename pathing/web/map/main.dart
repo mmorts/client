@@ -49,7 +49,7 @@ final selected = Map<int, Unit>();
 final militia = UnitStat(0,
     distance: Point<int>(1, 1),
     formationRole: FormationRole.protector,
-    speed: 1);
+    speed: 5);
 
 void main() {
   Player player1 = Player(1, game);
@@ -108,7 +108,7 @@ void main() {
     });
   }
 
-  Timer.periodic(Duration(milliseconds: 500), (_) {
+  Timer.periodic(Duration(milliseconds: 100), (_) {
     game.compute();
 
     for (Unit unit in game.units.values) {

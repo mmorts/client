@@ -65,15 +65,16 @@ class Game {
   final units = <int, Unit>{};
   final Stats stats;
 
-  DateTime _startTime;
+  int _time = 0;
+
+  int get time => _time;
 
   Game(this.stats);
 
-  void start() {
-    _startTime = DateTime.now();
-  }
+  void start() {}
 
   void compute() {
+    _time += 5;
     for (Player player in players.values) {
       final finished = <int>[];
       for (Movement movement in player.formations.values) {
