@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:meta/meta.dart';
 import 'package:pathing/src/geom.dart';
 import 'pathing.dart';
 import 'movement/movement.dart';
@@ -15,7 +16,12 @@ class UnitStat {
 
   final FormationRole formationRole;
 
-  UnitStat(this.id, {this.distance, this.formationRole});
+  final int speed;
+
+  UnitStat(this.id,
+      {@required this.distance,
+      @required this.formationRole,
+      @required this.speed});
 }
 
 class Stats {

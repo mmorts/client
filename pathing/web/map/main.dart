@@ -47,7 +47,9 @@ int curPlayer = 1;
 final selected = Map<int, Unit>();
 
 final militia = UnitStat(0,
-    distance: Point<int>(1, 1), formationRole: FormationRole.protector);
+    distance: Point<int>(1, 1),
+    formationRole: FormationRole.protector,
+    speed: 1);
 
 void main() {
   Player player1 = Player(1, game);
