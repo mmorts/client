@@ -73,6 +73,7 @@ class MovementWithFormation implements Movement {
   // TODO move unitTypeMap here
 
   void recomputeAllPaths() {
+    speed = 5;  // TODO pick lowest speed of all units
     _formationResult =
         formation.format(_unitsByType, Point<int>(5, 100), game.stats.units);
     _computeReference();
@@ -105,7 +106,15 @@ class MovementWithFormation implements Movement {
     // TODO get to closest point.
   }
 
+  int speed = 0;
+
   void tick() {
+    if(_reference.unit.pos == destination &&
+        units.values.every((u) => u.unit.pos == u.spot.transformedSpot)) {
+      _finished = true;
+      return;
+    }
+
     if (units.isEmpty) {
       _finished = true;
       return;
@@ -160,9 +169,15 @@ class MovementWithFormation implements Movement {
         if (!next.isWalkableBy(TerrainType.land)) {
           if (next.owner is Unit) {
             final obs = next.owner;
-            if (units.containsKey(obs.id)) continue;
+            if (!units.containsKey(obs.id)) {
+              recomputeUnitPath(unit);
+            } else {
+              // TODO
+            }
+          } else {
+            recomputeUnitPath(unit);
           }
-          recomputeUnitPath(unit);
+
           // TODO what if new path is null
           next = map.tiles[unit.path.tile.flatPos];
         }
@@ -174,12 +189,13 @@ class MovementWithFormation implements Movement {
         unit.unit.pos.copy(next.pos);
         unit.path = unit.path.child;
 
-        if (unit.path != null)
+        if (unit.path != null) {
           unit.acceleration = 2;
-        else
+          unit.needsUpdate = unit.unit.stat.speed - unit.acceleration;
+        } else {
           unit.acceleration = 0;
-        if (unit.acceleration != 0) print(unit.acceleration);
-        unit.needsUpdate = unit.unit.stat.speed - unit.acceleration;
+          unit.needsUpdate = _reference.needsUpdate;
+        }
 
         if (unit.path != null) {
           // allFinished = false;
@@ -201,6 +217,7 @@ class MovementWithFormation implements Movement {
   }
 
   void dispose() {
+    print("Finished!");
     for (final unit in units.values) {
       unit.unit.movement = null;
     }

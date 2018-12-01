@@ -40,6 +40,14 @@ class Position {
   }
 
   Position clone() => Position(x: x, y: y);
+
+  bool operator ==(other) {
+    if(x == other.x && y == other.y) return true;
+    return false;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 abstract class HasPosition {
