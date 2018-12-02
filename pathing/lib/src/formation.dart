@@ -30,7 +30,7 @@ final transformByDir = {
   Direction.s: (Position pos) => Position(x: -pos.x, y: -pos.y),
   Direction.sw: (Position pos) => Position(x: -pos.x, y: -(pos.x + pos.y)),
   Direction.w: (Position pos) => Position(x: pos.y, y: -pos.x),
-  Direction.nw: (Position pos) => Position(x: -pos.x, y: -pos.x + pos.y),
+  Direction.nw: (Position pos) => Position(x: pos.x, y: -pos.x + pos.y),
 };
 
 class FormationResult {
