@@ -84,18 +84,11 @@ class MovementWithFormation implements Movement {
         map.findPath(_reference.unit.pos, destination, TerrainType.land)?.child;
     // TODO what if path is null?
 
-    // TODO also use direction
-    _formationResult.transform(_reference.unit.pos);
-
     for (final unit in units.values) {
       if (unit == _reference) continue;
       FormationSpot spot = _formationResult.getFreeSpotFor(unit.unit.stat.id);
       spot.unit = unit.unit;
       unit.spot = spot;
-      unit.path = map
-          .findPath(unit.unit.pos, spot.transformedSpot, TerrainType.land)
-          ?.child;
-      // TODO get to closest point.
     }
   }
 
@@ -144,14 +137,15 @@ class MovementWithFormation implements Movement {
       _reference.needsUpdate = _reference.unit.stat.speed;
 
       _reference.unit.pos.copy(next.pos);
+      final oldPath = _reference.path;
       _reference.path = _reference.path.child;
       if (_reference.path != null) {
-        // allFinished = false;
+        _formationResult.transform(_reference.unit.pos, _reference.path.dir);
+      } else {
+        _formationResult.transform(_reference.unit.pos, oldPath.dir);
       }
       break;
     }
-
-    _formationResult.transform(_reference.unit.pos);
 
     for (final unit in units.values) {
       if (unit != _reference) {

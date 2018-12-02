@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'geom.dart';
+import 'pathing.dart';
 import 'unit.dart';
 
 enum Formation {
@@ -21,6 +22,17 @@ class FormationSpot {
   FormationSpot(this.spot, this.unitType);
 }
 
+final transformByDir = {
+  Direction.n: (Position pos) => Position(x: pos.x, y: pos.y),
+  Direction.ne: (Position pos) => Position(x: pos.x, y: pos.x + pos.y),
+  Direction.e: (Position pos) => Position(x: -pos.y, y: pos.x),
+  Direction.se: (Position pos) => Position(x: -pos.x, y: pos.x - pos.y),
+  Direction.s: (Position pos) => Position(x: -pos.x, y: -pos.y),
+  Direction.sw: (Position pos) => Position(x: -pos.x, y: -(pos.x + pos.y)),
+  Direction.w: (Position pos) => Position(x: pos.y, y: -pos.x),
+  Direction.nw: (Position pos) => Position(x: -pos.x, y: -pos.x + pos.y),
+};
+
 class FormationResult {
   final Map<int, List<FormationSpot>> spotsMap;
 
@@ -30,9 +42,9 @@ class FormationResult {
 
   FormationResult(this.spotsMap, this.spots, this.reference);
 
-  void transform(Position to) {
-    spots.forEach((s) =>
-        s.transformedSpot = Position(x: s.spot.x + to.x, y: s.spot.y + to.y));
+  void transform(Position to, Direction dir) {
+    final rotator = transformByDir[dir];
+    spots.forEach((s) => s.transformedSpot = rotator(s.spot) + to);
   }
 
   FormationSpot getFreeSpotFor(int unitType) {
@@ -85,9 +97,9 @@ class LineFormation implements FormationMaker {
         final currentSpots = <FormationSpot>[];
         for (int i = 0; i < numRows; i++) {
           int maxInThisRow = maxInRow;
-          if(i == numRows - 1) {
+          if (i == numRows - 1) {
             maxInThisRow = numUnits % maxInRow;
-            if(maxInThisRow == 0) maxInThisRow = maxInRow;
+            if (maxInThisRow == 0) maxInThisRow = maxInRow;
           }
           for (int j = 0; j < maxInThisRow; j++) {
             final spot = FormationSpot(

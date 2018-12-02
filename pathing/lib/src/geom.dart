@@ -42,12 +42,23 @@ class Position {
   Position clone() => Position(x: x, y: y);
 
   bool operator ==(other) {
-    if(x == other.x && y == other.y) return true;
+    if (x == other.x && y == other.y) return true;
     return false;
   }
 
   @override
   int get hashCode => super.hashCode;
+
+  Position operator *(Position other) =>
+      Position(x: x * other.x, y: y * other.y);
+
+  Position operator +(Position other) =>
+      Position(x: x + other.x, y: y + other.y);
+
+  Position macc(Position m, Position acc) =>
+      Position(x: x * m.x + acc.x, y: y * m.y + acc.y);
+
+  Position dot(Position other) => Position(x: x * other.x, y: y * other.y);
 }
 
 abstract class HasPosition {
