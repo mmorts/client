@@ -64,7 +64,7 @@ void main() {
   Unit unit7 = game.players[1].addUnit(0, pos: Position(x: 16, y: 40));
   Unit unit8 = game.players[1].addUnit(0, pos: Position(x: 17, y: 40));
   Unit unit9 = game.players[1].addUnit(0, pos: Position(x: 18, y: 40));
-  Unit unit10 = game.players[1].addUnit(0, pos: Position(x: 19, y: 40));
+  Unit unit10 = game.players[1].addUnit(0, pos: Position(x: 41, y: 47));
 
   selected[unit1.id] = unit1;
   selected[unit2.id] = unit2;

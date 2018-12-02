@@ -18,6 +18,17 @@ enum Direction {
   nw,
 }
 
+final dirToDistance = {
+  Direction.n: 1.0,
+  Direction.ne: 1.414,
+  Direction.e: 1.0,
+  Direction.se: 1.414,
+  Direction.s: 1.0,
+  Direction.sw: 1.414,
+  Direction.w: 1.0,
+  Direction.nw: 1.414,
+};
+
 class TileWithDirection {
   final Tile tile;
 
@@ -26,6 +37,8 @@ class TileWithDirection {
   TileWithDirection({this.tile, this.dir});
 
   bool isWalkableBy(int type) => tile.isWalkableBy(type);
+
+  double get distance => dirToDistance[dir];
 }
 
 class Tile {
@@ -237,16 +250,14 @@ class TileMap {
         final Tile neighTile = neigh.tile;
 
         if (closed.containsKey(neighTile.flatPos)) continue;
-        if (open.containsKey(neighTile.flatPos)) continue;
 
-        final toStart = current.distanceFromStart +
-            current.tile.pos.distanceTo(neighTile.pos);
         double zigzagCost = current.zigzagCost;
         final toEnd = end.distanceTo(neighTile.pos);
         if (current.dir != null && neigh.dir != current.dir) zigzagCost += 0.7;
-        double neighFCost = toStart + toEnd + zigzagCost;
-        final existing = open[neighTile.flatPos];
-        if (existing == null || neighFCost <= existing.fcost) {
+        final toStart = current.distanceFromStart + neigh.distance + zigzagCost;
+        double neighFCost = toStart + toEnd;
+        final existingOpen = open[neighTile.flatPos];
+        if (existingOpen == null || neighFCost <= existingOpen.fcost) {
           final newFind = _Path(current, neighTile,
               distanceFromStart: toStart,
               fcost: neighFCost,
@@ -305,5 +316,21 @@ class _Path {
 
   String toString() {
     return "${tile.pos.x}:${tile.pos.y} -> $parent";
+  }
+
+  Path get toPath {
+    _Path current = this;
+    Path ret = Path(null, current.tile,
+        fcost: current.fcost,
+        distanceToEnd: current.distanceToEnd,
+        dir: current.dir);
+    while (current.parent != null) {
+      current = current.parent;
+      ret = Path(ret, current.tile,
+          fcost: current.fcost,
+          distanceToEnd: current.distanceToEnd,
+          dir: current.dir);
+    }
+    return ret;
   }
 }
