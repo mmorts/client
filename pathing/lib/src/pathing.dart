@@ -203,7 +203,8 @@ class TileMap {
         fcost: end.distanceTo(start),
         distanceFromStart: 0,
         distanceToEnd: end.distanceTo(start),
-        dir: null);
+        dir: null,
+        zigzagCost: 0);
     open[current.tile.flatPos] = current;
 
     do {
@@ -240,16 +241,18 @@ class TileMap {
 
         final toStart = current.distanceFromStart +
             current.tile.pos.distanceTo(neighTile.pos);
+        double zigzagCost = current.zigzagCost;
         final toEnd = end.distanceTo(neighTile.pos);
-        double neighFCost = toStart + toEnd;
-        if (current.dir != null && neigh.dir != current.dir) neighFCost += 1;
+        if (current.dir != null && neigh.dir != current.dir) zigzagCost += 0.7;
+        double neighFCost = toStart + toEnd + zigzagCost;
         final existing = open[neighTile.flatPos];
         if (existing == null || neighFCost <= existing.fcost) {
           final newFind = _Path(current, neighTile,
               distanceFromStart: toStart,
               fcost: neighFCost,
               distanceToEnd: toEnd,
-              dir: neigh.dir);
+              dir: neigh.dir,
+              zigzagCost: zigzagCost);
           open[neighTile.flatPos] = newFind;
         }
       }
@@ -291,11 +294,14 @@ class _Path {
 
   final Direction dir;
 
+  final double zigzagCost;
+
   _Path(this.parent, this.tile,
       {@required this.distanceToEnd,
       @required this.distanceFromStart,
       @required this.fcost,
-      @required this.dir});
+      @required this.dir,
+      @required this.zigzagCost});
 
   String toString() {
     return "${tile.pos.x}:${tile.pos.y} -> $parent";
