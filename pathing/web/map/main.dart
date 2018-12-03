@@ -109,6 +109,9 @@ void main() {
   }
 
   Timer.periodic(Duration(milliseconds: 100), (_) {
+    final watch = Stopwatch();
+    watch.start();
+    print("s");
     game.compute();
 
     for (Unit unit in game.units.values) {
@@ -136,6 +139,10 @@ void main() {
           }
         });
       }
+
+      watch.stop();
+      if (watch.elapsedMilliseconds > 100)
+        print(watch.elapsedMilliseconds ~/ 100);
 
       styleUnit(unit);
     }

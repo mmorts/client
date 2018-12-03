@@ -39,23 +39,6 @@ class MovementWithFormation implements Movement {
 
   UnitInMovement _reference;
 
-  /*
-  void _computeReference() {
-    _reference = units.values.first;
-
-    {
-      double bestDistance = _reference.unit.pos.distanceTo(destination);
-      for (final unit in units.values) {
-        final unitDist = unit.unit.pos.distanceTo(destination);
-        if (unitDist < bestDistance) {
-          _reference = unit;
-          bestDistance = unitDist;
-        }
-      }
-    }
-  }
-  */
-
   void _computeReference() {
     _reference =
         units[_unitsByType[_formationResult.reference.unitType].keys.first];
@@ -69,8 +52,6 @@ class MovementWithFormation implements Movement {
       }
     }
   }
-
-  // TODO move unitTypeMap here
 
   void recomputeAllPaths() {
     speed = 5;  // TODO pick lowest speed of all units
@@ -93,6 +74,12 @@ class MovementWithFormation implements Movement {
   }
 
   void recomputeUnitPath(UnitInMovement unit) {
+    final dest = game.map.tileAt(unit.spot.transformedSpot);
+    unit.curDest = unit.spot.transformedSpot;
+    if(!dest.isWalkableBy(TerrainType.land)) {
+      unit.path = null;
+      return;
+    }
     unit.path = map
         .findPath(unit.unit.pos, unit.spot.transformedSpot, TerrainType.land)
         ?.child;
@@ -154,9 +141,11 @@ class MovementWithFormation implements Movement {
         }
         if (unit.path == null) {
           // TODO check if we have reached the destination
-          // TODO what if this is null?
+          recomputeUnitPath(unit);
         }
-        recomputeUnitPath(unit);
+        if(unit.curDest.distanceTo(unit.spot.transformedSpot) > 2) {
+          recomputeUnitPath(unit);
+        }
         if (unit.path == null) continue;
         Tile next = map.tiles[unit.path.tile.flatPos];
         // TODO if diagonal check we have space on sides
@@ -166,12 +155,11 @@ class MovementWithFormation implements Movement {
             if (!units.containsKey(obs.id)) {
               recomputeUnitPath(unit);
             } else {
-              // TODO
+              continue;
             }
           } else {
-            recomputeUnitPath(unit);
+            continue;
           }
-
           // TODO what if new path is null
           next = map.tiles[unit.path.tile.flatPos];
         }
@@ -211,7 +199,6 @@ class MovementWithFormation implements Movement {
   }
 
   void dispose() {
-    print("Finished!");
     for (final unit in units.values) {
       unit.unit.movement = null;
     }

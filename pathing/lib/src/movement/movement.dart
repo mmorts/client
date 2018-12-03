@@ -20,6 +20,8 @@ class UnitInMovement {
 
   int needsUpdate = 0;
 
+  Position curDest;
+
   UnitInMovement(Unit unit)
       : id = unit.id,
         unit = unit;

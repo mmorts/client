@@ -105,52 +105,52 @@ class Tile {
 
     final ret = <TileWithDirection>[];
 
-    if (north != null && north.isWalkableBy(terrainType)) {
+    if (north.tile != null && north.isWalkableBy(terrainType)) {
       ret.add(north);
     } else {
       north = null;
     }
 
-    if (east != null && east.isWalkableBy(terrainType)) {
+    if (east.tile != null && east.isWalkableBy(terrainType)) {
       ret.add(east);
     } else {
       east = null;
     }
 
-    if (south != null && south.isWalkableBy(terrainType)) {
+    if (south.tile != null && south.isWalkableBy(terrainType)) {
       ret.add(south);
     } else {
       south = null;
     }
 
-    if (west != null && west.isWalkableBy(terrainType)) {
+    if (west.tile != null && west.isWalkableBy(terrainType)) {
       ret.add(west);
     } else {
       west = null;
     }
 
-    if (northEast != null &&
+    if (northEast.tile != null &&
         north != null &&
         east != null &&
         northEast.isWalkableBy(terrainType)) {
       ret.add(northEast);
     }
 
-    if (southEast != null &&
+    if (southEast.tile != null &&
         south != null &&
         east != null &&
         southEast.isWalkableBy(terrainType)) {
       ret.add(southEast);
     }
 
-    if (southWest != null &&
+    if (southWest.tile != null &&
         south != null &&
         west != null &&
         southWest.isWalkableBy(terrainType)) {
       ret.add(southWest);
     }
 
-    if (northWest != null &&
+    if (northWest.tile != null &&
         north != null &&
         west != null &&
         northWest.isWalkableBy(terrainType)) {
