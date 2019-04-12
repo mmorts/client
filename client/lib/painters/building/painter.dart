@@ -42,7 +42,7 @@ class BuildingPainter {
     return BuildingPainter._(shader: shader, buffer: buffer);
   }
 
-  void paintSprite(State gameState, Rectangle rect, Texture texture) {
+  void _paintSprite(State gameState, Rectangle rect, Texture texture) {
     // Set program
     shader.use();
 
@@ -80,7 +80,7 @@ class BuildingPainter {
       ..drawArrays(gl: gl, buffer: buffer);
   }
 
-  void paintBuilding(BuildingPaintData p, {@required State gameState}) {
+  void paint(BuildingPaintData p, {@required State gameState}) {
     int timeDiff = gameState.current - p.previousTime;
     for (SpriteRef sprite in p.sprites) {
       Frame frame;
@@ -100,7 +100,7 @@ class BuildingPainter {
       }
       final newPos = p.position + sprite.offset;
       final rect = Rectangle(newPos.x, newPos.y, frame.size.x, frame.size.y);
-      paintSprite(gameState, rect, frame.texture);
+      _paintSprite(gameState, rect, frame.texture);
     }
   }
 

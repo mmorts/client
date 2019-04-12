@@ -1,4 +1,3 @@
-import 'package:ezwebgl/ezwebgl.dart';
 import 'package:meta/meta.dart';
 import 'package:client/objects/objects.dart';
 import 'package:loader/loader.dart';
@@ -7,7 +6,6 @@ import 'package:client/objects/player.dart';
 
 import 'painter.dart';
 import 'package:client/objects/game.dart';
-import 'package:client/painters/sprite_repo.dart';
 
 enum BuildingState {
   constructing,
@@ -44,7 +42,7 @@ class Building {
       sprite = spritesForAge.constructing;
     if (state == BuildingState.standing) sprite = spritesForAge.standing;
     if (state == BuildingState.dead) sprite = spritesForAge.dying;
-    painter.paintBuilding(
+    painter.paint(
         BuildingPaintData(
             position: pos, previousTime: stateChangeTime, sprites: sprite),
         gameState: gameState);

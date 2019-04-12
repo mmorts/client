@@ -11,6 +11,7 @@ import 'package:ezwebgl/ezwebgl.dart';
 
 import 'package:client/painters/terrain.dart';
 import 'package:client/painters/military.dart';
+import 'package:client/painters/building/state.dart';
 import 'package:client/painters/painter.dart';
 import 'package:client/painters/tiles_highlight.dart';
 
@@ -76,8 +77,8 @@ void main() async {
   final terrain3 = Terrain()..position = Position2(x: 0, y: -512.0);
   final terrain4 = Terrain()..position = Position2(x: -512.0, y: 0);
   // final military = Military();
-  final barrack = Building(pos: Position2(), spriteId: 1);
-  final bamboo = Building(pos: Position2(), spriteId: 2);
+  final barrack = Building(null, null, null, pos: Position2());
+  final bamboo = Building(null, null, null, pos: Position2());
   final highlight = TileHighlight();
 
   Function loop = () {
