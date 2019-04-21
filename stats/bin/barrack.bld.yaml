@@ -1,0 +1,30 @@
+id: 1
+type: military
+name: Barrack
+shape:
+  shape: rectangle
+  width: 2
+  height: 2
+cost:
+  wood: 100
+buildTime: 20
+los: 4
+hp: 100
+armor: 2
+pierceArmor: 2
+faith: 2
+range:
+  min: 0
+  max: 2
+blastRadius: 5
+attack: 5
+attackRate: 5
+selfHealRate: 0
+
+recruit:
+  - militia
+  - pikeman
+
+research:
+  - arson
+  - squire

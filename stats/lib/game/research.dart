@@ -1,20 +1,20 @@
 part of 'civilization.dart';
 
-// TODO cartography
+/// Defines criteria when the [entity] becomes available.
+class Locked<E> {
+  /// The entity that is being locked
+  final E entity;
 
-enum ChangeMultiplier {
-  absolute,
-  percent,
-}
+  /// Should have this building for [entity] to be available
+  final Building hasBuilding;
 
-class ParameterChanges {
-  final List<UnitParameterChange> unit;
-  final List<BuildingParameterChange> building;
-  final List<MarketParameterChange> market;
+  /// Age after which unit is available for recruitment
   final int age;
 
-  ParameterChanges(
-      {this.unit, this.building, this.market, this.age});
+  /// Research after which unit is available for recruitment
+  final Research research;
+
+  Locked(this.entity, {this.hasBuilding, this.age, this.research});
 }
 
 class Research {
@@ -24,12 +24,69 @@ class Research {
 
   final Resource cost;
 
-  final ParameterChanges effect;
+  final List<Upgrade> effects;
 
   // Number of seconds to research
   final int time;
 
-  Research({this.id, this.name, this.time, this.cost, this.effect});
+  Research(this.id, {this.name, this.time, this.cost, this.effects});
+}
+
+enum ChangeMultiplier {
+  absolute,
+  percent,
+}
+
+abstract class Upgrade {}
+
+class AgeUpgrade implements Upgrade {}
+
+class CartographyUpgrade implements Upgrade {}
+
+class UnitParamChange implements Upgrade {
+  /// THe parameter that would be changed
+  final UnitParameter parameter;
+
+  final Unit byUnit;
+  final UnitLine byUnitLine;
+  final List<AttackType> byAttackType;
+  final List<DamageClass> byDamageClass;
+
+  final int change;
+  final ChangeMultiplier multiplier;
+
+  UnitParamChange(
+      {@required this.parameter,
+      @required this.byUnit,
+      @required this.byUnitLine,
+      @required this.byAttackType,
+      @required this.byDamageClass,
+      @required this.change,
+      @required this.multiplier});
+}
+
+class BuildingParamUpgrade implements Upgrade {
+  final BuildingParameter parameter;
+
+  final List<Building> buildings;
+  final BuildingType byType;
+
+  final int change;
+  final ChangeMultiplier multiplier;
+
+  BuildingParamUpgrade(
+      {this.buildings,
+      this.byType,
+      this.parameter,
+      this.change,
+      this.multiplier});
+}
+
+class MarketChange implements Upgrade {
+  final MarketParameter parameter;
+  final double change;
+  final ChangeMultiplier multiplier;
+  MarketChange({this.parameter, this.change, this.multiplier});
 }
 
 enum UnitParameter {
@@ -63,28 +120,6 @@ enum UnitParameter {
   resCarry4,
 }
 
-class UnitParameterChange {
-  final UnitStat byUnit;
-  final UnitLine byUnitLine;
-  final List<AttackType> byAttackType;
-  final List<DamageClass> byDamageClass;
-
-  final UnitParameter parameter;
-
-  final int change;
-
-  final ChangeMultiplier multiplier;
-
-  UnitParameterChange(
-      {@required this.byUnit,
-      @required this.byUnitLine,
-      @required this.byAttackType,
-      @required this.byDamageClass,
-      @required this.parameter,
-      @required this.change,
-      @required this.multiplier});
-}
-
 enum BuildingParameter {
   cost1,
   cost2,
@@ -110,28 +145,8 @@ enum BuildingParameter {
   popSpace,
 }
 
-class BuildingParameterChange {
-  final List<BuildingStat> buildings;
-  final BuildingType byType;
-  final BuildingParameter parameter;
-  final int change;
-  final ChangeMultiplier multiplier;
-  BuildingParameterChange(
-      {this.buildings,
-      this.byType,
-      this.parameter,
-      this.change,
-      this.multiplier});
-}
-
 enum MarketParameter {
   cartSpeed,
   tradeFee,
   tributeFee,
-}
-
-class MarketParameterChange {
-  final MarketParameter parameter;
-  final double change;
-  MarketParameterChange({this.parameter, this.change});
 }

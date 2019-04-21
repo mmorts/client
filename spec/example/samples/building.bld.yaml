@@ -1,4 +1,4 @@
-sprite: "barrack"
+sprite: barrack
 construction_speed: 20
 hp: 100
 unlock_age: 0

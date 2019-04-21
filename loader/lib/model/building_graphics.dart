@@ -1,6 +1,6 @@
 import 'sprite_ref.dart';
 
-class BuildingSpriteAge {
+class BuildingSpriteForAge {
   final List<SpriteRef> constructing;
   final List<SpriteRef> standing;
   final List<SpriteRef> garrison;
@@ -9,24 +9,29 @@ class BuildingSpriteAge {
   final List<SpriteRef> damage50;
   final List<SpriteRef> damage75;
 
-  BuildingSpriteAge(
+  BuildingSpriteForAge(
       {this.constructing,
-        this.standing,
-        this.garrison,
-        this.dying,
-        this.damage25,
-        this.damage50,
-        this.damage75});
+      this.standing,
+      this.garrison,
+      this.dying,
+      this.damage25,
+      this.damage50,
+      this.damage75});
 }
 
-class BuildingSpriteCiv {
-  final List<BuildingSpriteAge> ages;
+class BuildingSpriteForCiv {
+  final BuildingSpriteForAge age0;
+  final BuildingSpriteForAge age1;
+  final BuildingSpriteForAge age2;
+  final BuildingSpriteForAge age3;
 
-  BuildingSpriteCiv({this.ages});
+  List<BuildingSpriteForAge> get ages => [age0, age1, age2, age3];
+
+  BuildingSpriteForCiv({this.age0, this.age1, this.age2, this.age3});
 }
 
 class BuildingSprite {
-  final List<BuildingSpriteCiv> civilizations;
+  final List<BuildingSpriteForCiv> civilizations;
 
   BuildingSprite({this.civilizations});
 }

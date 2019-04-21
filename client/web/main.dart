@@ -12,6 +12,7 @@ import 'package:ezwebgl/ezwebgl.dart';
 import 'package:client/painters/terrain.dart';
 import 'package:client/painters/military.dart';
 import 'package:client/painters/building/state.dart';
+import 'package:client/painters/building/painter.dart';
 import 'package:client/painters/painter.dart';
 import 'package:client/painters/tiles_highlight.dart';
 
@@ -66,7 +67,7 @@ void main() async {
   Function init = () async {
     await TerrainPainter.bootstrap(gl);
     // await MilitaryPainter.bootstrap(gl);
-    await BuildingPainter.bootstrap(gl);
+    await BuildingPainter.make(gl);
     await TileHighlightPainter.bootstrap(gl);
   };
 

@@ -2,28 +2,28 @@ import 'dart:math';
 import 'dart:web_gl';
 import 'package:meta/meta.dart';
 
-class Frame {
+class SpriteFrame {
   final int index;
 
-  final Texture texture;
+  final List<int> image;
 
   final Point<double> size;
 
   final Point hotspot;
 
-  Frame(
+  SpriteFrame(
       {@required this.index,
-      @required this.texture,
+      @required this.image,
       @required this.size,
       @required this.hotspot});
 }
 
 class Sprite {
-  final List<Frame> frames;
+  final List<SpriteFrame> frames;
 
   final int length;
 
-  Sprite({@required List<Frame> frames})
+  Sprite({@required List<SpriteFrame> frames})
       : frames = frames,
         length = frames.length;
 }
@@ -39,5 +39,5 @@ class SpriteRef {
 
   SpriteRef({this.sprite, this.offset, this.rate, this.loop});
 
-  List<Frame> get frames => sprite.frames;
+  List<SpriteFrame> get frames => sprite.frames;
 }

@@ -2,7 +2,7 @@ part of 'object.dart';
 
 class BuildingStatInfo {
   final Player player;
-  final BuildingStat template;
+  final Building template;
   Resource cost;
   int buildTime;
   double los;
@@ -53,7 +53,7 @@ class BuildingStatInfo {
     @required this.popSpace,
   });
 
-  factory BuildingStatInfo.fromTemplate(Player player, BuildingStat template) {
+  factory BuildingStatInfo.fromTemplate(Player player, Building template) {
     final ret = BuildingStatInfo(player, template,
         cost: template.cost,
         buildTime: template.buildTime,
@@ -212,7 +212,7 @@ class BuildingStatInfo {
 class Building {
   final int id;
 
-  final BuildingStat template;
+  final Building template;
 
   Player player;
 

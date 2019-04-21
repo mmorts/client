@@ -23,7 +23,7 @@ class Player {
 
   final buildings = <int, Building>{};
 
-  final CivilizationStat civilization;
+  final Civilization civilization;
 
   final researched = <int, bool>{};
 
@@ -47,7 +47,7 @@ class Player {
   void applyUnitResearch(UnitParameterChange change) {
     final applied = HashSet<int>();
 
-    final apply = (UnitStat unit) {
+    final apply = (Unit unit) {
       if (applied.contains(unit.id)) return;
       applied.add(unit.id);
 
@@ -90,7 +90,7 @@ class Player {
   void applyBuildingResearch(BuildingParameterChange change) {
     final applied = HashSet<int>();
 
-    final apply = (BuildingStat building) {
+    final apply = (Building building) {
       if (applied.contains(building.id)) return;
       applied.add(building.id);
 

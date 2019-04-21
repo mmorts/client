@@ -8,12 +8,17 @@ enum BuildingType {
 
 // TODO garrison type
 
-class BuildingStat {
+class Range {
+  final int min;
+  final int max;
+  const Range({this.min, this.max});
+}
+
+class Building {
   final int id;
   final BuildingType type;
   final String name;
   final Shape shape;
-  final List<DamageClass> damageClass;
   final Resource cost;
   final int buildTime;
   final double los;
@@ -21,52 +26,59 @@ class BuildingStat {
   final int armor;
   final int pierceArmor;
   final int faith;
-  final double minRange;
-  final double maxRange;
+  final Range range;
   final int blastRadius;
   final int attack;
   final int attackRate;
   final int selfHealRate;
 
-  /// Attack bonus against unit classes
-  final Map<DamageClass, int> attackBonus;
-
+  /// Number of projectiles fired when nobody is garrisoned in the building.
   final int baseProjectiles;
 
+  /// Maximum number of projectiles that can be fired from the building.
   final int maxProjectiles;
 
+  /// Accuracy of projectiles.
   final int accuracy;
-  final int garrisonCapacity;
-  final int garrisonHealRate;
-  final int popSpace;
-  final Map<int, Locked<UnitStat>> units;
-  final Map<int, Locked<Research>> researches;
 
-  BuildingStat(this.id, {
+  /// Maximum garrison capacity
+  final int garrisonCapacity;
+
+  /// Heal rate of garrisoned troops
+  final int garrisonHealRate;
+
+  /// Pop space provided by the building.
+  final int popSpace;
+
+  /// Units that can be recruited at the building.
+  final Map<int, Locked<Unit>> units;
+
+  /// Researches that can be researched at the building.
+  final List<Locked<Research>> researches;
+
+  const Building(
+    this.id, {
     this.type,
     @required this.name,
     @required this.shape,
-    @required this.damageClass,
     @required this.cost,
     @required this.buildTime,
     @required this.hp,
     @required this.los,
-    @required this.armor,
-    @required this.pierceArmor,
-    @required this.faith,
-    @required this.minRange,
-    @required this.maxRange,
-    @required this.blastRadius,
-    @required this.attack,
-    @required this.attackRate,
-    @required this.selfHealRate,
-    @required this.attackBonus,
-    @required this.baseProjectiles,
-    @required this.maxProjectiles,
-    @required this.accuracy,
-    @required this.garrisonCapacity,
-    @required this.garrisonHealRate,
-    @required this.popSpace,
+    this.armor: 0,
+    this.pierceArmor: 0,
+    this.faith: 0,
+    this.range,
+    this.blastRadius,
+    this.attack,
+    this.attackRate,
+    this.selfHealRate,
+    this.baseProjectiles,
+    this.maxProjectiles,
+    this.accuracy,
+    this.garrisonCapacity: 0,
+    this.garrisonHealRate: 0,
+    this.popSpace: 0,
     @required this.units,
     @required this.researches,
   });

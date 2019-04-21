@@ -9,20 +9,16 @@ class Resource {
 
   int gold;
 
-  Resource(
-      {@required this.wood,
-      @required this.food,
-      @required this.gold,
-      @required this.stone});
+  Resource({this.wood: 0, this.food: 0, this.gold: 0, this.stone: 0});
 
   Resource clone() =>
       Resource(wood: wood, food: food, stone: stone, gold: gold);
 
   void toValid() {
-    if(wood.isNegative) wood = 0;
-    if(food.isNegative) food = 0;
-    if(stone.isNegative) stone = 0;
-    if(gold.isNegative) gold = 0;
+    if (wood.isNegative) wood = 0;
+    if (food.isNegative) food = 0;
+    if (stone.isNegative) stone = 0;
+    if (gold.isNegative) gold = 0;
   }
 
   bool operator ==(Object other) {
@@ -74,23 +70,23 @@ class Resource {
 
 abstract class Shape {}
 
-class CircleShape extends Shape {
+class CircleShape implements Shape {
   final double radius;
 
-  CircleShape(this.radius);
+  const CircleShape(this.radius);
 }
 
-class RectangleShape extends Shape {
+class RectangleShape implements Shape {
   final double width;
 
   final double height;
 
-  RectangleShape({this.width, this.height});
+  const RectangleShape({this.width, this.height});
 }
 
 enum AttackType {
   melee,
-  ranged,
+  pierce,
   mesmerize,
 }
 

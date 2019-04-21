@@ -1,9 +1,27 @@
 import 'dart:io';
 import 'package:spec/spec.dart';
-import 'package:yaml/yaml.dart';
+
+final barrack = Building(
+  standing: [
+    Layer(
+      sprites: [
+        Compose(
+          sprite: Sprite(
+            frames: [
+              Frame(),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ],
+);
+
+final militia = Unit(
+  standing: UnitState(s: [], sw: [], w: [], nw: [], n: []),
+  walking: UnitState(s: [], sw: [], w: [], nw: [], n: []),
+);
 
 main() async {
-  final file = loadYaml(await File('example/barrack.yaml').readAsString());
-  final spec = BuildingGraphicsSpec.decode(file);
-  print(spec);
+  // Something here
 }

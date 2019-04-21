@@ -19,7 +19,7 @@ class UnitAbility {
   static const mine = UnitAbility(mask: 0x8, name: "Mine");
 }
 
-class UnitStat {
+class Unit {
   final int id;
 
   final String name;
@@ -30,7 +30,7 @@ class UnitStat {
 
   final List<DamageClass> damageClass;
 
-  final int abilities;
+  // final int abilities;
 
   final Resource cost;
 
@@ -48,9 +48,7 @@ class UnitStat {
 
   final int faith;
 
-  final double minRange;
-
-  final double maxRange;
+  final Range range;
 
   final double blastRadius;
 
@@ -73,37 +71,39 @@ class UnitStat {
 
   final Resource resCarry;
 
-  UnitStat(this.id,
+  Unit(this.id,
       {@required this.name,
       @required this.shape,
       @required this.attackType,
       @required this.damageClass,
-      @required this.abilities,
+      // @required this.abilities,
       @required this.cost,
       @required this.trainTime,
       @required this.speed,
       @required this.los,
       @required this.hp,
-      @required this.armor,
-      @required this.pierceArmor,
-      @required this.faith,
-      @required this.minRange,
-      @required this.maxRange,
-      @required this.blastRadius,
+      this.armor: 0,
+      this.pierceArmor: 0,
+      this.faith: 0,
+      this.range: const Range(min: 0, max: 0),
+      this.blastRadius: 0,
       @required this.attack,
       @required this.attackRate,
       @required this.attackBonus,
-      @required this.accuracy,
-      @required this.selfHealRate,
-      @required this.garrisonCapacity,
-      @required this.garrisonHealRate,
-      @required this.workRate,
-      @required this.resCarry});
+      this.accuracy: 0,
+      this.selfHealRate: 0,
+      this.garrisonCapacity: 0,
+      this.garrisonHealRate: 0,
+      this.workRate,
+      this.resCarry});
 }
 
+/// A line of units that can be enabled sequentially
 class UnitLine {
-  final UnitStat unit;
+  /// Current unit in the line
+  final Unit unit;
 
+  /// Next upgrade
   final Locked<UnitLine> upgrade;
 
   UnitLine({this.unit, this.upgrade});

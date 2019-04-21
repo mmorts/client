@@ -5,48 +5,40 @@ part 'building.dart';
 part 'common.dart';
 part 'research.dart';
 
-/// Defines criteria when the [entity] becomes available.
-class Locked<E> {
-  final E entity;
+class CivAge {
+  final List<Upgrade> bonus;
 
-  /// Should have this building for [entity] to be available
-  final BuildingStat hasBuilding;
-
-  /// Age after which unit is available for recruitment
-  final int age;
-
-  /// Research after which unit is available for recruitment
-  final Research research;
-
-  Locked({this.entity, this.hasBuilding, this.age, this.research});
+  CivAge({this.bonus});
 }
 
-class CivAgeStat {
-  final List<ParameterChanges> bonus;
-
-  CivAgeStat({this.bonus});
-}
-
-class StartingStat {
+class StartWith {
+  /// Number of villagers the civilization starts with
   final int villagers;
-  final Map<UnitStat, int> units;
-  // TODO final Map<Building, int> buildings;
-  StartingStat({
+
+  StartWith({
     @required this.villagers,
-    @required this.units,
-    // TODO @required this.buildings,
   });
 }
 
-class CivilizationStat {
+class Civilization {
+  /// Name of the civilization
   final String name;
-  final List<CivAgeStat> ages;
-  final Map<int, Locked<BuildingStat>> buildings;
-  final List<Locked<ParameterChanges>> civBonus;
-  final List<Locked<ParameterChanges>> teamBonus;
-  final StartingStat startWith;
 
-  CivilizationStat(
+  /// Age stats
+  final List<CivAge> ages;
+
+  /// Building stats
+  final Map<int, Locked<Building>> buildings;
+
+  /// Civilization bonus stats
+  final List<Locked<Upgrade>> civBonus;
+
+  /// Team bonus stats
+  final List<Locked<Upgrade>> teamBonus;
+
+  final StartWith startWith;
+
+  Civilization(
       {@required this.name,
       @required this.ages,
       @required this.buildings,
@@ -55,9 +47,8 @@ class CivilizationStat {
       @required this.startWith});
 }
 
-class GameStat {
-  final List<String> ages;
-  final List<CivilizationStat> civs;
+class Game {
+  final List<Civilization> civs;
 
-  GameStat({@required this.civs, @required this.ages});
+  Game({@required this.civs});
 }

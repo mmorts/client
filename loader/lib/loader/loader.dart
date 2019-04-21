@@ -4,36 +4,32 @@ import 'package:meta/meta.dart';
 import 'package:spec/spec.dart';
 import 'package:yaml/yaml.dart';
 import 'package:image/image.dart' as img;
-import 'package:ezwebgl/ezwebgl.dart';
 
 import 'io.dart';
 
 import 'package:loader/model/model.dart';
 
 class GameSpec {
-  final RenderingContext2 gl;
-
   final Io io;
 
   final sprites = <String, Sprite>{};
 
-  final buildingGraphics = <String, BuildingGraphicsSpec>{};
+  final buildingGraphics = <String, Building>{};
 
-  GameSpec({@required this.gl, @required this.io});
+  GameSpec({ @required this.io});
 
   Future<Sprite> loadSprite(String name) async {
-    final sps = SpriteSpec.decode(loadYaml(
+    final sps = Sprite.decode(loadYaml(
         String.fromCharCodes(await io.readSpriteFile(name, "spr.yaml"))));
 
-    final frames = List<Frame>(sps.numFrames());
+    final frames = List<SpriteFrame>(sps.numFrames());
 
     for (int i = 0; i < sps.numFrames(); i++) {
       img.Image image =
           img.decodePng(await io.readSpriteFile(name, "${i + 1}.png"));
-      Texture texture = texFromImage(image, gl: gl);
-      frames[i] = Frame(
+      frames[i] = SpriteFrame(
           index: i,
-          texture: texture,
+          image: image.getBytes(),
           size: Point<double>(image.width.toDouble(), image.height.toDouble()),
           hotspot: sps.frames[i].hotspot);
     }
@@ -41,7 +37,7 @@ class GameSpec {
   }
 
   Future<void> loadBuilding(String name) async {
-    final spec = BuildingGraphicsSpec.decode(
+    final spec = Building.decode(
         loadYaml(String.fromCharCodes(await io.readBuildingGraphicFile(name))));
     // TODO
   }

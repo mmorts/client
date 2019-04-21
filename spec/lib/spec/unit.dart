@@ -1,53 +1,46 @@
-import 'dart:math';
+import 'package:meta/meta.dart';
 
-class Resources {
-  int wood;
+import 'sprite.dart';
 
-  int food;
+/// Specifies unit graphics for a specific state
+class UnitState {
+  /// The graphics shown when the unit is moving south.
+  final List<Layer> s;
 
-  int gold;
+  final List<Layer> sw;
 
-  int stone;
+  final List<Layer> w;
+
+  final List<Layer> nw;
+
+  final List<Layer> n;
+
+  UnitState({
+    @required this.s,
+    @required this.sw,
+    @required this.w,
+    @required this.nw,
+    @required this.n,
+  });
 }
 
-class FrameInfo {
-  Point<int> hotspot;
-}
+/// Specifies unit graphics
+class Unit {
+  /// The graphics shown when the unit is moving south.
+  final UnitState standing;
 
-class FrameSet {
-  List<FrameInfo> frames;
-}
+  final UnitState walking;
 
-class UnitSprite {
-  FrameSet s;
+  final UnitState attacking;
 
-  FrameSet sw;
+  final UnitState dying;
 
-  FrameSet w;
+  final UnitState rotting;
 
-  FrameSet nw;
-
-  FrameSet n;
-}
-
-class UnitStats {
-  Resources cost;
-
-  int hitPoints;
-
-  int armor;
-
-  int pierceArmor;
-
-  Point<double> size;
-
-  Point<double> selectionSize;
-}
-
-class BuildingSprite {
-  Point<double> size;
-
-  Point<double> selectionSize;
-
-
+  Unit(
+      {@required this.standing,
+      @required this.walking,
+      @required this.attacking,
+      @required this.dying,
+      @required this.rotting});
 }

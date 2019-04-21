@@ -30,18 +30,6 @@ class BuildingPainter {
   BuildingPainter._({@required this.shader, @required this.buffer})
       : gl = shader.gl;
 
-  static BuildingPainter make(RenderingContext2 gl) {
-    ShaderProgram shader = ShaderProgram.prepare(
-      gl: gl,
-      vertex: _vertexCode,
-      fragment: _fragmentCode,
-    );
-
-    Buffer buffer = PosTexBuf.createBuffer(shader);
-
-    return BuildingPainter._(shader: shader, buffer: buffer);
-  }
-
   void _paintSprite(State gameState, Rectangle rect, Texture texture) {
     // Set program
     shader.use();
@@ -83,7 +71,7 @@ class BuildingPainter {
   void paint(BuildingPaintData p, {@required State gameState}) {
     int timeDiff = gameState.current - p.previousTime;
     for (SpriteRef sprite in p.sprites) {
-      Frame frame;
+      SpriteFrame frame;
       if (sprite.rate == 0) {
         frame = sprite.frames.first;
       } else {
@@ -143,6 +131,18 @@ class BuildingPainter {
       ..drawArrays(gl: gl, buffer: buffer);
   }
   */
+
+  static BuildingPainter make(RenderingContext2 gl) {
+    ShaderProgram shader = ShaderProgram.prepare(
+      gl: gl,
+      vertex: _vertexCode,
+      fragment: _fragmentCode,
+    );
+
+    Buffer buffer = PosTexBuf.createBuffer(shader);
+
+    return BuildingPainter._(shader: shader, buffer: buffer);
+  }
 }
 
 const _vertexCode = r"""

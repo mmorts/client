@@ -2,7 +2,7 @@ part of 'object.dart';
 
 class UnitStatInfo {
   final Player player;
-  final UnitStat template;
+  final Unit template;
   Resource cost;
   int trainTime;
   double speed;
@@ -50,7 +50,7 @@ class UnitStatInfo {
     @required this.resCarry,
   });
 
-  factory UnitStatInfo.fromStat(Player player, UnitStat stat) {
+  factory UnitStatInfo.fromStat(Player player, Unit stat) {
     final ret = UnitStatInfo(
       player,
       stat,
@@ -272,7 +272,7 @@ class UnitStatInfo {
 class Unit {
   final int id;
 
-  final UnitStat template;
+  final Unit template;
 
   UnitStatInfo statInfo;
 
