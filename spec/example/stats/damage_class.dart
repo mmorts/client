@@ -1,4 +1,4 @@
-import 'package:stats/stats.dart';
+import 'package:spec/stats.dart';
 
 const damageIdInfantry = 0;
 const damageIdRanged = 1;

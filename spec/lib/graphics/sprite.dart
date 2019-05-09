@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:meta/meta.dart';
 
-import '../serializer/serializer.dart';
+import 'serializer/serializer.dart';
 
 /// Represents a frame in [Sprite]
 class Frame {
@@ -44,7 +44,7 @@ class Sprite {
 /// Set [loop] to true to loop the sprite.
 /// [rate] specifies the rate at which the sprite is animated.
 class Compose {
-  final Sprite sprite;
+  final String sprite;
 
   final Point<int> offset;
 
@@ -55,7 +55,7 @@ class Compose {
   Compose(
       {@required this.sprite,
       this.offset: const Point(0, 0),
-      this.loop: true,
+      this.loop: false,
       this.rate: 1.0});
 
   Map<String, dynamic> toJson() => serializer.toMap(this);
@@ -73,7 +73,7 @@ class Layer {
   String name;
 
   /// List of sprites composing the sprite layer
-  final List<Compose> sprites;
+  final List<Compose> compose;
 
   // final int depth;
 
@@ -83,7 +83,7 @@ class Layer {
   final String include;
   Layer(
       {this.name,
-      @required this.sprites,
+      @required this.compose,
       // this.depth: 0,
       this.offset: const Point<int>(0, 0),
       this.include});

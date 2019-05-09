@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-import '../spec/spec.dart';
+import '../graphics.dart';
 
 part 'serializer.jser.dart';
 
@@ -23,10 +23,6 @@ class SpriteRefSpecSerializer extends Serializer<SpriteRef>
 @GenSerializer(fields: {"offset": Field(processor: const PointProcessor())})
 class BuildingLayerSpecSerializer extends Serializer<Layer>
     with _$BuildingLayerSpecSerializer {}
-
-@GenSerializer()
-class BuildingGraphicsSerializer extends Serializer<Building>
-    with _$BuildingGraphicsSerializer {}
 
 class BuildingGraphicsStateSpecSerializer
     extends Serializer<BuildingState> {
@@ -72,16 +68,31 @@ class IntPointProcessor implements FieldProcessor<Point<int>, List> {
   }
 }
 
-@GenSerializer()
+@GenSerializer(ignore: ['numFrames'])
 class SpriteSerializer extends Serializer<Sprite> with _$SpriteSerializer {}
 
-@GenSerializer(
-    fields: {"hotspot": Field(processor: const IntPointProcessor())},
-    ignore: ['numFrames'])
+@GenSerializer(fields: {"hotspot": Field(processor: const IntPointProcessor())})
 class FrameSerializer extends Serializer<Frame> with _$FrameSerializer {}
 
-@GenSerializer(fields: {"offset": Field(processor: const IntPointProcessor())},)
-class ComposeSerializer extends Serializer<Compose> with _$ComposeSerializer {}
+@GenSerializer(
+  fields: {"offset": Field(processor: const IntPointProcessor())},
+)
+class ComposeSerializer extends Serializer<Compose> with _$ComposeSerializer {
+  @override
+  T getJserDefault<T>(String field) {
+    if (field == "offset") return Point<int>(0, 0) as T;
+    if (field == "loop") return false as T;
+    if (field == "rate") return 1.0 as T;
 
-@GenSerializer(fields: {"offset": Field(processor: const IntPointProcessor())},)
+    return null;
+  }
+}
+
+@GenSerializer(
+  fields: {"offset": Field(processor: const IntPointProcessor())},
+)
 class LayerSerializer extends Serializer<Layer> with _$LayerSerializer {}
+
+@GenSerializer()
+class BuildingSerializer extends Serializer<Building>
+    with _$BuildingSerializer {}

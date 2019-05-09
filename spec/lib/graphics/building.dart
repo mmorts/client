@@ -2,28 +2,30 @@ import 'package:meta/meta.dart';
 
 import 'sprite.dart';
 
+import 'serializer/serializer.dart';
+
 /// Specifies building graphics
 class Building {
   /// The graphics shown during construction.
-  List<Layer> constructing;
+  List<Compose> constructing;
 
   /// The graphics shown normally
-  List<Layer> standing;
+  List<Compose> standing;
 
   /// The overlay graphics displayed when garrisoned.
-  List<Layer> garrison;
+  List<Compose> garrison;
 
   /// The graphics shown when dying.
-  List<Layer> dying;
+  List<Compose> dying;
 
   /// The graphics shown when the building is at 25% hp
-  List<Layer> hp25;
+  List<Compose> hp25;
 
   /// The graphics shown when the building is at 50% hp
-  List<Layer> hp50;
+  List<Compose> hp50;
 
   /// The graphics shown when the building is at 75% hp
-  List<Layer> hp75;
+  List<Compose> hp75;
 
   Building(
       {@required this.constructing,
@@ -34,7 +36,6 @@ class Building {
       @required this.hp50,
       @required this.hp75});
 
-  /*
   Map<String, dynamic> toJson() => serializer.toMap(this);
 
   String toString() => "BuildingGraphicsSpec(${toJson().toString()})";
@@ -42,5 +43,4 @@ class Building {
   static final serializer = BuildingSerializer();
 
   static Building decode(Map map) => serializer.fromMap(map);
-  */
 }

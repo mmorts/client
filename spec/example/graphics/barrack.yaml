@@ -1,6 +1,15 @@
+constructing:
+  - sprite: building/cnst2x2
 standing:
-  layer0:
-    sprites:
-      - sprite: barrack
-        offset: [12, 12]
-        # loop: true (defaults to false)
+  - sprite: TODO shadow
+  - sprite: building/barrack/dark
+garrison:
+  - sprite: TODO
+dying:
+  - sprite: TODO
+hp25:
+  - sprite: TODO
+hp50:
+  - sprite: TODO
+hp75:
+  - sprite: TODO
