@@ -1,9 +1,26 @@
 import 'dart:async';
 import 'dart:html';
 import 'package:pathing/pathing.dart';
+import 'package:pathing/src/actor/actor.dart';
 
-final game = Game(Stats(units: {0: militia}));
-TileMap get map => game.map;
+final game = Game();
+
+final unitEls = <int, DivElement>{};
+
+int actorIdGen = 0;
+
+int formationIdGen = 0;
+
+final int tileSize = 25;
+
+final selected = Map<int, Unit>();
+
+final militia = UnitStat(1,
+    size: Point<int>(1, 1), formationRole: FormationRole.protector, speed: 5);
+
+final tree = UnmovableStat(2, size: Point<int>(1, 1));
+
+final unmovables = <Element, Unmovable>{};
 
 final viewport = querySelector('#viewport');
 
@@ -12,16 +29,11 @@ void styleTile(Tile t) {
 
   tEl.classes.remove("land");
   tEl.classes.remove("water");
-  tEl.classes.remove("occupied");
 
   if (t.terrainType & TerrainType.land != 0) {
     tEl.classes.add("land");
   } else if (t.terrainType & TerrainType.water != 0) {
     tEl.classes.add("water");
-  }
-
-  if (t.owner != null) {
-    tEl.classes.add("occupied");
   }
 }
 
@@ -36,35 +48,20 @@ void styleUnit(Unit t) {
   }
 }
 
-final unitEls = <int, DivElement>{};
-
-int formationIdGen = 0;
-
-final int tileSize = 25;
-
-int curPlayer = 1;
-
-final selected = Map<int, Unit>();
-
-final militia = UnitStat(0,
-    distance: Point<int>(1, 1),
-    formationRole: FormationRole.protector,
-    speed: 5);
-
 void main() {
-  Player player1 = Player(1, game);
-  game.players[player1.id] = player1;
-
-  Unit unit1 = game.players[1].addUnit(0, pos: Position(x: 10, y: 40));
-  Unit unit2 = game.players[1].addUnit(0, pos: Position(x: 11, y: 40));
-  Unit unit3 = game.players[1].addUnit(0, pos: Position(x: 12, y: 40));
-  Unit unit4 = game.players[1].addUnit(0, pos: Position(x: 13, y: 40));
-  Unit unit5 = game.players[1].addUnit(0, pos: Position(x: 14, y: 40));
-  Unit unit6 = game.players[1].addUnit(0, pos: Position(x: 15, y: 40));
-  Unit unit7 = game.players[1].addUnit(0, pos: Position(x: 16, y: 40));
-  Unit unit8 = game.players[1].addUnit(0, pos: Position(x: 17, y: 40));
-  Unit unit9 = game.players[1].addUnit(0, pos: Position(x: 18, y: 40));
-  Unit unit10 = game.players[1].addUnit(0, pos: Position(x: 41, y: 47));
+  final unit1 = Unit(1, militia, pos: Position(x: 10, y: 5), clan: 1);
+  final unit2 = Unit(2, militia, pos: Position(x: 11, y: 5), clan: 1);
+  final Unit unit3 = Unit(3, militia, pos: Position(x: 12, y: 5), clan: 1);
+  final Unit unit4 = Unit(4, militia, pos: Position(x: 13, y: 5), clan: 1);
+  final Unit unit5 = Unit(5, militia, pos: Position(x: 14, y: 5), clan: 1);
+  final Unit unit6 = Unit(6, militia, pos: Position(x: 15, y: 5), clan: 1);
+  final Unit unit7 = Unit(7, militia, pos: Position(x: 16, y: 5), clan: 1);
+  final Unit unit8 = Unit(8, militia, pos: Position(x: 17, y: 5), clan: 1);
+  final Unit unit9 = Unit(9, militia, pos: Position(x: 18, y: 5), clan: 1);
+  final Unit unit10 = Unit(10, militia, pos: Position(x: 41, y: 5), clan: 1);
+  actorIdGen = 11;
+  game.addUnits(
+      [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10]);
 
   selected[unit1.id] = unit1;
   selected[unit2.id] = unit2;
@@ -77,7 +74,7 @@ void main() {
   selected[unit9.id] = unit9;
   selected[unit10.id] = unit10;
 
-  for (Tile t in map.tiles.values) {
+  for (Tile t in game.map.tiles.values) {
     final tEl = DivElement();
     tEl.classes
         .addAll(["tile", "tile-${t.flatPos}", "tile-${t.pos.x}-${t.pos.y}"]);
@@ -90,20 +87,30 @@ void main() {
 
     tEl.onClick.listen((MouseEvent event) {
       event.preventDefault();
+
       if (event.button == 0) {
-        if (t.owner == null)
-          t.owner = 'x';
-        else if (t.owner == 'x') t.owner = null;
-        styleTile(t);
+        if (t.owner == null) {
+          final unmovable = Unmovable(actorIdGen++, tree, pos: t.pos.clone());
+          final el = DivElement();
+          unmovables[el] = unmovable;
+          game.addUnmovable(unmovable);
+          viewport.children.add(el);
+
+          el.onClick.listen((MouseEvent event) {
+            unmovables.remove(el);
+            game.removeUnmovable(unmovable.id);
+          });
+        }
       }
     });
+
     tEl.onContextMenu.listen((MouseEvent event) {
       if (event.ctrlKey) return;
       event.preventDefault();
       final int id = formationIdGen++;
-      game.players[1].formations[id] = MovementWithFormation(
-          id, game, t.pos, selected.values,
-          formation: LineFormation());
+
+      game.addMovement(MovementWithFormation(id, game, t.pos, selected.values,
+          formation: LineFormation()));
       // NoFormationMovement(id, map, t.pos, selected.values);
     });
   }
@@ -120,7 +127,7 @@ void main() {
         unitEl = DivElement();
         unitEl.text = unit.id.toString();
         unitEl.classes
-            .addAll(["unit", "unit-${unit.id}", "unit-pl${unit.player.id}"]);
+            .addAll(["unit", "unit-${unit.id}", "unit-pl${unit.clan}"]);
         unitEl.style.width = "${tileSize}px";
         unitEl.style.height = "${tileSize}px";
         unitEls[unit.id] = unitEl;
@@ -145,6 +152,18 @@ void main() {
         print(watch.elapsedMilliseconds ~/ 100);
 
       styleUnit(unit);
+    }
+
+    for(Element unmoveEl in unmovables.keys) {
+      final unmovable = unmovables[unmoveEl];
+
+      unmoveEl.classes.add('unmovable');
+
+      unmoveEl.style.left = "${unmovable.pos.x * tileSize}px";
+      unmoveEl.style.top = "${unmovable.pos.y * tileSize}px";
+
+      unmoveEl.style.width = "${unmovable.stat.size.x * tileSize}px";
+      unmoveEl.style.height = "${unmovable.stat.size.y * tileSize}px";
     }
   });
 }

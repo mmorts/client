@@ -1,26 +1,11 @@
 import 'dart:math';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-import '../spec/building.dart';
+import '../spec/spec.dart';
 
-/*
 part 'serializer.jser.dart';
 
-class PointProcessor implements FieldProcessor<Point<double>, List> {
-  const PointProcessor();
-
-  @override
-  Point<double> deserialize(List value) {
-    if (value == null) return null;
-    return Point<double>(value[0].toDouble(), value[1].toDouble());
-  }
-
-  @override
-  List<double> serialize(Point<double> value) {
-    if (value == null) return null;
-    return [value.x, value.y];
-  }
-}
+/*
 
 @GenSerializer(fields: {
   "offset": Field(processor: const PointProcessor()),
@@ -69,12 +54,34 @@ class BuildingGraphicsStateSpecSerializer
     return BuildingState(layers: layers);
   }
 }
+ */
+
+class IntPointProcessor implements FieldProcessor<Point<int>, List> {
+  const IntPointProcessor();
+
+  @override
+  Point<int> deserialize(List value) {
+    if (value == null) return null;
+    return Point<int>(value[0].toInt(), value[1].toInt());
+  }
+
+  @override
+  List<int> serialize(Point<int> value) {
+    if (value == null) return null;
+    return [value.x, value.y];
+  }
+}
 
 @GenSerializer()
-class SpriteSpecSerializer extends Serializer<SpriteSpec>
-    with _$SpriteSpecSerializer {}
+class SpriteSerializer extends Serializer<Sprite> with _$SpriteSerializer {}
 
-@GenSerializer(fields: {"hotspot": Field(processor: const PointProcessor())})
-class FrameSpecSerializer extends Serializer<FrameSpec>
-    with _$FrameSpecSerializer {}
- */
+@GenSerializer(
+    fields: {"hotspot": Field(processor: const IntPointProcessor())},
+    ignore: ['numFrames'])
+class FrameSerializer extends Serializer<Frame> with _$FrameSerializer {}
+
+@GenSerializer(fields: {"offset": Field(processor: const IntPointProcessor())},)
+class ComposeSerializer extends Serializer<Compose> with _$ComposeSerializer {}
+
+@GenSerializer(fields: {"offset": Field(processor: const IntPointProcessor())},)
+class LayerSerializer extends Serializer<Layer> with _$LayerSerializer {}

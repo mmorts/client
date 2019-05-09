@@ -8,9 +8,10 @@ import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 
 import 'package:ezwebgl/ezwebgl.dart';
 
-import 'package:client/objects/objects.dart';
+import 'package:client/objects/pos.dart';
+import 'package:client/objects/state.dart';
 
-MilitaryPainter _painter;
+import 'package:client/objects/military.dart';
 
 class MilitaryDirTextures {
   final Iterable<Texture> s;
@@ -44,7 +45,18 @@ class MilitaryDirTextures {
   static Future<MilitaryDirTextures> load(
       RenderingContext2 gl, String path) async {
     List<Texture> w = await loadOneDir(gl, path + "/w");
-    return MilitaryDirTextures(w: w);
+    List<Texture> s = await loadOneDir(gl, path + "/s");
+    List<Texture> n = await loadOneDir(gl, path + "/n");
+    List<Texture> nw = await loadOneDir(gl, path + "/nw");
+    List<Texture> sw = await loadOneDir(gl, path + "/sw");
+
+    return MilitaryDirTextures(
+      w: w,
+      s: s,
+      n: n,
+      nw: nw,
+      sw: sw,
+    );
   }
 
   static Future<List<Texture>> loadOneDir(
@@ -100,8 +112,10 @@ class MilitaryTextures {
   static Future<MilitaryTextures> load(
       RenderingContext2 gl, String path) async {
     final stand = await MilitaryDirTextures.load(gl, path + "/stand");
-    final walk = await MilitaryDirTextures.load(gl, path + "/walk");
-    return MilitaryTextures(stand: stand, walk: walk);
+    // final walk = await MilitaryDirTextures.load(gl, path + "/walk");
+    return MilitaryTextures(
+      stand: stand, /* walk: walk */
+    );
   }
 }
 
@@ -118,7 +132,7 @@ class MilitaryPainter {
       {@required this.shader, @required this.buffer, @required this.textures})
       : gl = shader.gl;
 
-  void paint(Rectangle rect, {UnitState unitState, State gameState}) {
+  void _paint(Rectangle rect, {UnitState unitState, State gameState}) {
     // Set program
     shader.use();
 
@@ -162,7 +176,15 @@ class MilitaryPainter {
       ..drawArrays(gl: gl, buffer: buffer);
   }
 
-  static Future<void> bootstrap(RenderingContext2 gl) async {
+  void paint(Military military, State gameState) {
+    _paint(
+        Rectangle<double>(
+            military.pos.x, military.pos.y, military.size.x, military.size.y),
+        unitState: military.state,
+        gameState: gameState);
+  }
+
+  static Future<MilitaryPainter> make(RenderingContext2 gl) async {
     ShaderProgram shader = ShaderProgram.prepare(
       gl: gl,
       vertex: _vertexCode,
@@ -174,39 +196,9 @@ class MilitaryPainter {
     final textures =
         await MilitaryTextures.load(gl, "sprites/military/militia");
 
-    _painter =
-        MilitaryPainter._(shader: shader, buffer: buffer, textures: textures);
+    return MilitaryPainter._(
+        shader: shader, buffer: buffer, textures: textures);
   }
-}
-
-enum UnitVerb {
-  stand,
-  walk,
-  attack,
-  die,
-  rot,
-}
-
-enum UnitDirection {
-  s,
-  sw,
-  w,
-  nw,
-  n,
-  ne,
-  e,
-  se,
-}
-
-class UnitState {
-  UnitVerb verb;
-
-  UnitDirection dir;
-
-  int since;
-
-  UnitState(
-      {this.verb: UnitVerb.stand, this.dir: UnitDirection.s, this.since = 0});
 }
 
 const shouldMirrorDir = {
@@ -225,24 +217,6 @@ const directionMirror = {
   UnitDirection.e: UnitDirection.w,
   UnitDirection.se: UnitDirection.sw,
 };
-
-class Military {
-  Position2 pos = Position2(x: 250.0, y: 250.0);
-
-  Point<double> size = Point<double>(37.0, 50.0);
-
-  final state = UnitState(verb: UnitVerb.walk, dir: UnitDirection.w);
-
-  Military() {
-    if (_painter == null)
-      throw Exception("MilitaryUnitPainter not bootstrapped!");
-  }
-
-  void paint(State gameState) {
-    _painter.paint(Rectangle<double>(pos.x, pos.y, size.x, size.y),
-        unitState: state, gameState: gameState);
-  }
-}
 
 const _vertexCode = r"""
 #version 300 es

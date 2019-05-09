@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart';
 import 'package:pathing/src/geom.dart';
-import 'unit.dart';
+import 'game.dart';
+
+import 'package:pathing/src/actor/actor.dart';
 
 abstract class TerrainType {
   static const land = 0x1;
@@ -42,22 +44,32 @@ class TileWithDirection {
 }
 
 class Tile {
+  /// Total number of tiles in the map in horizontal direction
   final int numHTiles;
+
+  /// Total number of tiles in the map in vertical direction
   final int numVTiles;
+
+  /// Position of the tile in the map
   final Position pos;
+
+  /// Terrain type of this tile
   int terrainType;
-  dynamic owner;
+
+  // TODO
+  Actor owner;
 
   Tile(
-      {this.numHTiles,
-      this.numVTiles,
-      this.pos,
+      {@required this.numHTiles,
+      @required this.numVTiles,
+      @required this.pos,
       this.terrainType: TerrainType.land});
 
+  /// Returns true if the tile is walkable for unit that can navigate terrain
+  /// [type].
   bool isWalkableBy(int type) {
     // TODO
     if (owner != null && owner is! Unit) return false;
-    // if (owner != null) return false;
     return terrainType & type != 0;
   }
 

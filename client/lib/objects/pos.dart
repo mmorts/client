@@ -1,9 +1,4 @@
 import 'dart:math';
-import 'dart:web_gl';
-
-import 'package:meta/meta.dart';
-
-import 'package:ezwebgl/ezwebgl.dart';
 
 class Position2 {
   double x;
@@ -36,28 +31,5 @@ class Position3 implements Position2 {
       return Position3(x: x + other.x, y: y + other.y, z: z + other.z);
     }
     throw Exception("Unknown operand!");
-  }
-}
-
-class State {
-  final DateTime startTime;
-
-  final RenderingContext2 gl;
-
-  // Milliseconds
-  int current;
-
-  Point<int> size;
-
-  Mat4 projectionMatrix = Mat4();
-
-  State({DateTime start, this.size, @required this.gl})
-      : startTime = start ?? DateTime.now() {
-    current = DateTime.now().difference(startTime).inMilliseconds;
-    size = Point<int>(500, 500);
-  }
-
-  void newLoop(RenderingContext2 gl) {
-    current = DateTime.now().difference(startTime).inMilliseconds;
   }
 }

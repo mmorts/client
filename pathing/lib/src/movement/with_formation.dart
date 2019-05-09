@@ -54,9 +54,8 @@ class MovementWithFormation implements Movement {
   }
 
   void recomputeAllPaths() {
-    speed = 5;  // TODO pick lowest speed of all units
-    _formationResult =
-        formation.format(_unitsByType, Point<int>(5, 100), game.stats.units);
+    speed = 5; // TODO pick lowest speed of all units
+    _formationResult = formation.format(_unitsByType, Point<int>(5, 100));
     _computeReference();
 
     _reference.spot = _formationResult.reference;
@@ -76,7 +75,7 @@ class MovementWithFormation implements Movement {
   void recomputeUnitPath(UnitInMovement unit) {
     final dest = game.map.tileAt(unit.spot.transformedSpot);
     unit.curDest = unit.spot.transformedSpot;
-    if(!dest.isWalkableBy(TerrainType.land)) {
+    if (!dest.isWalkableBy(TerrainType.land)) {
       unit.path = null;
       return;
     }
@@ -89,7 +88,7 @@ class MovementWithFormation implements Movement {
   int speed = 0;
 
   void tick() {
-    if(_reference.unit.pos == destination &&
+    if (_reference.unit.pos == destination &&
         units.values.every((u) => u.unit.pos == u.spot.transformedSpot)) {
       _finished = true;
       return;
@@ -143,7 +142,7 @@ class MovementWithFormation implements Movement {
           // TODO check if we have reached the destination
           recomputeUnitPath(unit);
         }
-        if(unit.curDest.distanceTo(unit.spot.transformedSpot) > 2) {
+        if (unit.curDest.distanceTo(unit.spot.transformedSpot) > 2) {
           recomputeUnitPath(unit);
         }
         if (unit.path == null) continue;

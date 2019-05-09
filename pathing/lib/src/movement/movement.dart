@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:pathing/src/geom.dart';
 import 'package:pathing/src/pathing.dart';
-import 'package:pathing/src/unit.dart';
-import 'package:pathing/src/formation.dart';
+import 'package:pathing/src/game.dart';
+import 'package:pathing/src/formation/formation.dart';
 
 part 'no_formation.dart';
 part 'with_formation.dart';

@@ -2,16 +2,16 @@ import 'dart:math';
 import 'dart:web_gl';
 import 'package:meta/meta.dart';
 
-class SpriteFrame {
+class Frame {
   final int index;
 
   final List<int> image;
 
   final Point<double> size;
 
-  final Point hotspot;
+  final Point<int> hotspot;
 
-  SpriteFrame(
+  Frame(
       {@required this.index,
       @required this.image,
       @required this.size,
@@ -19,16 +19,16 @@ class SpriteFrame {
 }
 
 class Sprite {
-  final List<SpriteFrame> frames;
+  final List<Frame> frames;
 
   final int length;
 
-  Sprite({@required List<SpriteFrame> frames})
+  Sprite(List<Frame> frames)
       : frames = frames,
         length = frames.length;
 }
 
-class SpriteRef {
+class Graphic {
   final Sprite sprite;
 
   final Point<int> offset;
@@ -37,7 +37,7 @@ class SpriteRef {
 
   final bool loop;
 
-  SpriteRef({this.sprite, this.offset, this.rate, this.loop});
+  Graphic({this.sprite, this.offset, this.rate, this.loop});
 
-  List<SpriteFrame> get frames => sprite.frames;
+  List<Frame> get frames => sprite.frames;
 }

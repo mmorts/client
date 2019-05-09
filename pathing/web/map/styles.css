@@ -34,10 +34,6 @@ html, body {
   background-color: blue;
 }
 
-.tile.occupied {
-  background-color: black;
-}
-
 .tile.path {
   background-color: white;
   pointer-events: none;
@@ -69,4 +65,13 @@ html, body {
 
 .unit.selected {
   border: 1px solid white;
+}
+
+.unmovable {
+  position: absolute;
+  color: white;
+  font-size: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: black;
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:spec/spec.dart';
+import 'dart:math';
+import 'package:spec/graphics.dart';
 
 final barrack = Building(
   standing: [
@@ -8,7 +9,7 @@ final barrack = Building(
         Compose(
           sprite: Sprite(
             frames: [
-              Frame(),
+              Frame(hotspot: Point(149, 185)),
             ],
           ),
         ),
