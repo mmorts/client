@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
 
-import 'sprite_ref.dart';
+import 'sprite.dart';
 
-class BuildingGraphic {
+class BuildingAge {
   final List<Graphic> constructing;
   final List<Graphic> standing;
   final List<Graphic> garrison;
@@ -11,7 +11,7 @@ class BuildingGraphic {
   final List<Graphic> hp50;
   final List<Graphic> hp75;
 
-  BuildingGraphic(
+  BuildingAge(
       {@required this.constructing,
       @required this.standing,
       @required this.garrison,
@@ -21,11 +21,13 @@ class BuildingGraphic {
       @required this.hp75});
 }
 
-class BuildingAges {
-  final List<BuildingGraphic> age0;
-  final List<BuildingGraphic> age1;
-  final List<BuildingGraphic> age2;
-  final List<BuildingGraphic> age3;
+class Building {
+  final BuildingAge age0;
+  final BuildingAge age1;
+  final BuildingAge age2;
+  final BuildingAge age3;
 
-  BuildingAges({this.age0, this.age1, this.age2, this.age3});
+  List<BuildingAge> get ages => [age0, age1, age2, age3];
+
+  Building({this.age0, this.age1, this.age2, this.age3});
 }

@@ -11,9 +11,8 @@ dependencies:
   image:
   spec:
     path: ../spec
-  ezwebgl:
-    path: ../ezwebgl
   yaml:
+  http:
 
 dev_dependencies:
   build_runner:

@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 class Frame {
   final int index;
 
-  final List<int> image;
+  dynamic /* List<int> | Texture */ image;
 
   final Point<double> size;
 
