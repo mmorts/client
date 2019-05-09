@@ -6,7 +6,8 @@ import 'package:meta/meta.dart';
 
 import 'package:ezwebgl/ezwebgl.dart';
 
-import 'package:client/objects/objects.dart';
+import 'package:client/objects/pos.dart';
+import 'package:client/objects/state.dart';
 
 TileHighlightPainter _painter;
 
@@ -62,7 +63,8 @@ class TileHighlight {
   Point<double> size = Point<double>(64.0, 64.0);
 
   TileHighlight() {
-    if (_painter == null) throw Exception("TileHighlightPainter not bootstrapped!");
+    if (_painter == null)
+      throw Exception("TileHighlightPainter not bootstrapped!");
   }
 
   void paint(State gameState) {

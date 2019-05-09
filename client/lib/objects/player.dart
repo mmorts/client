@@ -1,5 +1,3 @@
-
-
 class Player {
   final int id;
 

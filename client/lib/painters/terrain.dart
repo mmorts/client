@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:web_gl';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
 import 'package:ezwebgl/ezwebgl.dart';
 
-import 'package:client/objects/objects.dart';
-
-TerrainPainter _painter;
+import 'package:client/objects/pos.dart';
+import 'package:client/objects/state.dart';
 
 class TerrainPainter {
   final RenderingContext2 gl;
@@ -24,7 +22,7 @@ class TerrainPainter {
       {@required this.shader, @required this.buffer, @required this.texture})
       : gl = shader.gl;
 
-  void paint(Rectangle rect, {State gameState}) {
+  void _paint(Rectangle rect, {State gameState}) {
     // Set program
     shader.use();
 
@@ -48,7 +46,14 @@ class TerrainPainter {
       ..drawArrays(gl: gl, buffer: buffer);
   }
 
-  static Future<void> bootstrap(RenderingContext2 gl) async {
+  void paint(Terrain terrain, State gameState) {
+    _paint(
+        Rectangle(terrain.position.x, terrain.position.y, terrain.size.x,
+            terrain.size.y),
+        gameState: gameState);
+  }
+
+  static Future<TerrainPainter> make(RenderingContext2 gl) async {
     ShaderProgram shader = ShaderProgram.prepare(
       gl: gl,
       vertex: _vertexCode,
@@ -59,7 +64,7 @@ class TerrainPainter {
 
     final texture = await texFromUrl("sprites/terrain/land.png", gl: gl);
 
-    _painter = TerrainPainter(
+    return TerrainPainter(
       shader: shader,
       buffer: buffer,
       texture: texture.texture,
@@ -72,14 +77,7 @@ class Terrain {
 
   Point<double> size = Point<double>(512.0, 512.0);
 
-  Terrain() {
-    if (_painter == null) throw Exception("TerrainPainter not bootstrapped!");
-  }
-
-  void paint(State gameState) {
-    _painter.paint(Rectangle(position.x, position.y, size.x, size.y),
-        gameState: gameState);
-  }
+  Terrain();
 }
 
 const _vertexCode = r"""

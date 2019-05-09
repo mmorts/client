@@ -1,4 +1,2 @@
 standing:
-  layer0:
-    sprites:
-    - sprite: barrack
+  - sprite: building/barrack/dark

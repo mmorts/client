@@ -10,6 +10,7 @@ build/
 # Directory created by dartdoc
 doc/api/
 
+*.iml
 .idea
 
 web/sprites

@@ -15,6 +15,12 @@ class Position2 {
     }
     throw Exception("Unknown operand!");
   }
+
+  Position2 clone() => Position2(x: x, y: y);
+
+  Point<double> toPoint() => Point<double>(x, y);
+
+  Point<int> toIntPoint() => Point<int>(x.toInt(), y.toInt());
 }
 
 class Position3 implements Position2 {
@@ -32,4 +38,10 @@ class Position3 implements Position2 {
     }
     throw Exception("Unknown operand!");
   }
+
+  Position3 clone() => Position3(x: x, y: y, z: z);
+
+  Point<double> toPoint() => Point<double>(x, y);
+
+  Point<int> toIntPoint() => Point<int>(x.toInt(), y.toInt());
 }

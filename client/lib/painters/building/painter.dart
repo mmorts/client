@@ -5,13 +5,13 @@ import 'package:meta/meta.dart';
 
 import 'package:ezwebgl/ezwebgl.dart';
 
-import 'package:client/objects/objects.dart';
+import 'package:client/objects/pos.dart';
+import 'package:client/objects/state.dart';
 
 import 'package:loader/loader.dart';
-import 'package:client/painters/sprite_repo.dart';
 
 class BuildingPaintData {
-  final List<SpriteRef> sprites;
+  final List<Graphic> sprites;
 
   int previousTime;
 
@@ -68,10 +68,10 @@ class BuildingPainter {
       ..drawArrays(gl: gl, buffer: buffer);
   }
 
-  void paint(BuildingPaintData p, {@required State gameState}) {
+  void paint(BuildingPaintData p, State gameState) {
     int timeDiff = gameState.current - p.previousTime;
-    for (SpriteRef sprite in p.sprites) {
-      SpriteFrame frame;
+    for (Graphic sprite in p.sprites) {
+      Frame frame;
       if (sprite.rate == 0) {
         frame = sprite.frames.first;
       } else {
@@ -88,49 +88,9 @@ class BuildingPainter {
       }
       final newPos = p.position + sprite.offset;
       final rect = Rectangle(newPos.x, newPos.y, frame.size.x, frame.size.y);
-      _paintSprite(gameState, rect, frame.texture);
+      _paintSprite(gameState, rect, frame.image);
     }
   }
-
-  /*
-  void paint(_PaintProps props, {@required State gameState}) {
-    // Set program
-    shader.use();
-
-    gl.bindTexture(WebGL.TEXTURE_2D, textures[props.spriteId].texture);
-
-    var textureLocation = gl.getUniformLocation(shader.program, "u_texture");
-    gl.uniform1i(textureLocation, 0);
-
-    var resolutionLocation =
-        gl.getUniformLocation(shader.program, "resolution");
-    gl.uniform2f(resolutionLocation, gameState.size.x, gameState.size.y);
-
-    shader.setUniformMatrix4fv("proj", gameState.projectionMatrix);
-
-    // Set data
-    DataArray()
-      ..add(PosTexBuf(
-          position: Vec4(x: props.viewport.left, y: props.viewport.top),
-          texCoords: Vec2(x: 0.0, y: 0.0)))
-      ..add(PosTexBuf(
-          position: Vec4(x: props.viewport.right, y: props.viewport.top),
-          texCoords: Vec2(x: 1.0, y: 0.0)))
-      ..add(PosTexBuf(
-          position: Vec4(x: props.viewport.left, y: props.viewport.bottom),
-          texCoords: Vec2(x: 0.0, y: 1.0)))
-      ..add(PosTexBuf(
-          position: Vec4(x: props.viewport.right, y: props.viewport.top),
-          texCoords: Vec2(x: 1.0, y: 0.0)))
-      ..add(PosTexBuf(
-          position: Vec4(x: props.viewport.left, y: props.viewport.bottom),
-          texCoords: Vec2(x: 0.0, y: 1.0)))
-      ..add(PosTexBuf(
-          position: Vec4(x: props.viewport.right, y: props.viewport.bottom),
-          texCoords: Vec2(x: 1.0, y: 1.0)))
-      ..drawArrays(gl: gl, buffer: buffer);
-  }
-  */
 
   static BuildingPainter make(RenderingContext2 gl) {
     ShaderProgram shader = ShaderProgram.prepare(

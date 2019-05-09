@@ -1,11 +1,13 @@
 import 'package:meta/meta.dart';
-import 'package:client/objects/objects.dart';
+import 'package:client/objects/pos.dart';
 import 'package:loader/loader.dart';
 
 import 'package:client/objects/player.dart';
 
 import 'painter.dart';
-import 'package:client/objects/game.dart';
+
+import 'package:client/objects/data.dart';
+import 'package:client/objects/state.dart';
 
 enum BuildingState {
   constructing,
@@ -15,8 +17,6 @@ enum BuildingState {
 
 class Building {
   final int id;
-
-  final Game game;
 
   final BuildingPainter painter;
 
@@ -32,19 +32,22 @@ class Building {
 
   int damageAnimationTime;
 
-  Building(this.game, this.id, this.painter, {@required this.pos});
+  Building(this.id, this.painter, {@required this.pos});
 
   void paint(State gameState) {
-    final spritesForAge = game
-        .spriteRepo.buildings[id].civilizations[player.civ].ages[player.age];
-    List<SpriteRef> sprite;
+    final spritesForAge = gameState.data.graphics.civs[player.civ]
+        .buildings[0 /* TODO */].ages[player.age];
+    List<Graphic> sprite;
     if (state == BuildingState.constructing)
       sprite = spritesForAge.constructing;
-    if (state == BuildingState.standing) sprite = spritesForAge.standing;
-    if (state == BuildingState.dead) sprite = spritesForAge.dying;
+    else if (state == BuildingState.standing) {
+      // TODO hp
+      sprite = spritesForAge.standing;
+    } else if (state == BuildingState.dead) sprite = spritesForAge.dying;
+
     painter.paint(
         BuildingPaintData(
             position: pos, previousTime: stateChangeTime, sprites: sprite),
-        gameState: gameState);
+        gameState);
   }
 }

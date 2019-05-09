@@ -1,15 +1,15 @@
 part of 'military.dart';
 
 class MilitaryDirTextures {
-  final Iterable<Texture> s;
-  final Iterable<Texture> sw;
-  final Iterable<Texture> w;
-  final Iterable<Texture> nw;
-  final Iterable<Texture> n;
+  final Sprite s;
+  final Sprite sw;
+  final Sprite w;
+  final Sprite nw;
+  final Sprite n;
 
   MilitaryDirTextures({this.s, this.sw, this.w, this.nw, this.n});
 
-  Iterable<Texture> byDir(UnitDirection dir) {
+  Sprite byDir(UnitDirection dir) {
     switch (dir) {
       case UnitDirection.s:
         return s;
@@ -31,11 +31,11 @@ class MilitaryDirTextures {
 
   static Future<MilitaryDirTextures> load(
       RenderingContext2 gl, String path) async {
-    List<Texture> w = await loadOneDir(gl, path + "/w");
-    List<Texture> s = await loadOneDir(gl, path + "/s");
-    List<Texture> n = await loadOneDir(gl, path + "/n");
-    List<Texture> nw = await loadOneDir(gl, path + "/nw");
-    List<Texture> sw = await loadOneDir(gl, path + "/sw");
+    Sprite w = await loadOneDir(gl, path + "/w");
+    Sprite s = await loadOneDir(gl, path + "/s");
+    Sprite n = await loadOneDir(gl, path + "/n");
+    Sprite nw = await loadOneDir(gl, path + "/nw");
+    Sprite sw = await loadOneDir(gl, path + "/sw");
 
     return MilitaryDirTextures(
       w: w,
@@ -46,23 +46,29 @@ class MilitaryDirTextures {
     );
   }
 
-  static Future<List<Texture>> loadOneDir(
-      RenderingContext2 gl, String path) async {
-    final ret = <Texture>[];
+  static Future<Sprite> loadOneDir(RenderingContext2 gl, String path) async {
+    final ret = <Frame>[];
 
-    resty.StringResponse resp;
-    int frameCount = 1;
-    do {
-      resp = await resty.get(path + "/$frameCount.png").go();
-      if (resp.statusCode != 404) {
-        ret.add(texFromBytes(resp.bytes, gl: gl).texture);
-      }
-      frameCount++;
-    } while (resp.statusCode != 404);
+    resty.StringResponse resp = await resty.get(path + "/sprite.yaml").go();
+    if (resp.statusCode != 200) throw resp;
+    final spriteSpec = spec.Sprite.decode(yaml.loadYaml(resp.body));
+
+    int frameCount = spriteSpec.numFrames;
+
+    for (int i = 1; i <= frameCount; i++) {
+      resp = await resty.get(path + "/$i.png").go();
+      if (resp.statusCode != 200) throw resp;
+      final sizedTex = texFromBytes(resp.bytes, gl: gl);
+      ret.add(Frame(
+          size: sizedTex.size,
+          texture: sizedTex.texture,
+          hotspot: Point<double>(spriteSpec.frames[i - 1].hotspot.x.toDouble(),
+              spriteSpec.frames[i - 1].hotspot.y.toDouble())));
+    }
 
     if (ret.isEmpty) throw Exception("No frames found!");
 
-    return ret;
+    return Sprite(ret);
   }
 }
 
@@ -79,7 +85,7 @@ class MilitaryTextures {
 
   MilitaryTextures({this.stand, this.walk, this.attack, this.die, this.rot});
 
-  Iterable<Texture> by({UnitVerb state, UnitDirection dir}) {
+  Sprite by({UnitVerb state, UnitDirection dir}) {
     switch (state) {
       case UnitVerb.stand:
         return stand.byDir(dir);
