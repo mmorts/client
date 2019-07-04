@@ -11,21 +11,19 @@ enum FormationRole {
   protector,
 }
 
-class Unit implements Actor {
-  final int id;
+abstract class Movable implements Actor {
+  int get id;
 
-  UnitStat stat;
+  MovableStat get stat;
 
-  int clan;
+  int get clan;
 
-  Position pos;
+  Position get pos;
 
-  Movement movement;
-
-  Unit(this.id, this.stat, {this.clan, this.pos, this.movement});
+  Movement movement;  // TODO
 }
 
-class UnitStat implements ActorStat {
+class MovableStat implements ActorStat {
   final int id;
 
   final Point<int> size;
@@ -34,7 +32,7 @@ class UnitStat implements ActorStat {
 
   int speed;
 
-  UnitStat(this.id,
+  MovableStat(this.id,
       {@required this.size,
       @required this.formationRole,
       @required this.speed});
