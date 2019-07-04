@@ -68,10 +68,13 @@ void main() async {
     adjust();
   }).observe(canvas);
 
+  Game game;
+
   // Initialize game
   Function init = () async {
     painter = await Painter.make(gl);
     await TileHighlightPainter.bootstrap(gl);
+    game = Game(state, painter, players: []);
   };
   await init();
 
@@ -79,10 +82,12 @@ void main() async {
   final terrain2 = Terrain()..position = Position2(x: -512.0, y: -512.0);
   final terrain3 = Terrain()..position = Position2(x: 0, y: -512.0);
   final terrain4 = Terrain()..position = Position2(x: -512.0, y: 0);
-  final military = Military();
+  final military = Military(1);
   final barrack = Building(null, null, pos: Position2());
   // final bamboo = Building(null, null, null, pos: Position2());
   final highlight = TileHighlight();
+
+  game.units[military.id] = military;
 
   window.document.onKeyUp.listen((KeyboardEvent e) {
     print(e.key);
@@ -116,7 +121,7 @@ void main() async {
 
     highlight.paint(state);
 
-    painter.military.paint(military, state);
+    game.paint();
 
     // bamboo.paint(state);
     // barrack.paint(state);

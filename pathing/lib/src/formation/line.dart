@@ -4,13 +4,13 @@ import '../pathing.dart';
 import '../game.dart';
 import 'formation.dart';
 
-class LineFormation implements FormationMaker {
+class LineFormation implements Formation {
   FormationResult format(
-    Map<int, Map<int, Unit>> units,
+    Map<int, Map<int, Movable>> units,
     Point<int> area,
   ) {
-    final fragiles = <int, Map<int, Unit>>{};
-    final protectors = <int, Map<int, Unit>>{};
+    final fragiles = <int, Map<int, Movable>>{};
+    final protectors = <int, Map<int, Movable>>{};
 
     for (int unitTypeId in units.keys) {
       final stat = units[unitTypeId][units[unitTypeId].keys.first].stat;
@@ -26,9 +26,9 @@ class LineFormation implements FormationMaker {
 
     int vSpaceTaken = 0;
 
-    Function allocator = (Map<int, Map<int, Unit>> unitMapping) {
+    Function allocator = (Map<int, Map<int, Movable>> unitMapping) {
       for (int unitTypeId in unitMapping.keys) {
-        final Map<int, Unit> units = unitMapping[unitTypeId];
+        final Map<int, Movable> units = unitMapping[unitTypeId];
         final int numUnits = units.length;
         final int unitWidth = 1; // TODO units.first.stat.distance.x * 2;
         final int unitHeight = 1; // TODO units.first.stat.distance.y * 2;

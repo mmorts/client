@@ -1,5 +1,7 @@
 import 'dart:math';
 
+export 'package:pos/pos.dart';
+
 class Position2 {
   double x;
 

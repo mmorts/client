@@ -23,7 +23,7 @@ class FormationSpot {
 
   final int unitType;
 
-  Unit unit;
+  Movable unit;
 
   Position transformedSpot;
 
@@ -56,8 +56,8 @@ class FormationResult {
   }
 }
 
-abstract class FormationMaker {
-  FormationResult format(Map<int, Map<int, Unit>> units, Point<int> area);
+abstract class Formation {
+  FormationResult format(Map<int, Map<int, Movable>> units, Point<int> area);
 }
 
 /// Find transformer to transform a formation into a required direction.

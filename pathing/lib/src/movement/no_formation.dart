@@ -10,8 +10,8 @@ class NoFormationMovement implements Movement {
   final Position destination;
 
   NoFormationMovement(
-      this.id, this.map, this.destination, Iterable<Unit> units) {
-    for (Unit unit in units) {
+      this.id, this.map, this.destination, Iterable<MovableWrap> units) {
+    for (MovableWrap unit in units) {
       if (unit.movement != null) {
         unit.movement.removeUnit(unit);
       }
@@ -49,7 +49,7 @@ class NoFormationMovement implements Movement {
       Tile next = map.tiles[unit.path.tile.flatPos];
       // TODO if diagonal check we have space on sides
       if (!next.isWalkableBy(TerrainType.land)) {
-        if (next.owner is Unit) {
+        if (next.owner is Movable) {
           final obs = next.owner;
           // TODO if it has been a while recompute path
           // TODO if it is close enough, end movement
@@ -74,7 +74,7 @@ class NoFormationMovement implements Movement {
   }
 
   /// Removed units from this formation
-  void removeUnit(Unit unit) {
+  void removeUnit(MovableWrap unit) {
     units.remove(unit.id);
     unit.movement = null;
     recomputeAllPaths();

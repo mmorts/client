@@ -1,6 +1,6 @@
 import 'dart:math';
 
-export 'unit.dart';
+export 'movable.dart';
 export 'unmovable.dart';
 
 abstract class Actor {

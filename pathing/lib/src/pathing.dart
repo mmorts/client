@@ -69,7 +69,7 @@ class Tile {
   /// [type].
   bool isWalkableBy(int type) {
     // TODO
-    if (owner != null && owner is! Unit) return false;
+    if (owner != null && owner is! Movable) return false;
     return terrainType & type != 0;
   }
 

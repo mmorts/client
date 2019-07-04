@@ -2,24 +2,24 @@ part of 'movement.dart';
 
 class MovementWithFormation implements Movement {
   final int id;
-  final Game game;
+  final Pather game;
   TileMap get map => game.map;
 
   /// Units included in the formation
   final units = <int, UnitInMovement>{};
 
-  Map<int, Map<int, Unit>> _unitsByType;
+  Map<int, Map<int, MovableWrap>> _unitsByType;
 
-  FormationMaker formation;
+  Formation formation;
 
   final Position destination;
 
   MovementWithFormation(
-      this.id, this.game, this.destination, Iterable<Unit> units,
+      this.id, this.game, this.destination, Iterable<MovableWrap> units,
       {this.formation}) {
     _unitsByType = splitUnitsByType(units);
 
-    for (Unit unit in units) {
+    for (MovableWrap unit in units) {
       if (unit.movement != null) {
         unit.movement.removeUnit(unit);
       }
@@ -106,7 +106,7 @@ class MovementWithFormation implements Movement {
       Tile next = map.tiles[_reference.path.tile.flatPos];
       // TODO if diagonal check we have space on sides
       if (!next.isWalkableBy(TerrainType.land)) {
-        if (next.owner is Unit) {
+        if (next.owner is Movable) {
           // TODO can we do better?
           final obs = next.owner;
           if (units.containsKey(obs.id)) break;
@@ -149,7 +149,7 @@ class MovementWithFormation implements Movement {
         Tile next = map.tiles[unit.path.tile.flatPos];
         // TODO if diagonal check we have space on sides
         if (!next.isWalkableBy(TerrainType.land)) {
-          if (next.owner is Unit) {
+          if (next.owner is Movable) {
             final obs = next.owner;
             if (!units.containsKey(obs.id)) {
               recomputeUnitPath(unit);
@@ -187,7 +187,7 @@ class MovementWithFormation implements Movement {
   }
 
   /// Removed units from this formation
-  void removeUnit(Unit unit) {
+  void removeUnit(MovableWrap unit) {
     units.remove(unit.id);
     _unitsByType[unit.stat.id].remove(unit.id);
     if (_unitsByType[unit.stat.id].isEmpty) _unitsByType.remove(unit.stat.id);

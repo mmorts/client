@@ -3,19 +3,17 @@ import 'dart:html';
 import 'package:pathing/pathing.dart';
 import 'package:pathing/src/actor/actor.dart';
 
-final game = Game();
+final game = Pather();
 
 final unitEls = <int, DivElement>{};
 
 int actorIdGen = 0;
 
-int formationIdGen = 0;
-
 final int tileSize = 25;
 
-final selected = Map<int, Unit>();
+final selected = Map<int, Movable>();
 
-final militia = UnitStat(1,
+final militia = MovableStat(1,
     size: Point<int>(1, 1), formationRole: FormationRole.protector, speed: 5);
 
 final tree = UnmovableStat(2, size: Point<int>(1, 1));
@@ -37,7 +35,7 @@ void styleTile(Tile t) {
   }
 }
 
-void styleUnit(Unit t) {
+void styleUnit(Movable t) {
   DivElement tEl = viewport.querySelector(".unit-${t.id}");
   tEl.style.left = "${t.pos.x * tileSize}px";
   tEl.style.top = "${t.pos.y * tileSize}px";
@@ -48,19 +46,51 @@ void styleUnit(Unit t) {
   }
 }
 
+class MoveableImpl implements Movable {
+  final int id;
+
+  MovableStat stat;
+
+  final int clan;
+
+  Position pos;
+
+  Movement movement;
+
+  MoveableImpl(this.id, this.stat, {this.clan, this.pos, this.movement});
+}
+
+class UnmovableImpl implements Unmovable {
+  final int id;
+
+  UnmovableStat stat;
+
+  Position pos;
+
+  UnmovableImpl(this.id, {this.stat, this.pos});
+}
+
 void main() {
-  final unit1 = Unit(1, militia, pos: Position(x: 10, y: 5), clan: 1);
-  final unit2 = Unit(2, militia, pos: Position(x: 11, y: 5), clan: 1);
-  final Unit unit3 = Unit(3, militia, pos: Position(x: 12, y: 5), clan: 1);
-  final Unit unit4 = Unit(4, militia, pos: Position(x: 13, y: 5), clan: 1);
-  final Unit unit5 = Unit(5, militia, pos: Position(x: 14, y: 5), clan: 1);
-  final Unit unit6 = Unit(6, militia, pos: Position(x: 15, y: 5), clan: 1);
-  final Unit unit7 = Unit(7, militia, pos: Position(x: 16, y: 5), clan: 1);
-  final Unit unit8 = Unit(8, militia, pos: Position(x: 17, y: 5), clan: 1);
-  final Unit unit9 = Unit(9, militia, pos: Position(x: 18, y: 5), clan: 1);
-  final Unit unit10 = Unit(10, militia, pos: Position(x: 41, y: 5), clan: 1);
+  final unit1 = MoveableImpl(1, militia, pos: Position(x: 10, y: 5), clan: 1);
+  final unit2 = MoveableImpl(2, militia, pos: Position(x: 11, y: 5), clan: 1);
+  final Movable unit3 =
+      MoveableImpl(3, militia, pos: Position(x: 12, y: 5), clan: 1);
+  final Movable unit4 =
+      MoveableImpl(4, militia, pos: Position(x: 13, y: 5), clan: 1);
+  final Movable unit5 =
+      MoveableImpl(5, militia, pos: Position(x: 14, y: 5), clan: 1);
+  final Movable unit6 =
+      MoveableImpl(6, militia, pos: Position(x: 15, y: 5), clan: 1);
+  final Movable unit7 =
+      MoveableImpl(7, militia, pos: Position(x: 16, y: 5), clan: 1);
+  final Movable unit8 =
+      MoveableImpl(8, militia, pos: Position(x: 17, y: 5), clan: 1);
+  final Movable unit9 =
+      MoveableImpl(9, militia, pos: Position(x: 18, y: 5), clan: 1);
+  final Movable unit10 =
+      MoveableImpl(10, militia, pos: Position(x: 41, y: 5), clan: 1);
   actorIdGen = 11;
-  game.addUnits(
+  game.addMovables(
       [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10]);
 
   selected[unit1.id] = unit1;
@@ -90,7 +120,8 @@ void main() {
 
       if (event.button == 0) {
         if (t.owner == null) {
-          final unmovable = Unmovable(actorIdGen++, tree, pos: t.pos.clone());
+          final unmovable =
+              UnmovableImpl(actorIdGen++, stat: tree, pos: t.pos.clone());
           final el = DivElement();
           unmovables[el] = unmovable;
           game.addUnmovable(unmovable);
@@ -107,10 +138,9 @@ void main() {
     tEl.onContextMenu.listen((MouseEvent event) {
       if (event.ctrlKey) return;
       event.preventDefault();
-      final int id = formationIdGen++;
 
-      game.addMovement(MovementWithFormation(id, game, t.pos, selected.values,
-          formation: LineFormation()));
+      game.addMovementWithFormation(t.pos, selected.values.map((u) => u.id),
+          formation: LineFormation());
       // NoFormationMovement(id, map, t.pos, selected.values);
     });
   }
@@ -121,7 +151,7 @@ void main() {
     print("s");
     game.compute();
 
-    for (Unit unit in game.units.values) {
+    for (Movable unit in game.movable.values) {
       DivElement unitEl = unitEls[unit.id];
       if (unitEl == null) {
         unitEl = DivElement();
@@ -154,7 +184,7 @@ void main() {
       styleUnit(unit);
     }
 
-    for(Element unmoveEl in unmovables.keys) {
+    for (Element unmoveEl in unmovables.keys) {
       final unmovable = unmovables[unmoveEl];
 
       unmoveEl.classes.add('unmovable');

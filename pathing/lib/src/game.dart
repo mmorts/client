@@ -3,17 +3,19 @@ import 'package:pathing/pathing.dart';
 import 'pathing.dart';
 import 'movement/movement.dart';
 
-import 'package:pathing/src/actor/unit.dart';
+import 'package:pathing/src/actor/movable.dart';
 import 'package:pathing/src/actor/unmovable.dart';
 
-export 'package:pathing/src/actor/unit.dart';
+export 'package:pathing/src/actor/movable.dart';
 
-class Game {
+import 'actor/internal.dart';
+
+class Pather {
   final map = TileMap(100, 100);
 
   final unmovables = <int, Unmovable>{};
 
-  final units = <int, Unit>{};
+  final movable = <int, MovableWrap>{};
 
   final movements = <int, Movement>{};
 
@@ -21,20 +23,38 @@ class Game {
 
   int get time => _time;
 
-  Game();
+  Pather();
 
   void start() {}
 
-  void addUnit(Unit unit) {
-    units[unit.id] = unit;
+  void addMovable(Movable unit) {
+    movable[unit.id] = MovableWrap(unit);
   }
 
-  void addUnits(Iterable<Unit> units) {
-    units.forEach((unit) => addUnit(unit));
+  void addMovables(Iterable<Movable> movabs) {
+    movabs.forEach((unit) => addMovable(unit));
   }
 
-  void addMovement(Movement movement) {
-    // TODO generate movement id
+  void addMovementWithFormation(Position to, Iterable<int> unitIds,
+      {Formation formation}) {
+    final units = <MovableWrap>[];
+
+    for (int id in unitIds) {
+      final wrap = movable[id];
+      if (wrap == null) {
+        continue;
+        // throw "Unit is not in the books!";
+      }
+      units.add(wrap);
+    }
+
+    Movement movement;
+    if (formation != null) {
+      movement = MovementWithFormation(_moveIdGen++, this, to, units,
+          formation: formation);
+    } else {
+      movement = NoFormationMovement(_moveIdGen++, map, to, units);
+    }
     movements[movement.id] = movement;
   }
 
@@ -49,7 +69,8 @@ class Game {
         Tile tile = map.tileAt(Position(x: posX, y: posY));
         final owner = tile.owner;
         if (owner != null) {
-          throw Exception("Something is already on the tile ($posX:$posY) $owner");
+          throw Exception(
+              "Something is already on the tile ($posX:$posY) $owner");
         }
 
         tile.owner = unmovable;
@@ -93,17 +114,15 @@ class Game {
     // TODO
   }
 
-  int _unitIdGen = 0;
-
-  int get newUnitId => _unitIdGen++;
+  int _moveIdGen = 0;
 }
 
-Map<int, Map<int, Unit>> splitUnitsByType(Iterable<Unit> units) {
-  final fragileTypes = <int, Map<int, Unit>>{};
-  for (Unit unit in units) {
-    Map<int, Unit> type = fragileTypes[unit.stat.id];
+Map<int, Map<int, MovableWrap>> splitUnitsByType(Iterable<MovableWrap> units) {
+  final fragileTypes = <int, Map<int, MovableWrap>>{};
+  for (MovableWrap unit in units) {
+    Map<int, MovableWrap> type = fragileTypes[unit.stat.id];
     if (type == null) {
-      type = <int, Unit>{};
+      type = <int, MovableWrap>{};
       fragileTypes[unit.stat.id] = type;
     }
     type[unit.id] = unit;

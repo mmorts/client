@@ -102,7 +102,7 @@ class MilitaryPainter {
   }
 
   void paint(Military military, State gameState) {
-    _paint(military.pos.toPoint(),
+    _paint(military.pos.toDoublePoint(),
         unitState: military.state, gameState: gameState);
   }
 

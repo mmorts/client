@@ -19,8 +19,6 @@ abstract class Movable implements Actor {
   int get clan;
 
   Position get pos;
-
-  Movement movement;  // TODO
 }
 
 class MovableStat implements ActorStat {

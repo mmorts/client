@@ -5,14 +5,12 @@ import 'package:pathing/src/geom.dart';
 
 import 'actor.dart';
 
-class Unmovable implements Actor {
-  final int id;
+abstract class Unmovable implements Actor {
+  int get id;
 
-  UnmovableStat stat;
+  UnmovableStat get stat;
 
-  Position pos;
-
-  Unmovable(this.id, this.stat, {this.pos});
+  Position get pos;
 }
 
 class UnmovableStat implements ActorStat {

@@ -1,6 +1,30 @@
 import 'dart:math';
 import 'pos.dart';
 
+import 'package:pathing/pathing.dart';
+
+import 'player.dart';
+
+class Military implements Movable {
+  final int id;
+
+  Player player;
+
+  MovableStat stat;
+
+  final Position pos = Position(x: 0, y: 0);
+
+  final state = UnitState(verb: UnitVerb.stand, dir: UnitDirection.w);
+
+  Military(this.id);
+
+  int get clan {
+    if(player == null) return -1;
+    return player.id;
+  }
+}
+
+/// The action the unit is doing
 enum UnitVerb {
   stand,
   walk,
@@ -9,6 +33,7 @@ enum UnitVerb {
   rot,
 }
 
+/// Direction of the unit
 class UnitDirection {
   final int id;
 
@@ -37,6 +62,7 @@ class UnitDirection {
   };
 }
 
+/// The state of a unit
 class UnitState {
   UnitVerb verb;
 
@@ -46,12 +72,4 @@ class UnitState {
 
   UnitState(
       {this.verb: UnitVerb.stand, this.dir: UnitDirection.s, this.since = 0});
-}
-
-class Military {
-  Position2 pos = Position2(x: 0.0, y: 0.0);
-
-  final state = UnitState(verb: UnitVerb.stand, dir: UnitDirection.w);
-
-  Military();
 }
