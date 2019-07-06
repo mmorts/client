@@ -8,8 +8,8 @@ environment:
   sdk: '>=2.0.0 <3.0.0'
 
 dependencies:
-  stats:
-    path: ../stats
+  spec:
+    path: ../spec
 
 dev_dependencies:
   test: ^1.0.0

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:server/object/object.dart';
-import 'package:stats/stats.dart';
+import 'package:spec/stats.dart' as stats;
 
 typedef VoidFunc = void Function();
 
@@ -24,9 +24,9 @@ class ResearchActivity implements Activity {
   /// Building at which this activity occurs
   final Building building;
 
-  final Research research;
+  final stats.Research research;
 
-  final Resource cost;
+  final stats.Resource cost;
 
   Timer _timer;
 
@@ -67,7 +67,7 @@ class UnitRecruitmentActivity implements Activity {
 
   final Building building;
 
-  final Resource cost;
+  final stats.Resource cost;
 
   final UnitStatInfo statInfo;
 

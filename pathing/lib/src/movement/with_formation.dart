@@ -2,7 +2,7 @@ part of 'movement.dart';
 
 class MovementWithFormation implements Movement {
   final int id;
-  final Pather game;
+  final PatherImpl game;
   TileMap get map => game.map;
 
   /// Units included in the formation

@@ -9,8 +9,9 @@ import 'package:pathing/src/actor/unmovable.dart';
 export 'package:pathing/src/actor/movable.dart';
 
 import 'actor/internal.dart';
+import 'pather.dart';
 
-class Pather {
+class PatherImpl implements Pather {
   final map = TileMap(100, 100);
 
   final unmovables = <int, Unmovable>{};
@@ -23,9 +24,7 @@ class Pather {
 
   int get time => _time;
 
-  Pather();
-
-  void start() {}
+  PatherImpl();
 
   void addMovable(Movable unit) {
     movable[unit.id] = MovableWrap(unit);
@@ -35,27 +34,9 @@ class Pather {
     movabs.forEach((unit) => addMovable(unit));
   }
 
-  void addMovementWithFormation(Position to, Iterable<int> unitIds,
-      {Formation formation}) {
-    final units = <MovableWrap>[];
-
-    for (int id in unitIds) {
-      final wrap = movable[id];
-      if (wrap == null) {
-        continue;
-        // throw "Unit is not in the books!";
-      }
-      units.add(wrap);
-    }
-
-    Movement movement;
-    if (formation != null) {
-      movement = MovementWithFormation(_moveIdGen++, this, to, units,
-          formation: formation);
-    } else {
-      movement = NoFormationMovement(_moveIdGen++, map, to, units);
-    }
-    movements[movement.id] = movement;
+  void removeRemovable(/* Movable | String */ unit) {
+    if(unit is Movable) unit = unit.id;
+    // TODO remove unit
   }
 
   void addUnmovable(Unmovable unmovable) {
@@ -93,6 +74,29 @@ class Pather {
         tile.owner = null;
       }
     }
+  }
+
+  void doMovement(Position to, Iterable<int> unitIds,
+      {Formation formation}) {
+    final units = <MovableWrap>[];
+
+    for (int id in unitIds) {
+      final wrap = movable[id];
+      if (wrap == null) {
+        continue;
+        // throw "Unit is not in the books!";
+      }
+      units.add(wrap);
+    }
+
+    Movement movement;
+    if (formation != null) {
+      movement = MovementWithFormation(_moveIdGen++, this, to, units,
+          formation: formation);
+    } else {
+      movement = NoFormationMovement(_moveIdGen++, map, to, units);
+    }
+    movements[movement.id] = movement;
   }
 
   void compute() {

@@ -90,7 +90,6 @@ void main() async {
   game.units[military.id] = military;
 
   window.document.onKeyUp.listen((KeyboardEvent e) {
-    print(e.key);
     military.state.dir += 1;
     // TODO
   });
@@ -104,7 +103,7 @@ void main() async {
     final point = e.offset - center;
     final curOrtho = iso64.toOrthoTile(point);
 
-    // TODO print("${e.offset} ${center} ${point} ${curOrtho}");
+    print("${e.offset} ${center} ${point} ${curOrtho}");
     // TODO
   });
 

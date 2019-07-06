@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:pathing/pathing.dart';
 import 'package:pathing/src/actor/actor.dart';
 
-final game = Pather();
+final game = PatherImpl();
 
 final unitEls = <int, DivElement>{};
 
@@ -139,7 +139,7 @@ void main() {
       if (event.ctrlKey) return;
       event.preventDefault();
 
-      game.addMovementWithFormation(t.pos, selected.values.map((u) => u.id),
+      game.doMovement(t.pos, selected.values.map((u) => u.id),
           formation: LineFormation());
       // NoFormationMovement(id, map, t.pos, selected.values);
     });

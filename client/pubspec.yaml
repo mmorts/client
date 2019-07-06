@@ -18,8 +18,6 @@ dependencies:
     path: ../spec
   loader:
     path: ../loader
-  pathing:
-    path: ../pathing
   pos:
     path: ../pos
   meta:

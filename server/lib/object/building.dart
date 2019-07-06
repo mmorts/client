@@ -18,7 +18,7 @@ class BuildingStatInfo {
   int selfHealRate;
 
   /// Attack bonus against unit classes
-  final attackBonus = <DamageClass, int>{};
+  final attackBonus = <stats.DamageClass, int>{};
 
   int baseProjectiles;
 
@@ -53,7 +53,7 @@ class BuildingStatInfo {
     @required this.popSpace,
   });
 
-  factory BuildingStatInfo.fromTemplate(Player player, Building template) {
+  factory BuildingStatInfo.fromTemplate(Player player, stats.Building template) {
     final ret = BuildingStatInfo(player, template,
         cost: template.cost,
         buildTime: template.buildTime,
@@ -78,7 +78,7 @@ class BuildingStatInfo {
     return ret;
   }
 
-  void applyResearch(BuildingParameterChange change) {
+  void applyResearch(stats.BuildingParameterChange change) {
     switch (change.parameter) {
       case BuildingParameter.cost1:
         if (change.multiplier == ChangeMultiplier.absolute) {

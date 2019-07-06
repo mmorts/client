@@ -3,7 +3,7 @@ part of 'object.dart';
 class PlayerStatInfo {
   final units = <int, UnitStatInfo>{};
 
-  final unitsByAttackType = <AttackType, List<UnitStatInfo>>{};
+  final unitsByAttackType = <stats.AttackType, List<UnitStatInfo>>{};
 
   final unitsByDamageClass = <int, List<UnitStatInfo>>{};
 
@@ -23,7 +23,7 @@ class Player {
 
   final buildings = <int, Building>{};
 
-  final Civilization civilization;
+  final stats.Civilization civilization;
 
   final researched = <int, bool>{};
 

@@ -1,7 +1,7 @@
 import 'dart:math';
 import '../geom.dart';
 import '../pathing.dart';
-import '../game.dart';
+import '../pather_impl.dart';
 import 'formation.dart';
 
 class LineFormation implements Formation {

@@ -3,7 +3,7 @@ import 'object/object.dart';
 import 'spatial/tile.dart';
 import 'commands/commands.dart';
 
-import 'package:stats/stats.dart';
+import 'package:spec/stats.dart';
 
 import 'activity/activity.dart';
 

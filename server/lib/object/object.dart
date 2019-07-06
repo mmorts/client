@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
-import 'package:stats/stats.dart';
+import 'package:spec/stats.dart' show Resource;
+import 'package:spec/stats.dart' as stat;
 import 'dart:collection';
 
 import 'package:server/activity/activity.dart';

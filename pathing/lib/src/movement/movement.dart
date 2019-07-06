@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:pathing/src/geom.dart';
 import 'package:pathing/src/pathing.dart';
-import 'package:pathing/src/game.dart';
+import 'package:pathing/src/pather_impl.dart';
 import 'package:pathing/src/formation/formation.dart';
 import '../actor/internal.dart';
 

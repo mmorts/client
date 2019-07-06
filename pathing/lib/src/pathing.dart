@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:pathing/src/geom.dart';
-import 'game.dart';
+import 'pather_impl.dart';
 
 import 'package:pathing/src/actor/actor.dart';
 
